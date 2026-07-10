@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
-project(OP4 VERSION 1.0.0 LANGUAGES CXX)
+# JUCE needs C (and Objective-C/C++ on Apple) in addition to C++.
+project(OP4 VERSION 1.0.0 LANGUAGES C CXX)
+
+if(APPLE)
+  enable_language(OBJC)
+  enable_language(OBJCXX)
+endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,7 +20,8 @@ include(FetchContent)
 FetchContent_Declare(
   juce
   GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
-  GIT_TAG 7.0.12
+  GIT_TAG 8.0.14
+  GIT_SHALLOW TRUE
 )
 
 # Skip building JUCE build tools (juceaide) which has macOS 15 issues
@@ -38,6 +45,8 @@ juce_add_plugin(OP4
   PLUGIN_MANUFACTURER_CODE "Gojss"
   PLUGIN_CODE "OP4_"
   FORMATS VST3 AU CLAP Standalone
+  IS_SYNTH TRUE
+  NEEDS_MIDI_INPUT TRUE
   COPY_PLUGIN_AFTER_BUILD TRUE
   PRODUCT_NAME "OP4"
 )
@@ -46,17 +55,20 @@ juce_add_plugin(OP4
 target_sources(OP4 PRIVATE
   src/PluginProcessor.cpp
   src/PluginProcessor.h
+  src/PluginEditor.cpp
   src/PluginEditor.h
 )
 
-# Engine & DSP
+# Engine & DSP (OPZ core via ymfm's YM2414)
 target_sources(OP4 PRIVATE
-  src/engine/Voice.cpp
+  src/engine/OPZChip.cpp
+  src/engine/OPZChip.h
   src/engine/Voice.h
   src/engine/FMEngine.cpp
   src/engine/FMEngine.h
   src/engine/LFO.h
   src/engine/Envelope.h
+  ${YMFM_DIR}/src/ymfm_opz.cpp
 )
 
 # Model (Patch, parameter ranges, enums)
@@ -84,8 +96,24 @@ target_sources(OP4 PRIVATE
 # Include ymfm
 target_include_directories(OP4 PRIVATE ${YMFM_DIR}/src)
 
+# Enable the WebView editor (juce_gui_extra WebBrowserComponent).
+# JUCE_USE_WIN_WEBVIEW2 selects the modern Edge/Chromium backend on Windows.
+target_compile_definitions(OP4 PRIVATE
+  JUCE_WEB_BROWSER=1
+  JUCE_USE_WIN_WEBVIEW2=1
+  JUCE_VST3_CAN_REPLACE_VST2=0
+)
+
 # Link against JUCE + system frameworks
-target_link_libraries(OP4 PRIVATE juce::juce_core juce::juce_audio_basics juce::juce_audio_devices juce::juce_gui_basics)
+target_link_libraries(OP4 PRIVATE
+  juce::juce_core
+  juce::juce_audio_basics
+  juce::juce_audio_devices
+  juce::juce_audio_processors
+  juce::juce_audio_utils
+  juce::juce_gui_basics
+  juce::juce_gui_extra
+)
 
 # Platform-specific linking
 if(APPLE)
@@ -93,16 +121,28 @@ if(APPLE)
 endif()
 
 # ============================================================================
-# Testing (optional, for later)
+# Testing — JUCE-free so the DSP/codec cores run fast on every CI platform.
 # ============================================================================
 enable_testing()
-add_executable(op4_tests
-  tests/sysex_tests.cpp
+
+# Engine core: renders the OPZ chip, checks carrier-count + keycode invariants.
+add_executable(op4_engine_tests
   tests/engine_tests.cpp
+  src/engine/OPZChip.cpp
+  ${YMFM_DIR}/src/ymfm_opz.cpp
 )
-target_include_directories(op4_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${YMFM_DIR}/src)
-target_link_libraries(op4_tests PRIVATE juce::juce_core juce::juce_audio_basics)
-add_test(NAME op4_tests COMMAND op4_tests)
+target_compile_features(op4_engine_tests PRIVATE cxx_std_20)
+target_include_directories(op4_engine_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${YMFM_DIR}/src)
+add_test(NAME op4_engine_tests COMMAND op4_engine_tests)
+
+# Sysex codecs: round-trip fidelity (M2).
+add_executable(op4_sysex_tests
+  tests/sysex_tests.cpp
+  src/sysex/VCEDCodec.cpp
+)
+target_compile_features(op4_sysex_tests PRIVATE cxx_std_20)
+target_include_directories(op4_sysex_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_test(NAME op4_sysex_tests COMMAND op4_sysex_tests)
 
 message(STATUS "OP4 v${PROJECT_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

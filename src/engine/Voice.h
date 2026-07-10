@@ -1,36 +1,25 @@
 #pragma once
-#include "../model/Patch.h"
+#include <cstdint>
 
-class Voice {
-public:
-  Voice();
-  ~Voice() = default;
+// Voice — a channel-allocation record, NOT a DSP owner.
+//
+// ymfm emulates the whole 8-channel OPZ in one object (see OPZChip), so a
+// "voice" here is just the bookkeeping that maps a held MIDI note to one chip
+// channel: which channel, what note, whether it's sounding or in release, and
+// how old it is (for oldest-note stealing).
+struct Voice {
+  int  channel = -1;        // owning OPZChip channel (0-7), -1 = unassigned
+  int  note = -1;           // MIDI note currently held
+  float velocity = 0.0f;
+  bool active = false;      // key held (excludes release tail)
+  bool releasing = false;   // note-off sent, envelope tail still sounding
+  uint64_t startTick = 0;   // allocation order, for voice stealing
 
-  void prepare(double sampleRate);
-
-  void noteOn(int noteNumber, float velocity);
-  void noteOff(float velocity);
-  void pitchBend(float semitones);
-  void setParameter(int operatorIndex, int paramIndex, float value);
-
-  void renderBlock(float* outL, float* outR, int numSamples);
-
-  bool isActive() const { return active_; }
-  int getAgeInSamples() const { return ageInSamples_; }
-  void setPatch(const Patch& patch);
-
-private:
-  bool active_ = false;
-  int ageInSamples_ = 0;
-
-  int noteNumber_ = 0;
-  float velocity_ = 0.0f;
-  double sampleRate_ = 44100.0;
-
-  Patch patch_;
-
-  // ymfm voice instance (to be instantiated in M1)
-  // void* ymfmVoice_;
-
-  double elapsedTime_ = 0.0;
+  void reset() {
+    note = -1;
+    velocity = 0.0f;
+    active = false;
+    releasing = false;
+    startTick = 0;
+  }
 };

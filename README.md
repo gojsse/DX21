@@ -64,8 +64,8 @@ cmake --build build --parallel
 
 | Phase | What | Status |
 |-------|------|--------|
-| **M0** | Scaffold (JUCE + CI) | in-progress |
-| **M1** | Voice engine + UI (spike WebView) | pending |
+| **M0** | Scaffold (JUCE + CI) | ✅ done |
+| **M1** | Voice engine + UI (spike WebView) | in-progress — OPZ core renders + tests green; WebView spiked |
 | **M2** | Sysex I/O + Librarian | pending → **ships as Alpha** |
 | **M3** | FX + Drums | pending |
 | **M4** | MIDI depth (NRPN/CC/Sizzler/tuning) | pending |

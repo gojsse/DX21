@@ -18,6 +18,8 @@ struct Operator {
   uint8_t fixed_freq_range = 0;                // TX81Z: range 0-7
   uint8_t wave = 0;                            // TX81Z: waveform 0-7
   uint8_t egl = 0, eg2 = 0, eg3 = 0;           // pitch EG levels (DX21 mode)
+
+  bool operator==(const Operator&) const = default;
 };
 
 struct Patch {
@@ -59,5 +61,5 @@ struct Patch {
   uint8_t foot_ctrl_pitch = 0, foot_ctrl_amp = 0;
 
   // Utility
-  bool operator==(const Patch& other) const;
+  bool operator==(const Patch& other) const = default;
 };

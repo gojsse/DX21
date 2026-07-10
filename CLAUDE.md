@@ -1,6 +1,15 @@
 # OP4 Development Notes
 
-**Current phase:** M0 (Scaffold & CI) → M1 (Voice engine + Voice UI) · started 2026-07-10
+**Current phase:** M1 (Voice engine + Voice UI) · started 2026-07-10
+
+## M1 progress (in flight)
+
+- **OPZ core wired.** `src/engine/OPZChip.{h,cpp}` wraps ymfm's `ym2414` (the OPZ = TX81Z's actual chip). One chip = 8-voice pool. Programs a `Patch` onto a channel (register-accurate: banked OW/FINE + EGS/REV, key-on gated via reg 0x08), does MIDI note→keycode, renders + resamples chip-rate→host-rate. **JUCE-free**, so it builds and runs standalone.
+- **Verified by `tests/engine_tests.cpp`** (JUCE-free): render is audibly non-silent, and per-algorithm output level tracks carrier count exactly matching the Yamaha 4-op chart (algs 1–4=1 carrier, 5=2, 6–7=3, 8=4). Keycode invariants pass.
+- **Engine architecture corrected:** ymfm emulates the *whole chip*, not one voice. `FMEngine` now owns the chip; `Voice` is a channel-allocation record (oldest-note stealing). `FMEngine::processBlock` does sample-accurate MIDI. `PluginProcessor::processBlock` renders live.
+- **WebView editor spike:** `src/PluginEditor.{h,cpp}` hosts the React UI via `juce::WebBrowserComponent` (loads Vite dev server; bundling /dist as embedded resources + JS↔native param bridge is the next step).
+- **`[verify]` (M1 exit gate, needs golden-WAV null-test vs. real hardware):** absolute octave/tuning reference, DX output-level→TL curve, coarse-ratio→MUL table, op→chip-slot order. All centralized as named helpers in OPZChip; carrier-count evidence already suggests slot/algorithm mapping is right.
+- **Fixed latent M0 bugs:** several CMake-referenced files never existed (`Types.h`, `LFO.h`, `Envelope.h`, `SysexRouter.h`, `CCTable.h`, `MEP4Echo.h`); both test files defined `main()` into one exe (now split into two JUCE-free test targets); `Patch::operator==` was declared-but-undefined (now C++20 defaulted).
 
 ## Architecture decisions (locked)
 
@@ -29,23 +38,23 @@
 - **Commit early, often.** One commit per feature/section; the roadmap is the narrative.
 - **Test scope:** pluginval (CI), sysex round-trip fixtures (M2), golden-WAV DSP regression (M1), null-test harness (M1).
 
-## Next immediate steps (M0)
+## Next immediate steps (M1 continued)
 
-1. Create `CMakeLists.txt` with JUCE 8 + ymfm as FetchContent, targets: VST3, AU, CLAP, Standalone.
-2. Wire `libs/ymfm/` as a git submodule.
-3. Set up GitHub Actions matrix (mac-universal, win-x64, linux-x64) → build all formats, run pluginval.
-4. Verify empty plugin loads in a DAW on macOS + Windows.
+1. **Bundle the WebView UI:** `npm run build` → embed `/dist` as JUCE `BinaryData`, serve via `WebBrowserComponent::Options().withResourceProvider(...)` so the plugin is self-contained (no dev server).
+2. **Parameter bridge:** JS→native (UI edits → `FMEngine::setPatch`/`setParameter`) and native→JS (host automation → UI) over the WebView native channel; wire APVTS.
+3. **Null-test harness:** render golden phrases, compare against real-hardware WAV fixtures (private) to lock the `[verify]` calibration items (tuning, TL curve, ratio table, slot order).
+4. **Velocity + controllers:** carrier-TL velocity scaling, pitch bend, sustain pedal, mod/breath.
 
-## Build notes (macOS 15 workaround)
+## Build notes
 
-**Local builds on macOS 15:** JUCE 7.0.12 (latest stable) has a deprecated API issue (`CGWindowListCreateImage`). The CMakeLists sets `JUCE_BUILD_TOOLS OFF` but juceaide is still built as a dependency.
-
-**Workaround for local testing:**
-- Use **GitHub Actions CI** (macos-13 or ubuntu-latest) — no issue there.
-- Or build only the plugin target: `cmake --build build --target OP4_Standalone 2>&1 | grep -v juceaide`.
-- JUCE 8.2.0+ (when released) will fix this; M1+ work can proceed on Linux CI in the meantime.
-
-**Impact:** M0 scaffold is structurally complete; M1 DSP work can proceed with CI builds while local Xcode builds sort out the deprecation issue.
+- **JUCE pinned to 8.0.14** (FetchContent, `GIT_SHALLOW`). JUCE 8 resolves the macOS-15 `CGWindowListCreateImage`/juceaide deprecation that blocked local builds under 7.0.12.
+- **Fast DSP/codec iteration without JUCE:** the OPZ core and sysex codecs are JUCE-free. Build+run the engine test directly:
+  ```
+  c++ -std=c++20 -O2 -I libs/ymfm/src -I src \
+      tests/engine_tests.cpp src/engine/OPZChip.cpp libs/ymfm/src/ymfm_opz.cpp \
+      -o build/engine_tests && ./build/engine_tests
+  ```
+- **Full plugin build:** `git submodule update --init --recursive` then `cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build`. CI (macos/win/linux) is the source of truth for all four plugin formats + pluginval.
 
 ## Decisions to make before code touch-down
 
