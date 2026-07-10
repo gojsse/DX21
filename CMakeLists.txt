@@ -135,6 +135,22 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(OP4 PRIVATE PkgConfig::WEBKIT2GTK)
 endif()
 
+# Embed the built web UI (dist/) as BinaryData and serve it from the editor's
+# ResourceProvider, so the plugin is self-contained. If dist/ is absent (no
+# `npm run build`), the editor falls back to the Vite dev server — keeping the
+# C++ build node-optional. CONFIGURE_DEPENDS re-globs when dist/ changes (Vite
+# hashes asset filenames on each build).
+file(GLOB_RECURSE OP4_WEB_ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/dist/*")
+if(OP4_WEB_ASSETS)
+  juce_add_binary_data(OP4WebUI SOURCES ${OP4_WEB_ASSETS})
+  target_link_libraries(OP4 PRIVATE OP4WebUI)
+  target_compile_definitions(OP4 PRIVATE OP4_HAS_EMBEDDED_UI=1)
+  message(STATUS "OP4: embedding web UI from ${CMAKE_CURRENT_SOURCE_DIR}/dist")
+else()
+  message(WARNING "OP4: dist/ not found — editor will load the Vite dev server. "
+                  "Run 'npm run build' then re-run CMake to embed the UI.")
+endif()
+
 # ============================================================================
 # Testing — JUCE-free so the DSP/codec cores run fast on every CI platform.
 # ============================================================================

@@ -32,6 +32,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Build web UI (embedded into the plugin)
+        run: |
+          npm ci
+          npm run build
+
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
         run: |
