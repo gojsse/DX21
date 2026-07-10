@@ -1,0 +1,50 @@
+html {
+  background: #131416;
+}
+body {
+  margin: 0;
+  background: #131416;
+  font-family: system-ui, sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  color: #a9c25c;
+}
+a:hover {
+  color: #cdd964;
+}
+
+/* Functional animations from the OP4 handoff prototype */
+@keyframes opPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes blip {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Value chips become editable inputs on double-click; keep them looking native-free */
+input.op4-edit {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  text-align: inherit;
+  padding: 0;
+  margin: 0;
+}

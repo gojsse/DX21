@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html{background:#131416}
+body{margin:0;background:#131416;font-family:system-ui,sans-serif}
+a{color:#a9c25c}a:hover{color:#cdd964}
+@keyframes opPulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes blip{0%,100%{opacity:.25}50%{opacity:1}}
+</style>
+</helmet>
+
+<div style="display:flex;justify-content:center;padding:28px 20px">
+<div style="{{ rootVars }}">
+
+  <!-- ===== app header + nav ===== -->
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:var(--head);border-bottom:2px solid var(--head-b);border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:var(--ink)">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:var(--silk)">{{ viewTitle }}</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,var(--acc),var(--acc) 60%,transparent)"></div>
+    </div>
+    <div style="display:flex;gap:3px;margin-left:8px">
+      <sc-for list="{{ nav }}" as="t" hint-placeholder-count="6">
+        <div style="{{ t.st }}" onClick="{{ t.go }}">{{ t.label }}</div>
+      </sc-for>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="{{ linkDot }}"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">{{ linkLabel }}</div>
+    </div>
+  </div>
+
+  <!-- ============ VOICE ============ -->
+  <sc-if value="{{ isVoice }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--head-b)">
+      <div style="display:flex;gap:3px;background:var(--panel);border:1px solid var(--panel-b);border-radius:5px;padding:3px">
+        <div style="{{ modeDXStyle }}" onClick="{{ setDX }}">DX21</div>
+        <div style="{{ modeTXStyle }}" onClick="{{ setTX }}">TX81Z</div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--key);border:1px solid var(--key-b);border-radius:4px;color:var(--key-ink);font:600 12px 'IBM Plex Mono';box-shadow:0 2px 3px rgba(0,0,0,.3)">‹</div>
+        <div style="display:flex;align-items:center;gap:12px;background:var(--disp);border:1px solid var(--disp-b);border-radius:4px;padding:6px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+          <div style="font:500 12px 'IBM Plex Mono';color:var(--disp-dim)">B12</div>
+          <div style="font:500 14px 'IBM Plex Mono';color:var(--disp-ink)">NITE PAD</div>
+          <div style="font:500 9px 'IBM Plex Mono';color:var(--disp-ink);border:1px solid var(--disp-b);border-radius:3px;padding:1px 5px">EDITED</div>
+        </div>
+        <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--key);border:1px solid var(--key-b);border-radius:4px;color:var(--key-ink);font:600 12px 'IBM Plex Mono';box-shadow:0 2px 3px rgba(0,0,0,.3)">›</div>
+        <div style="margin-left:6px;padding:6px 12px;background:var(--key);border:1px solid var(--key-b);border-radius:4px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:var(--key-ink);box-shadow:0 2px 3px rgba(0,0,0,.3)">COMPARE</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:236px 1fr;gap:10px;padding:12px 14px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">ALGORITHM</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:var(--acc)">3</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <sc-for list="{{ algos }}" as="a" hint-placeholder-count="8">
+              <div style="{{ a.bs }}">{{ a.g }}<div style="{{ a.ns }}">{{ a.n }}</div></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:14px">
+          <div style="position:relative;width:44px;height:44px;border-radius:50%;background:var(--knob);border:1px solid var(--knob-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+            <div style="position:absolute;left:50%;top:50%;width:2px;height:17px;margin:-17px 0 0 -1px;transform-origin:50% 100%;transform:rotate(28deg);background:var(--ptr);border-radius:1px"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">FEEDBACK</div>
+            <div style="font:500 13px 'IBM Plex Mono';color:var(--ink)">6</div>
+            <div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">OP4 → OP4</div>
+          </div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:9px 12px;display:flex;gap:12px;align-items:center">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;background:var(--acc)"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">CARRIER</div></div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;border:1px solid var(--faint)"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">MODULATOR</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ ops }}" as="op" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:148px 264px 1fr;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:9px 14px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="font:700 17px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">{{ op.name }}</div>
+                <div style="{{ op.ts }}">{{ op.role }}</div>
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--accg)"></div>
+              </div>
+              <div style="{{ op.txWrap }}">
+                <div style="{{ op.waveStyle }}">{{ op.wave }}</div>
+                <div style="{{ op.fixStyle }}">{{ op.fixLabel }}</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div style="display:flex;flex-direction:column;gap:4px"><div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">RATIO</div><div style="{{ dispChip }}">{{ op.ratio }}</div></div>
+              <div style="display:flex;flex-direction:column;gap:4px"><div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">LEVEL</div><div style="{{ dispChip }}">{{ op.lvl }}</div></div>
+              <div style="display:flex;flex-direction:column;gap:4px"><div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">DETUNE</div><div style="{{ dispChip }}">{{ op.det }}</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">ENVELOPE</div>
+                <div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">AR {{ op.eg }}</div>
+              </div>
+              {{ op.envG }}
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:8px">
+          <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">LFO</div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="{{ chipKey }}">TRI</div>
+                <div style="{{ chipKeyA }}">SYNC</div>
+              </div>
+              <sc-for list="{{ lfoKnobs }}" as="k" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">{{ k.label }}</div>
+                  <div style="position:relative;width:32px;height:32px;border-radius:50%;background:var(--knob);border:1px solid var(--knob-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                    <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:var(--ptr);border-radius:1px"></div>
+                  </div>
+                  <div style="font:500 10px 'IBM Plex Mono';color:var(--val)">{{ k.val }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">PITCH EG</div><div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">R 72 · L 50</div></div>
+            {{ pegG }}
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">FUNCTION</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <div style="display:flex;gap:3px"><div style="{{ segOn }}">POLY</div><div style="{{ segOff }}">MONO</div></div>
+              <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:var(--ink)">42</div></div>
+              <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:var(--ink)">−12</div></div>
+              <div style="display:flex;gap:3px"><div style="{{ segOff }}">SNGL</div><div style="{{ segOn }}">DUAL</div><div style="{{ segOff }}">SPLIT</div></div>
+            </div>
+          </div>
+          <div style="background:var(--szl);border:1px solid var(--szl-b);border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--szl-t)">SIZZLER</div><div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">9 TARGETS</div></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <div style="position:relative;width:32px;height:32px;border-radius:50%;background:var(--knob);border:1px solid var(--szl-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                  <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-40deg);background:var(--szl-t);border-radius:1px"></div>
+                </div>
+                <div style="font:500 10px 'IBM Plex Mono';color:var(--val)">35</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;gap:3px"><div style="{{ chipKeyASm }}">RND</div><div style="{{ chipKeySm }}">MRF</div><div style="{{ chipKeySm }}">DRF</div></div>
+                <div style="align-self:flex-start;padding:3px 10px;background:var(--key);border:1px solid var(--key-b);border-radius:4px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:var(--key-ink);box-shadow:0 1px 2px rgba(0,0,0,.3)">FREEZE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ LIBRARIAN ============ -->
+  <sc-if value="{{ isLib }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:216px 1fr;gap:10px;padding:12px 14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">BANKS</div>
+        <div style="display:flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--panel-b);border-radius:4px;padding:5px 8px"><div style="font:400 10px 'IBM Plex Mono';color:var(--faint)">⌕ SEARCH PATCHES…</div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <sc-for list="{{ libTags }}" as="t" hint-placeholder-count="7"><div style="{{ t.st }}">{{ t.t }}</div></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ banks }}" as="b" hint-placeholder-count="6">
+            <div style="{{ b.bs2 }}"><div style="{{ b.ns3 }}">{{ b.name }}</div><div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">{{ b.n }}</div></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:var(--panel);border:1px dashed var(--dash);border-radius:6px;padding:14px 12px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center">
+        <div style="font:600 11px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">DROP A .SYX FILE</div>
+        <div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint);line-height:1.5">or receive from<br>your synth</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="display:flex;align-items:baseline;gap:10px"><div style="font:700 15px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">FACTORY A</div><div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">30/32 · CLICK TO AUDITION · DRAG TO REORDER</div></div>
+          <div style="display:flex;gap:3px"><div style="{{ keyBtn }}">EXPORT .SYX</div><div style="{{ keyBtn }}">NEW BANK</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
+          <sc-for list="{{ bankCells }}" as="c" hint-placeholder-count="32">
+            <div style="{{ c.cs }}"><div style="display:flex;justify-content:space-between;align-items:baseline"><div style="{{ c.ss }}">{{ c.n }}</div><div style="{{ c.ts2 }}">{{ c.cat }}</div></div><div style="{{ c.ns2 }}">{{ c.name }}</div></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto auto 1fr;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:10px 14px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">DEVICE Nº</div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="{{ dispChipSm }}">1</div><div style="display:flex;flex-direction:column;gap:2px"><div style="{{ spin }}">▲</div><div style="{{ spin }}">▼</div></div></div>
+        </div>
+        <div style="display:flex;gap:4px"><div style="{{ keyABtn }}">SEND BANK TO SYNTH</div><div style="{{ keyBtn }}">RECEIVE BANK</div></div>
+        <div style="display:flex;flex-direction:column;gap:5px;background:var(--disp);border:1px solid var(--disp-b);border-radius:4px;padding:7px 12px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+          <div style="display:flex;justify-content:space-between"><div style="font:500 11px 'IBM Plex Mono';color:var(--disp-ink)">MIDI TRANSMIT? ▸ SENDING VOICE 14/32</div><div style="font:500 11px 'IBM Plex Mono';color:var(--disp-dim)">44%</div></div>
+          <div style="height:5px;background:var(--disp-track);border-radius:2px;overflow:hidden"><div style="height:100%;width:44%;background:var(--disp-ink);border-radius:2px"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ DRUM RACK ============ -->
+  <sc-if value="{{ isDrums }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:1px solid var(--head-b)">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--disp);border:1px solid var(--disp-b);border-radius:4px;padding:6px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)"><div style="font:500 12px 'IBM Plex Mono';color:var(--disp-dim)">KIT</div><div style="font:500 14px 'IBM Plex Mono';color:var(--disp-ink)">RX21 STANDARD</div><div style="font:500 9px 'IBM Plex Mono';color:var(--disp-ink);border:1px solid var(--disp-b);border-radius:3px;padding:1px 5px">9 SLOTS</div></div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--panel-b);border-radius:5px;padding:6px 12px"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:var(--silk)">AUTHENTIC '85</div><div style="{{ toggleOn }}"><div style="{{ toggleKnob }}"></div></div><div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">12-BIT</div></div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk);margin-right:2px">GROUPS</div>
+        <sc-for list="{{ drumGroups }}" as="g" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--panel-b);border-radius:4px;padding:4px 9px"><div style="{{ g.dot }}"></div><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">{{ g.g }}</div><div style="{{ g.ms }}">M</div></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;padding:10px 14px">
+      <div style="display:grid;grid-template-columns:6px 30px 150px 52px 1fr 56px 56px 90px 50px 46px;gap:10px;align-items:center;padding:0 10px">
+        <div></div><div style="{{ colHd }}">Nº</div><div style="{{ colHd }}">PATCH</div><div style="{{ colHd }}">KEY</div><div style="{{ colHd }}">LEVEL</div><div style="{{ colHd }}">PAN</div><div style="{{ colHd }}">TUNE</div><div style="{{ colHd }}">GROUP</div><div style="{{ colHd }}">CHOKE</div><div style="{{ colHd }}">M / S</div>
+      </div>
+      <sc-for list="{{ drums }}" as="d" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:6px 30px 150px 52px 1fr 56px 56px 90px 50px 46px;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--panel-b);border-radius:5px;padding:6px 10px">
+          <div style="{{ d.gbar }}"></div>
+          <div style="font:500 10px 'IBM Plex Mono';color:var(--faint)">{{ d.n }}</div>
+          <div style="{{ dispChipName }}">{{ d.name }}</div>
+          <div style="font:500 11px 'IBM Plex Mono';color:var(--val)">{{ d.key }}</div>
+          <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;background:var(--inset);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--acc);width:{{ d.lvlW }}"></div></div><div style="font:500 10px 'IBM Plex Mono';color:var(--val);width:20px;text-align:right">{{ d.lvl }}</div></div>
+          <div style="font:500 11px 'IBM Plex Mono';color:var(--val)">{{ d.pan }}</div>
+          <div style="font:500 11px 'IBM Plex Mono';color:var(--val)">{{ d.tune }}</div>
+          <div style="font:600 9.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">{{ d.grp }}</div>
+          <div style="{{ d.chst }}">{{ d.choke }}</div>
+          <div style="display:flex;gap:4px"><div style="{{ d.mst }}">M</div><div style="{{ d.sst }}">S</div></div>
+        </div>
+      </sc-for>
+      <div style="display:flex;justify-content:center;padding:5px"><div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">+ 22 EMPTY SLOTS · DROP A VOICE OR CLICK TO ASSIGN</div></div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:2px;padding:4px 16px 12px">
+      <sc-for list="{{ keyStrip }}" as="k" hint-placeholder-count="25"><div style="{{ k.ks }}"><div style="{{ k.ls }}">{{ k.label }}</div></div></sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ FX ============ -->
+  <sc-if value="{{ isFx }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;gap:10px;padding:12px 14px">
+    <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;gap:10px"><div style="font:700 14px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">FX500</div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">SIMUL-CHAIN · 5 BLOCKS IN SERIES</div></div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+        <sc-for list="{{ fxBlocks }}" as="b" hint-placeholder-count="5">
+          <div style="{{ b.wrap }}">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="font:700 12px 'Barlow Condensed';letter-spacing:.05em;color:var(--ink)">{{ b.name }}</div><div style="{{ b.byp }}">{{ b.bypLabel }}</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding-top:2px">
+              <sc-for list="{{ b.knobs }}" as="k" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="font:600 8px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">{{ k.label }}</div>
+                  <div style="position:relative;width:30px;height:30px;border-radius:50%;background:var(--knob);border:1px solid var(--knob-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)"><div style="position:absolute;left:50%;top:50%;width:2px;height:11px;margin:-11px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:var(--ptr);border-radius:1px"></div></div>
+                  <div style="font:500 9px 'IBM Plex Mono';color:var(--val)">{{ k.val }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:grid;grid-template-columns:230px 1fr;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;gap:8px"><div style="font:700 14px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">SPX90</div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">ONE ALGORITHM</div></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="background:var(--disp);border:1px solid var(--disp-b);border-radius:4px;padding:5px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)"><div style="font:600 26px 'IBM Plex Mono';color:var(--disp-ink)">04</div></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><div style="font:600 12px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">REVERB HALL</div><div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">PROGRAM 04 / 30</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ spxProgs }}" as="p" hint-placeholder-count="6"><div style="{{ p.st }}"><div style="font:500 10px 'IBM Plex Mono';color:var(--faint);width:22px">{{ p.n }}</div><div style="{{ p.ns }}">{{ p.name }}</div></div></sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">HALL PARAMETERS</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+          <sc-for list="{{ spxParams }}" as="k" hint-placeholder-count="5">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+              <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk);text-align:center">{{ k.label }}</div>
+              <div style="position:relative;width:40px;height:40px;border-radius:50%;background:var(--knob);border:1px solid var(--knob-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)"><div style="position:absolute;left:50%;top:50%;width:2px;height:15px;margin:-15px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:var(--ptr);border-radius:1px"></div></div>
+              <div style="{{ dispChipSm }}">{{ k.val }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font:400 9px 'IBM Plex Mono';color:var(--faint);margin-top:auto">MEP4 NOTE ECHO LIVES IN THE MIDI TAB — IT PROCESSES NOTES BEFORE THE SYNTH</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ GENERATOR ============ -->
+  <sc-if value="{{ isGen }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:230px 1fr;gap:10px;padding:12px 14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:9px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">CATEGORY</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <sc-for list="{{ genCats }}" as="c" hint-placeholder-count="6"><div style="{{ c.st }}">{{ c.name }}</div></sc-for>
+        </div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">COUNT</div><div style="font:500 12px 'IBM Plex Mono';color:var(--ink)">8</div></div><div style="height:5px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="height:100%;width:50%;background:var(--acc)"></div></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">MUTATION</div><div style="font:500 12px 'IBM Plex Mono';color:var(--ink)">64%</div></div><div style="height:5px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="height:100%;width:64%;background:var(--acc)"></div></div></div>
+        <div style="padding:9px 0;text-align:center;border-radius:4px;font:700 12px 'Barlow Condensed';letter-spacing:.14em;color:var(--keyA-ink);background:var(--keyA);border:1px solid var(--keyA-b);box-shadow:0 2px 3px rgba(0,0,0,.3)">GENERATE</div>
+        <div style="font:400 9px 'IBM Plex Mono';color:var(--faint);text-align:center">UNDO GENERATE · ⌘Z</div>
+      </div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="display:flex;align-items:baseline;gap:10px"><div style="font:700 15px 'Barlow Condensed';letter-spacing:.06em;color:var(--ink)">SCI-FI · RESULTS TRAY</div><div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">8 CANDIDATES · CLICK TO AUDITION</div></div><div style="{{ keyABtn }}">EXPORT BANK AS .SYX</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <sc-for list="{{ genResults }}" as="g" hint-placeholder-count="8">
+          <div style="{{ g.wrap }}">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="{{ g.ns }}">{{ g.name }}</div><div style="width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--accg)"></div></div>
+            {{ g.wave }}
+            <div style="display:flex;gap:4px"><div style="{{ g.kb }}">{{ g.kl }}</div><div style="{{ g.ds }}">DISCARD</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ MIDI / SETTINGS ============ -->
+  <sc-if value="{{ isMidi }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:300px 1fr 250px;gap:10px;padding:12px 14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:11px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">HARDWARE</div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">DEVICE Nº</div><div style="display:flex;align-items:center;gap:6px"><div style="{{ dispChipSm }}">1</div><div style="display:flex;flex-direction:column;gap:2px"><div style="{{ spin }}">▲</div><div style="{{ spin }}">▼</div></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">ECHO EDITS TO HARDWARE</div><div style="font:400 8.5px 'IBM Plex Mono';color:var(--faint)">EDIT HERE, HEAR IT ON YOUR DX21</div></div><div style="{{ toggleOn }}"><div style="{{ toggleKnob }}"></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">MIDI CHANNEL</div><div style="{{ dispChipSm }}">1</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:11px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">ENGINE</div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">MODE</div><div style="display:flex;gap:3px"><div style="{{ segOnF }}">VINTAGE 8-VOICE</div><div style="{{ segOffF }}">MODERN</div></div><div style="font:400 8.5px 'IBM Plex Mono';color:var(--faint);line-height:1.5">8-VOICE POLY · 12-BIT DAC CHARACTER · AUTHENTIC ENVELOPE STEPPING</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:var(--val)">OVERSAMPLING</div><div style="display:flex;gap:3px"><div style="{{ segOffSm }}">1×</div><div style="{{ segOnSm }}">2×</div><div style="{{ segOffSm }}">4×</div></div></div>
+      </div>
+      <div style="background:var(--inset);border:1px solid var(--panel-b);border-radius:6px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid var(--head-b)"><div style="font:700 12px 'Barlow Condensed';letter-spacing:.08em;color:var(--ink)">MEP4</div><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:var(--silk)">NOTE ECHO · BEFORE THE SYNTH</div><div style="flex:1"></div><div style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 7px var(--accg)"></div></div>
+        <div style="display:flex;gap:14px;padding:11px 13px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">DIVISION</div><div style="{{ dispChipSm }}">1/8·</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">REPEATS</div><div style="{{ dispChipSm }}">4</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">VEL DECAY</div><div style="position:relative;width:30px;height:30px;border-radius:50%;background:var(--knob);border:1px solid var(--knob-b);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)"><div style="position:absolute;left:50%;top:50%;width:2px;height:11px;margin:-11px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-25deg);background:var(--ptr);border-radius:1px"></div></div><div style="font:500 9.5px 'IBM Plex Mono';color:var(--val)">−12</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:var(--silk)">TRANSPOSE</div><div style="{{ dispChipSm }}">+12</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">CC ASSIGNMENTS</div><div style="flex:1"></div><div style="display:flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--panel-b);border-radius:4px;padding:4px 9px;width:180px"><div style="font:400 10px 'IBM Plex Mono';color:var(--faint)">⌕ SEARCH PARAMETERS…</div></div><div style="{{ keyABtn }}">LEARN MODE ON</div></div>
+      <div style="display:grid;grid-template-columns:1fr 64px 70px 70px;gap:10px;padding:0 10px"><div style="{{ colHd }}">PARAMETER</div><div style="{{ colHd }};text-align:center">CC Nº</div><div style="{{ colHd }};text-align:center">LEARN</div><div style="{{ colHd }};text-align:center">CLEAR</div></div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ ccRows }}" as="r" hint-placeholder-count="10">
+          <div style="{{ r.rs }}"><div style="font:500 11px 'IBM Plex Mono';color:var(--val)">{{ r.p }}</div><div style="{{ r.ccs }}">{{ r.cc }}</div><div style="{{ r.ls2 }}">{{ r.ll }}</div><div style="{{ r.cl }}">CLEAR</div></div>
+        </sc-for>
+      </div>
+      <div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">MOVE A CONTROL ON YOUR CONTROLLER TO BIND THE HIGHLIGHTED ROW · 118 MORE PARAMETERS</div>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--panel-b);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:var(--silk)">NRPN REFERENCE</div><div style="font:400 9px 'IBM Plex Mono';color:var(--faint)">READ-ONLY</div></div>
+      <div style="display:grid;grid-template-columns:1fr 56px;gap:8px;padding:0 4px"><div style="{{ colHd }}">PARAMETER</div><div style="{{ colHd }}">MSB LSB</div></div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <sc-for list="{{ nrpnRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:1fr 56px;gap:8px;padding:4px;border-bottom:1px solid var(--panel-b)"><div style="font:500 10.5px 'IBM Plex Mono';color:var(--val)">{{ r.p }}</div><div style="font:500 10.5px 'IBM Plex Mono';color:var(--silk)">{{ r.v }}</div></div></sc-for>
+      </div>
+      <div style="margin-top:auto;padding:8px 10px;background:var(--disp);border:1px solid var(--disp-b);border-radius:4px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)"><div style="font:500 10px 'IBM Plex Mono';color:var(--disp-ink)">COPY FULL NRPN MAP → CLIPBOARD</div></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- footer -->
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid var(--head-b)">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:var(--faint)">OP4 1.2.0 · THEME {{ themeName }}</div>
+  </div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1260},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;DX21&quot;,&quot;TX81Z&quot;,&quot;SK-1&quot;],&quot;default&quot;:&quot;DX21&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;hardwareLink&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Voice&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'voice', mode: 'DX21' };
+  renderVals() {
+    const e = React.createElement;
+    const themeName = this.props.theme ?? 'DX21';
+    const link = this.props.hardwareLink ?? true;
+    const view = this.state.view;
+    const mode = this.state.mode;
+
+    // ---------- THEME TOKEN SETS ----------
+    const THEMES = {
+      'DX21': {
+        '--chassis': 'linear-gradient(180deg,#37342f,#2b2825)', '--chassis-b': '#46423b',
+        '--head': 'linear-gradient(180deg,#3d3a34,#312e29)', '--head-b': '#191713',
+        '--panel': '#262421', '--panel-b': '#3d3a35', '--inset': '#1e1c19', '--dash': '#57523f',
+        '--ink': '#d8d2c2', '--silk': '#96907f', '--faint': '#6e6959', '--val': '#c4beb0',
+        '--disp': 'linear-gradient(180deg,#cdd964,#b6c74b)', '--disp-ink': '#26310f', '--disp-dim': '#5a6630', '--disp-b': '#8a9a35', '--disp-dot': '#c3d254', '--disp-track': 'rgba(38,49,15,.2)', '--disp-inset': 'inset 0 1px 4px rgba(0,0,0,.3)',
+        '--key': 'linear-gradient(180deg,#ddd6c6,#c8c0ad)', '--key-b': '#a89f8a', '--key-ink': '#33312e',
+        '--keyA': 'linear-gradient(180deg,#a9c25c,#8fae4a)', '--keyA-b': '#77913a', '--keyA-ink': '#1f2912',
+        '--knob': 'radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%)', '--knob-b': '#524e46', '--ptr': '#e8e2d2',
+        '--acc': '#a9c25c', '--accg': 'rgba(169,194,92,.8)',
+        '--szl': '#282b1e', '--szl-b': '#4d5433', '--szl-t': '#a9c25c',
+        '--nav': 'linear-gradient(180deg,#ddd6c6,#c8c0ad)', '--nav-b': '#a89f8a', '--nav-ink': '#33312e'
+      },
+      'TX81Z': {
+        '--chassis': 'linear-gradient(180deg,#202124,#18191b)', '--chassis-b': '#303236',
+        '--head': 'linear-gradient(180deg,#232427,#1b1c1e)', '--head-b': '#0a0a0b',
+        '--panel': '#141518', '--panel-b': '#2c2e32', '--inset': '#0e0f11', '--dash': '#3a3d43',
+        '--ink': '#e4e2dd', '--silk': '#84878d', '--faint': '#55585e', '--val': '#c9ccd1',
+        '--disp': '#120705', '--disp-ink': '#ff6a3d', '--disp-dim': '#8a3a20', '--disp-b': '#38160c', '--disp-dot': '#17191c', '--disp-track': 'rgba(255,106,61,.18)', '--disp-inset': 'inset 0 2px 8px rgba(0,0,0,.8)',
+        '--key': 'linear-gradient(180deg,#2b2d31,#1f2124)', '--key-b': '#3a3c41', '--key-ink': '#c9ccd1',
+        '--keyA': '#170d09', '--keyA-b': '#58260f', '--keyA-ink': '#ff6a3d',
+        '--knob': 'radial-gradient(circle at 35% 30%,#2f3135,#1a1b1d 70%)', '--knob-b': '#383a3f', '--ptr': '#e4e2dd',
+        '--acc': '#ff6a3d', '--accg': 'rgba(255,106,61,.8)',
+        '--szl': '#1c0f08', '--szl-b': '#58260f', '--szl-t': '#ff6a3d',
+        '--nav': 'linear-gradient(180deg,#2b2d31,#1f2124)', '--nav-b': '#3a3c41', '--nav-ink': '#c9ccd1'
+      },
+      'SK-1': {
+        '--chassis': 'linear-gradient(180deg,#ece8e0,#dad4c9)', '--chassis-b': '#b8b2a6',
+        '--head': 'linear-gradient(180deg,#f2efe8,#e2ddd3)', '--head-b': '#c5bfb4',
+        '--panel': '#f7f5f0', '--panel-b': '#cfc9be', '--inset': '#e6e2d9', '--dash': '#b8b2a6',
+        '--ink': '#33312e', '--silk': '#8a8478', '--faint': '#a39d90', '--val': '#55514a',
+        '--disp': 'linear-gradient(180deg,#8fdfd8,#6fd2c9)', '--disp-ink': '#0e3532', '--disp-dim': '#2f6b64', '--disp-b': '#3aa89e', '--disp-dot': '#7fd9d2', '--disp-track': 'rgba(14,53,50,.18)', '--disp-inset': 'inset 0 1px 4px rgba(0,0,0,.2)',
+        '--key': 'linear-gradient(180deg,#fbfaf7,#e9e5de)', '--key-b': '#c5bfb4', '--key-ink': '#4a463e',
+        '--keyA': 'linear-gradient(180deg,#f48fb1,#ec6a99)', '--keyA-b': '#d84f7f', '--keyA-ink': '#4a1228',
+        '--knob': 'radial-gradient(circle at 35% 30%,#4a4f55,#33373c 70%)', '--knob-b': '#2b2f34', '--ptr': '#f7f5f0',
+        '--acc': '#ec6a99', '--accg': 'rgba(236,106,153,.8)',
+        '--szl': '#fbe7ef', '--szl-b': '#e9a8c2', '--szl-t': '#d84f7f',
+        '--nav': 'linear-gradient(180deg,#fbfaf7,#e9e5de)', '--nav-b': '#c5bfb4', '--nav-ink': '#4a463e'
+      }
+    };
+    // glyph-only accents per theme (mirror of disp ink / base)
+    const ALGACC = {
+      'DX21': { base: '#57523f', ac: '#26310f', carInk: '#c3d254', numUnsel: '#57523f', selBg: 'linear-gradient(180deg,#cdd964,#b3c443)', selB: '#8a9a35', unselBg: 'linear-gradient(180deg,#ddd6c6,#c8c0ad)', unselB: '#a89f8a', glow: 'none' },
+      'TX81Z': { base: '#4d4f54', ac: '#ff6a3d', carInk: '#170d09', numUnsel: '#84878d', selBg: '#170d09', selB: '#ff6a3d55', unselBg: 'linear-gradient(180deg,#26272a,#1c1d20)', unselB: '#34363a', glow: '0 0 12px rgba(255,106,61,.2)' },
+      'SK-1': { base: '#8a8478', ac: '#0e3532', carInk: '#7fd9d2', numUnsel: '#8a8478', selBg: 'linear-gradient(180deg,#8fdfd8,#6fd2c9)', selB: '#3aa89e', unselBg: 'linear-gradient(180deg,#fbfaf7,#e9e5de)', unselB: '#c5bfb4', glow: 'none' }
+    };
+    const T = THEMES[themeName] || THEMES['DX21'];
+    const A = ALGACC[themeName] || ALGACC['DX21'];
+    const D = { bg: T['--disp'], ink: T['--disp-ink'], brd: T['--disp-b'], dot: T['--disp-dot'] };
+
+    const rootVars = Object.assign({
+      width: '1200px', maxWidth: '100%', background: 'var(--chassis)',
+      border: '1px solid var(--chassis-b)', borderRadius: '10px', boxShadow: '0 2px 16px rgba(0,0,0,.5)'
+    }, T);
+
+    // ---------- shared style tokens ----------
+    const dispChip = { font: "500 13px 'IBM Plex Mono'", color: 'var(--disp-ink)', background: 'var(--disp)', border: '1px solid var(--disp-b)', borderRadius: '3px', padding: '2px 7px', boxShadow: 'var(--disp-inset)' };
+    const dispChipSm = { font: "500 11px 'IBM Plex Mono'", color: 'var(--disp-ink)', background: 'var(--disp)', border: '1px solid var(--disp-b)', borderRadius: '3px', padding: '2px 10px', boxShadow: 'var(--disp-inset)', textAlign: 'center' };
+    const dispChipName = { font: "500 11px 'IBM Plex Mono'", color: 'var(--disp-ink)', background: 'var(--disp)', border: '1px solid var(--disp-b)', borderRadius: '3px', padding: '3px 8px', boxShadow: 'var(--disp-inset)', whiteSpace: 'nowrap', overflow: 'hidden' };
+    const keyBtn = { padding: '4px 11px', borderRadius: '3px', font: "600 10px 'Barlow Condensed'", letterSpacing: '.12em', color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)', boxShadow: '0 2px 3px rgba(0,0,0,.3)' };
+    const keyABtn = { padding: '4px 11px', borderRadius: '3px', font: "600 10px 'Barlow Condensed'", letterSpacing: '.12em', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)', boxShadow: '0 2px 3px rgba(0,0,0,.3)' };
+    const spin = { width: '16px', height: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--key)', border: '1px solid var(--key-b)', borderRadius: '2px', font: "600 7px 'IBM Plex Mono'", color: 'var(--key-ink)' };
+    const colHd = { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.14em', color: 'var(--faint)' };
+    const chipKey = { font: "500 10px 'IBM Plex Mono'", color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)', borderRadius: '4px', padding: '3px 8px', boxShadow: '0 1px 2px rgba(0,0,0,.3)' };
+    const chipKeyA = { font: "500 9px 'IBM Plex Mono'", color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)', borderRadius: '4px', padding: '2px 6px', textAlign: 'center' };
+    const chipKeySm = { font: "600 9px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)', borderRadius: '3px', padding: '2px 8px', opacity: 0.75 };
+    const chipKeyASm = { font: "600 9px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)', borderRadius: '3px', padding: '2px 8px' };
+    const segOn = { padding: '4px 10px', borderRadius: '3px', font: "600 10px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)' };
+    const segOff = { padding: '4px 10px', borderRadius: '3px', font: "600 10px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)', opacity: 0.75 };
+    const segOnF = Object.assign({}, segOn, { flex: '1', textAlign: 'center' });
+    const segOffF = Object.assign({}, segOff, { flex: '1', textAlign: 'center' });
+    const segOnSm = { padding: '3px 9px', borderRadius: '3px', font: "600 9.5px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)' };
+    const segOffSm = { padding: '3px 9px', borderRadius: '3px', font: "600 9.5px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)', opacity: 0.75 };
+    const toggleOn = { width: '30px', height: '15px', borderRadius: '8px', background: 'var(--keyA)', position: 'relative', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.3)', flex: 'none' };
+    const toggleKnob = { position: 'absolute', right: '1px', top: '1px', width: '13px', height: '13px', borderRadius: '50%', background: '#f2ecd9', boxShadow: '0 1px 2px rgba(0,0,0,.4)' };
+
+    // ---------- nav ----------
+    const NAV = [['voice', 'VOICE'], ['lib', 'LIBRARY'], ['drums', 'DRUMS'], ['fx', 'FX'], ['gen', 'GEN'], ['midi', 'MIDI']];
+    const nav = NAV.map(([id, label]) => ({
+      label, go: () => this.setState({ view: id }),
+      st: {
+        padding: '5px 12px', borderRadius: '3px', cursor: 'pointer',
+        font: "600 10.5px 'Barlow Condensed'", letterSpacing: '.12em',
+        color: view === id ? 'var(--keyA-ink)' : 'var(--nav-ink)',
+        background: view === id ? 'var(--keyA)' : 'var(--nav)',
+        border: '1px solid ' + (view === id ? 'var(--keyA-b)' : 'var(--nav-b)'),
+        boxShadow: '0 2px 3px rgba(0,0,0,.3)', opacity: view === id ? 1 : 0.8
+      }
+    }));
+    const TITLES = { voice: 'FM VOICE EDITOR', lib: 'LIBRARIAN', drums: 'DRUM RACK', fx: 'EFFECTS', gen: 'GENERATOR', midi: 'MIDI / SETTINGS' };
+
+    // ---------- algorithm glyphs ----------
+    const ALGS = [
+      { nodes: {1:[0,0],2:[0,1],3:[0,2],4:[0,3]}, edges: [[4,3],[3,2],[2,1]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0.5,1],3:[0,2],4:[1,2]}, edges: [[3,2],[4,2],[2,1]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0,1],3:[1,1],4:[1,2]}, edges: [[2,1],[3,1],[4,3]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0,1],3:[1,1],4:[0.5,2]}, edges: [[4,2],[4,3],[2,1],[3,1]], carriers: [1] },
+      { nodes: {1:[0,0],2:[0,1],3:[1,0],4:[1,1]}, edges: [[2,1],[4,3]], carriers: [1,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[1,1]}, edges: [[4,1],[4,2],[4,3]], carriers: [1,2,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[2,1]}, edges: [[4,3]], carriers: [1,2,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[3,0]}, edges: [], carriers: [1,2,3,4] }
+    ];
+    const gl = (i, sel) => {
+      const G = ALGS[i], bw = 13, bh = 10, gx = 9, gy = 8, pad = 4, topPad = 5;
+      const ns = Object.entries(G.nodes);
+      const maxX = Math.max.apply(null, ns.map(kv => kv[1][0]));
+      const maxY = Math.max.apply(null, ns.map(kv => kv[1][1]));
+      const W = pad * 2 + maxX * (bw + gx) + bw + 7, H = pad + topPad + maxY * (bh + gy) + bh + pad;
+      const pos = {};
+      ns.forEach(kv => { pos[kv[0]] = { x: pad + kv[1][0] * (bw + gx), y: pad + topPad + (maxY - kv[1][1]) * (bh + gy) }; });
+      const kids = [];
+      G.edges.forEach((ed, j) => kids.push(e('line', { key: 'e' + j, x1: pos[ed[0]].x + bw / 2, y1: pos[ed[0]].y + bh, x2: pos[ed[1]].x + bw / 2, y2: pos[ed[1]].y, stroke: sel ? A.ac : A.base, strokeWidth: 1.2, opacity: 0.85 })));
+      const p4 = pos[4];
+      kids.push(e('path', { key: 'fb', d: 'M ' + (p4.x + bw) + ' ' + (p4.y + bh / 2) + ' h 4 V ' + (p4.y - 3) + ' H ' + (p4.x + bw / 2), fill: 'none', stroke: sel ? A.ac : A.base, strokeWidth: 1, opacity: 0.7 }));
+      ns.forEach((kv, j) => {
+        const k = kv[0], isC = G.carriers.indexOf(+k) >= 0, P = pos[k];
+        const st = sel ? { animation: 'opPulse 1.8s ease-in-out ' + (j * 0.22) + 's infinite' } : null;
+        kids.push(e('rect', { key: 'b' + k, x: P.x, y: P.y, width: bw, height: bh, rx: 2, fill: isC ? (sel ? A.ac : A.base) : 'none', stroke: isC ? 'none' : (sel ? A.ac : A.base), strokeWidth: 1.3, style: st }));
+        kids.push(e('text', { key: 't' + k, x: P.x + bw / 2, y: P.y + bh / 2 + 3, textAnchor: 'middle', fill: isC ? A.carInk : (sel ? A.ac : A.numUnsel), style: { font: "600 7px 'IBM Plex Mono'" } }, k));
+      });
+      const sc = 34 / Math.max(W, H);
+      return e('svg', { width: Math.round(W * sc * 1.6), height: Math.round(H * sc * 1.6), viewBox: '0 0 ' + W + ' ' + H, style: { display: 'block' } }, kids);
+    };
+    const algos = ALGS.map((_, i) => {
+      const sel = i === 2;
+      return {
+        n: i + 1, g: gl(i, sel),
+        bs: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', height: '62px', borderRadius: '5px', background: sel ? A.selBg : A.unselBg, border: '1px solid ' + (sel ? A.selB : A.unselB), boxShadow: sel ? ('inset 0 2px 5px rgba(0,0,0,.3)' + (A.glow !== 'none' ? ', ' + A.glow : '')) : 'inset 0 1px 0 rgba(255,255,255,.25), 0 2px 3px rgba(0,0,0,.35)' },
+        ns: { font: "600 9px 'IBM Plex Mono'", color: sel ? A.ac : A.numUnsel }
+      };
+    });
+
+    // ---------- envelope / peg ----------
+    const env = (p, w, h) => {
+      const px = 5, py = 6, iw = w - px * 2, ih = h - py * 2, yb = h - py;
+      const xa = px + iw * (0.03 + p.a * 0.24);
+      const xd = Math.min(xa + iw * (0.05 + p.d1 * 0.3), px + iw * 0.66);
+      const ys = py + (1 - p.s) * ih, xs = px + iw * 0.78;
+      const xr = Math.min(xs + iw * (0.05 + p.r * 0.17), px + iw);
+      const P = [[px, yb], [xa, py], [xd, ys], [xs, ys], [xr, yb]];
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: D.bg, borderRadius: 3, border: '1px solid ' + D.brd, boxSizing: 'border-box', boxShadow: T['--disp-inset'] } },
+        e('line', { x1: px, y1: yb, x2: w - px, y2: yb, stroke: D.ink, strokeWidth: 1, opacity: 0.25 }),
+        e('path', { d: 'M' + P.map(q => q.join(',')).join(' L') + ' Z', fill: D.ink, opacity: 0.11 }),
+        e('polyline', { points: P.map(q => q.join(',')).join(' '), fill: 'none', stroke: D.ink, strokeWidth: 1.7, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 3, fill: D.dot, stroke: D.ink, strokeWidth: 1.4 }))
+      );
+    };
+    const peg = (w, h) => {
+      const mid = h / 2, P = [[5, mid], [w * 0.28, h * 0.18], [w * 0.58, h * 0.78], [w - 5, mid]];
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: D.bg, borderRadius: 3, border: '1px solid ' + D.brd, boxSizing: 'border-box', boxShadow: T['--disp-inset'] } },
+        e('line', { x1: 4, y1: mid, x2: w - 4, y2: mid, stroke: D.ink, strokeWidth: 1, strokeDasharray: '3 3', opacity: 0.3 }),
+        e('polyline', { points: P.map(q => q.join(',')).join(' '), fill: 'none', stroke: D.ink, strokeWidth: 1.7, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 2.6, fill: D.dot, stroke: D.ink, strokeWidth: 1.3 }))
+      );
+    };
+
+    // ---------- VOICE ----------
+    const tx = mode === 'TX81Z';
+    const roleTag = isC => ({ font: "600 9px 'Barlow Condensed'", letterSpacing: '.13em', padding: '2px 6px', borderRadius: '3px', background: isC ? 'var(--szl)' : 'transparent', color: isC ? 'var(--acc)' : 'var(--silk)', border: '1px solid ' + (isC ? 'var(--szl-b)' : 'var(--panel-b)') });
+    const ops = [
+      { name: 'OP 1', role: 'CARRIER', c: true, ratio: '1.00', lvl: '99', det: '+0', wave: 'W1 SIN', eg: '31·18·06·24', ep: { a: 0.04, d1: 0.5, s: 0.62, r: 0.4 } },
+      { name: 'OP 2', role: 'MOD', c: false, ratio: '14.00', lvl: '58', det: '+2', wave: 'W1 SIN', eg: '31·26·00·31', ep: { a: 0.02, d1: 0.18, s: 0.1, r: 0.15 } },
+      { name: 'OP 3', role: 'MOD', c: false, ratio: '1.00', lvl: '66', det: '−4', wave: 'W2 SQR', eg: '28·14·10·20', ep: { a: 0.1, d1: 0.42, s: 0.45, r: 0.35 } },
+      { name: 'OP 4', role: 'MOD', c: false, ratio: '5.00', lvl: '41', det: '+0', wave: 'W3 TRI', eg: '31·30·00·28', ep: { a: 0.02, d1: 0.1, s: 0.05, r: 0.1 } }
+    ].map(o => ({
+      name: o.name, role: o.role, ratio: o.ratio, lvl: o.lvl, det: o.det, eg: o.eg, wave: o.wave,
+      ts: roleTag(o.c), envG: env(o.ep, 380, 58),
+      txWrap: { display: 'flex', gap: '5px', opacity: tx ? 1 : 0.35 },
+      waveStyle: tx ? chipKeyA2() : chipDim(), fixStyle: chipDim(),
+      fixLabel: tx ? 'FIX OFF' : 'TX ONLY'
+    }));
+    function chipKeyA2() { return { font: "500 10px 'IBM Plex Mono'", color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)', borderRadius: '4px', padding: '3px 8px' }; }
+    function chipDim() { return { font: "500 10px 'IBM Plex Mono'", color: 'var(--silk)', border: '1px solid var(--panel-b)', borderRadius: '4px', padding: '3px 8px' }; }
+    const deg = v => Math.round(v / 99 * 270 - 135);
+
+    // ---------- LIBRARIAN ----------
+    const CATS = { EP: 'var(--acc)', BASS: '#c2704a', BRASS: '#d0b45a', PAD: '#9aa3ad', LEAD: 'var(--acc)', SFX: '#b08bb5', ORG: '#7fa8a0', STR: 'var(--val)', PERC: '#c2704a', KEY: 'var(--acc)' };
+    const NAMES = ['GLASS EP', 'FULLTINES', 'LATELY BASS', 'SOLID BASS', 'BRASS 1', 'SAX BC1', 'GLASS EP', 'NITE PAD', 'WARM STR', 'CHIME PAD', 'SYN LEAD', 'SQUARE LD', 'PIPE ORG', 'ROCK ORG', 'CLAV 1', 'HARPSI', 'MARIMBA', 'VIBES', 'STEEL DRM', 'TIMPANI', 'WOOD BASS', 'FRETLESS', 'HORN SECT', 'TRUMPET', 'ANLG PAD', 'ICE FIELD', 'ZAP SFX', 'STARSHIP', 'BELL TREE', 'TUB BELLS', '', ''];
+    const CATSEQ = ['EP', 'EP', 'BASS', 'BASS', 'BRASS', 'BRASS', 'EP', 'PAD', 'STR', 'PAD', 'LEAD', 'LEAD', 'ORG', 'ORG', 'KEY', 'KEY', 'PERC', 'PERC', 'PERC', 'PERC', 'BASS', 'BASS', 'BRASS', 'BRASS', 'PAD', 'PAD', 'SFX', 'SFX', 'PERC', 'PERC', '', ''];
+    const bankCells = NAMES.map((nm, i) => {
+      const empty = !nm, isSel = i === 6;
+      return {
+        n: (i + 1 < 10 ? '0' : '') + (i + 1), name: empty ? '— — — —' : nm, cat: CATSEQ[i],
+        cs: { display: 'flex', flexDirection: 'column', gap: '4px', padding: '7px 9px', borderRadius: '4px', minWidth: 0, background: isSel ? 'var(--disp)' : 'var(--panel)', border: '1px solid ' + (isSel ? 'var(--disp-b)' : 'var(--panel-b)'), boxShadow: isSel ? 'var(--disp-inset)' : 'none', opacity: empty ? 0.45 : 1 },
+        ns2: { font: "500 11px 'IBM Plex Mono'", color: isSel ? 'var(--disp-ink)' : (empty ? 'var(--faint)' : 'var(--ink)'), whiteSpace: 'nowrap', overflow: 'hidden' },
+        ss: { font: "500 9px 'IBM Plex Mono'", color: isSel ? 'var(--disp-dim)' : 'var(--faint)' },
+        ts2: { font: "600 8px 'Barlow Condensed'", letterSpacing: '.12em', color: isSel ? 'var(--disp-ink)' : (CATS[CATSEQ[i]] || 'transparent') }
+      };
+    });
+    const banks = [['FACTORY A', '32', 1], ['E.PIANO COLLECTION', '32', 0], ['USER 01', '27', 0], ['TX ROM 1', '32', 0], ['GEN · SCI-FI 06', '18', 0], ['RX21 KITS', '12', 0]].map(b => ({
+      name: b[0], n: b[1],
+      bs2: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 10px', borderRadius: '4px', background: b[2] ? 'var(--szl)' : 'transparent', border: '1px solid ' + (b[2] ? 'var(--szl-b)' : 'transparent') },
+      ns3: { font: "600 11px 'Barlow Condensed'", letterSpacing: '.08em', color: b[2] ? 'var(--acc)' : 'var(--val)' }
+    }));
+    const libTags = ['ALL', 'EP', 'BASS', 'PAD', 'LEAD', 'BRASS', 'SFX'].map((t, i) => ({ t, st: i === 0 ? Object.assign({}, segOnSm, { letterSpacing: '.12em' }) : { font: "600 9.5px 'Barlow Condensed'", letterSpacing: '.12em', padding: '3px 9px', borderRadius: '3px', color: 'var(--silk)', background: 'var(--panel)', border: '1px solid var(--panel-b)' } }));
+
+    // ---------- DRUMS ----------
+    const GRP = { KICKS: '#c2704a', SNARES: 'var(--acc)', HATS: '#d0b45a', TOMS: '#9aa3ad', CYMB: '#b08bb5', PERC: 'var(--acc)' };
+    const drumGroups = Object.keys(GRP).map((g, i) => ({
+      g, dot: { width: '8px', height: '8px', borderRadius: '2px', background: GRP[g], flex: 'none' },
+      ms: i === 3 ? { font: "600 9px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 7px', borderRadius: '3px', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)' } : { font: "600 9px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 7px', borderRadius: '3px', color: 'var(--silk)', background: 'var(--panel)', border: '1px solid var(--panel-b)' }
+    }));
+    const DRUMS = [
+      ['01', 'BD TIGHT', 'C1', 92, 'C', '+0', 'KICKS', '', 0, 0], ['02', 'BD ROOM', 'C#1', 84, 'C', '−3', 'KICKS', '', 0, 0],
+      ['03', 'SD CRACK', 'D1', 88, 'R4', '+0', 'SNARES', '', 0, 1], ['04', 'SD RIM', 'D#1', 70, 'L6', '+2', 'SNARES', '', 0, 0],
+      ['05', 'HH CLOSED', 'F#1', 76, 'L12', '+0', 'HATS', 'A', 0, 0], ['06', 'HH OPEN', 'A#1', 74, 'L12', '+0', 'HATS', 'A', 0, 0],
+      ['07', 'TOM LO', 'F1', 81, 'R10', '−5', 'TOMS', '', 1, 0], ['08', 'TOM HI', 'G1', 81, 'L10', '+4', 'TOMS', '', 1, 0],
+      ['09', 'CRASH', 'C#2', 66, 'R16', '+0', 'CYMB', '', 0, 0], ['10', 'COWBELL', 'G#2', 58, 'R20', '+0', 'PERC', '', 0, 0]
+    ].map(d => ({
+      n: d[0], name: d[1], key: d[2], lvl: d[3], pan: d[4], tune: d[5], grp: d[6], choke: d[7],
+      gbar: { width: '3px', alignSelf: 'stretch', borderRadius: '2px', background: GRP[d[6]], flex: 'none' },
+      lvlW: Math.round(d[3] / 99 * 100) + '%',
+      mst: { font: "600 9px 'IBM Plex Mono'", width: '20px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', color: d[8] ? 'var(--keyA-ink)' : 'var(--silk)', background: d[8] ? 'var(--keyA)' : 'var(--panel)', border: '1px solid ' + (d[8] ? 'var(--keyA-b)' : 'var(--panel-b)') },
+      sst: { font: "600 9px 'IBM Plex Mono'", width: '20px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', color: d[9] ? 'var(--keyA-ink)' : 'var(--silk)', background: d[9] ? 'var(--keyA)' : 'var(--panel)', border: '1px solid ' + (d[9] ? 'var(--keyA-b)' : 'var(--panel-b)') },
+      chst: { font: "600 8.5px 'IBM Plex Mono'", padding: '1px 5px', borderRadius: '3px', color: d[7] ? 'var(--disp-ink)' : 'transparent', background: d[7] ? 'var(--disp)' : 'transparent', border: '1px solid ' + (d[7] ? 'var(--disp-b)' : 'transparent') }
+    }));
+    const KEYMAP = { 0: 'KICKS', 1: 'KICKS', 2: 'SNARES', 3: 'SNARES', 5: 'TOMS', 6: 'HATS', 7: 'TOMS', 10: 'HATS', 13: 'CYMB', 20: 'PERC' };
+    const keyStrip = Array.from({ length: 25 }, (_, i) => {
+      const black = [1, 3, 6, 8, 10].indexOf(i % 12) >= 0, grp = KEYMAP[i];
+      return {
+        label: i % 12 === 0 ? 'C' + (1 + i / 12) : '',
+        ks: { flex: '1', height: '38px', borderRadius: '0 0 3px 3px', position: 'relative', background: black ? 'var(--ink)' : 'var(--key)', border: '1px solid var(--key-b)', borderTop: grp ? '4px solid ' + GRP[grp] : '4px solid transparent', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' },
+        ls: { font: "500 8px 'IBM Plex Mono'", color: black ? 'var(--silk)' : 'var(--faint)', paddingBottom: '2px' }
+      };
+    });
+
+    // ---------- FX ----------
+    const fxBlocks = [
+      ['COMP', 1, [['THRSH', 40], ['RATIO', 60], ['GAIN', 55]]],
+      ['DIST', 0, [['DRIVE', 30], ['TONE', 50], ['LVL', 62]]],
+      ['EQ', 1, [['LOW', 55], ['MID', 48], ['HIGH', 66], ['Q', 40]]],
+      ['PITCH', 1, [['SHIFT', 52], ['FINE', 50], ['MIX', 44]]],
+      ['DELAY', 1, [['TIME', 58], ['FB', 46], ['MIX', 40]]]
+    ].map(b => ({
+      name: b[0],
+      wrap: { display: 'flex', flexDirection: 'column', gap: '9px', background: 'var(--inset)', border: '1px solid var(--panel-b)', borderRadius: '5px', padding: '10px 10px 12px', opacity: b[1] ? 1 : 0.5 },
+      byp: b[1] ? { font: "600 8px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 6px', borderRadius: '3px', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)' } : { font: "600 8px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 6px', borderRadius: '3px', color: 'var(--silk)', background: 'var(--panel)', border: '1px solid var(--panel-b)' },
+      bypLabel: b[1] ? 'ON' : 'BYP',
+      knobs: b[2].map(k => ({ label: k[0], val: k[1], deg: deg(k[1]) }))
+    }));
+    const spxProgs = ['REVERB HALL', 'REVERB ROOM', 'GATE REVERB', 'EARLY REF', 'STEREO ECHO', 'SYMPHONIC'].map((nm, i) => ({
+      n: (i + 1 < 10 ? '0' : '') + (i + 1), name: nm,
+      st: { display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 8px', borderRadius: '4px', background: i === 0 ? 'var(--szl)' : 'transparent', border: '1px solid ' + (i === 0 ? 'var(--szl-b)' : 'transparent') },
+      ns: { font: "500 10.5px 'IBM Plex Mono'", color: i === 0 ? 'var(--acc)' : 'var(--val)' }
+    }));
+    const spxParams = [['REV TIME', 62], ['HI RATIO', 48], ['DELAY', 40], ['DENSITY', 70], ['MIX', 45]].map(k => ({ label: k[0], val: k[1], deg: deg(k[1]) }));
+
+    // ---------- GENERATOR ----------
+    const genCats = ['PADS', 'SCI-FI', 'RPG', 'PERCUSSION', 'GM', 'LEADS'].map((c, i) => ({
+      name: c, st: i === 1 ? Object.assign({}, segOnF, { textAlign: 'left', padding: '6px 11px', font: "600 11px 'Barlow Condensed'", letterSpacing: '.1em' }) : { padding: '6px 11px', borderRadius: '3px', font: "600 11px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--val)', background: 'var(--inset)', border: '1px solid var(--panel-b)' }
+    }));
+    const GNAMES = [['NEBULA DRIFT', 1], ['WARP CORE', 0], ['ANDROID DRM', 1], ['ZERO-G PAD', 0], ['PULSAR SEQ', 0], ['ION STORM', 1], ['CRYO SWEEP', 0], ['VOID BELL', 0]];
+    const genResults = GNAMES.map((g, i) => ({
+      name: g[0],
+      wrap: { display: 'flex', flexDirection: 'column', gap: '7px', background: g[1] ? 'var(--szl)' : 'var(--inset)', border: '1px solid ' + (g[1] ? 'var(--szl-b)' : 'var(--panel-b)'), borderRadius: '5px', padding: '9px 10px' },
+      ns: { font: "600 11px 'Barlow Condensed'", letterSpacing: '.06em', color: g[1] ? 'var(--acc)' : 'var(--ink)' },
+      wave: env({ a: (i % 4) * 0.18 + 0.05, d1: (i % 3) * 0.25 + 0.15, s: ((i + 1) % 4) * 0.24, r: (i % 2) * 0.3 + 0.15 }, 150, 30),
+      kb: g[1] ? { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 8px', borderRadius: '3px', color: 'var(--keyA-ink)', background: 'var(--keyA)', border: '1px solid var(--keyA-b)' } : { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 8px', borderRadius: '3px', color: 'var(--key-ink)', background: 'var(--key)', border: '1px solid var(--key-b)' },
+      kl: g[1] ? 'KEPT ✓' : 'KEEP',
+      ds: { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 8px', borderRadius: '3px', color: 'var(--silk)', border: '1px solid var(--panel-b)' }
+    }));
+
+    // ---------- MIDI ----------
+    const CCROWS = [['OP1 LEVEL', '16', 1], ['OP2 LEVEL', '17', 1], ['OP3 LEVEL', '18', 1], ['OP4 LEVEL', '19', 1], ['FEEDBACK', '20', 1], ['LFO SPEED', '21', 1], ['LFO PMD', '22', 0], ['ALGORITHM', '—', 0], ['PORTA TIME', '5', 1], ['SIZZLER AMT', '70', 1]];
+    const ccRows = CCROWS.map((r, i) => ({
+      p: r[0], cc: r[1],
+      rs: { display: 'grid', gridTemplateColumns: '1fr 64px 70px 70px', gap: '10px', alignItems: 'center', padding: '5px 10px', borderRadius: '4px', background: i === 6 ? 'var(--szl)' : (i % 2 ? 'var(--inset)' : 'transparent'), border: '1px solid ' + (i === 6 ? 'var(--szl-b)' : 'transparent') },
+      ccs: { font: "500 11px 'IBM Plex Mono'", textAlign: 'center', padding: '2px 0', borderRadius: '3px', color: r[2] ? 'var(--disp-ink)' : 'var(--faint)', background: r[2] ? 'var(--disp)' : 'var(--inset)', border: '1px solid ' + (r[2] ? 'var(--disp-b)' : 'var(--panel-b)'), boxShadow: r[2] ? 'var(--disp-inset)' : 'none' },
+      ls2: i === 6 ? { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: 'var(--keyA-ink)', background: 'var(--keyA)', animation: 'blip 1.2s ease-in-out infinite' } : { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: 'var(--silk)', border: '1px solid var(--panel-b)' },
+      ll: i === 6 ? 'LISTENING…' : 'LEARN',
+      cl: { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: r[1] === '—' ? 'var(--panel-b)' : 'var(--silk)', border: '1px solid var(--panel-b)', opacity: r[1] === '—' ? 0.4 : 1 }
+    }));
+    const nrpnRows = [['ALGORITHM', '00 07'], ['FEEDBACK', '00 08'], ['OP1 RATIO', '01 00'], ['OP1 LEVEL', '01 01'], ['OP1 EG ATK', '01 02'], ['LFO SPEED', '00 10'], ['PITCH EG R1', '00 20'], ['WAVE SELECT', '01 0A']].map(r => ({ p: r[0], v: r[1] }));
+
+    return {
+      rootVars, themeName, nav, viewTitle: TITLES[view] || 'FM VOICE EDITOR',
+      isVoice: view === 'voice', isLib: view === 'lib', isDrums: view === 'drums', isFx: view === 'fx', isGen: view === 'gen', isMidi: view === 'midi',
+      setDX: () => this.setState({ mode: 'DX21' }), setTX: () => this.setState({ mode: 'TX81Z' }),
+      modeDXStyle: tx ? segOff : segOn, modeTXStyle: tx ? segOn : segOff,
+      linkDot: { width: '7px', height: '7px', borderRadius: '50%', background: link ? 'var(--acc)' : 'var(--faint)', boxShadow: link ? '0 0 8px var(--accg)' : 'none', animation: link ? 'blip 2.4s ease-in-out infinite' : 'none' },
+      linkLabel: link ? ('LINK · ' + mode + ' #1') : 'NO LINK',
+      algos, ops, pegG: peg(280, 52),
+      lfoKnobs: [{ label: 'SPEED', val: '12', deg: deg(12) }, { label: 'DELAY', val: '30', deg: deg(30) }, { label: 'PMD', val: '41', deg: deg(41) }, { label: 'AMD', val: '8', deg: deg(8) }],
+      dispChip, dispChipSm, dispChipName, keyBtn, keyABtn, spin, colHd, chipKey, chipKeyA, chipKeySm, chipKeyASm, segOn, segOff, segOnF, segOffF, segOnSm, segOffSm, toggleOn, toggleKnob,
+      bankCells, banks, libTags,
+      drumGroups, drums: DRUMS, keyStrip,
+      fxBlocks, spxProgs, spxParams,
+      genCats, genResults,
+      ccRows, nrpnRows
+    };
+  }
+}
+</script>
+</body>
+</html>

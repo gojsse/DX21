@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html{background:#131416}
+body{margin:0;background:#131416;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(255,255,255,.07);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#e8e6e1;color:#131416;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#e8e6e1}
+.dv-opts{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(255,255,255,.12);color:#e8e6e1;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(255,255,255,.55)}
+.dv-card{max-width:100%;background:#0e0f11;border:1px solid rgba(255,255,255,.09);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.4);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(255,255,255,.45)}
+@keyframes opPulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes blip{0%,100%{opacity:.25}50%{opacity:1}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">MIDI / Settings — CC table, NRPN reference, MEP4 note echo, engine</span></div>
+<div class="dv-opts">
+
+<!-- ============ 5a MIDI/SETTINGS ============ -->
+<div class="dv-opt" id="5a" data-screen-label="5a MIDI Settings">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>MIDI / SETTINGS — CC editor with learn mode, NRPN reference, MEP4 strip, engine mode</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">MIDI / SETTINGS</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">EVERY CONTROL IS TYPEABLE, DRAGGABLE, AND MIDI-LEARNABLE</div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:300px 1fr 250px;gap:10px;padding:12px 14px">
+
+    <!-- left: device + engine + MEP4 -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:11px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">HARDWARE</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">DEVICE Nº</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">1</div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div style="width:16px;height:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 7px 'IBM Plex Mono';color:#33312e">▲</div>
+              <div style="width:16px;height:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 7px 'IBM Plex Mono';color:#33312e">▼</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">ECHO EDITS TO HARDWARE</div>
+            <div style="font:400 8.5px 'IBM Plex Mono';color:#6e6959">EDIT HERE, HEAR IT ON YOUR DX21</div>
+          </div>
+          <div style="width:30px;height:15px;border-radius:8px;background:linear-gradient(180deg,#a9c25c,#8fae4a);position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,.3);flex:none"><div style="position:absolute;right:1px;top:1px;width:13px;height:13px;border-radius:50%;background:#f2ecd9;box-shadow:0 1px 2px rgba(0,0,0,.4)"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">MIDI CHANNEL</div>
+          <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">1</div>
+        </div>
+      </div>
+
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:11px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">ENGINE</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">MODE</div>
+          <div style="display:flex;gap:3px">
+            <div style="flex:1;text-align:center;padding:5px 0;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)">VINTAGE 8-VOICE</div>
+            <div style="flex:1;text-align:center;padding:5px 0;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">MODERN</div>
+          </div>
+          <div style="font:400 8.5px 'IBM Plex Mono';color:#6e6959;line-height:1.5">8-VOICE POLY · 12-BIT DAC CHARACTER · AUTHENTIC ENVELOPE STEPPING</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">OVERSAMPLING</div>
+          <div style="display:flex;gap:3px">
+            <div style="padding:3px 9px;border-radius:3px;font:600 9.5px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);opacity:.75">1×</div>
+            <div style="padding:3px 9px;border-radius:3px;font:600 9.5px 'Barlow Condensed';letter-spacing:.1em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a)">2×</div>
+            <div style="padding:3px 9px;border-radius:3px;font:600 9.5px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);opacity:.75">4×</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEP4 strip -->
+      <div style="background:#1e1c19;border:1px solid #3d3a35;border-radius:6px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid #14120f">
+          <div style="font:700 12px 'Barlow Condensed';letter-spacing:.08em;color:#d8d2c2">MEP4</div>
+          <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">NOTE ECHO · BEFORE THE SYNTH</div>
+          <div style="flex:1"></div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#a9c25c;box-shadow:0 0 7px rgba(169,194,92,.8)"></div>
+        </div>
+        <div style="display:flex;gap:14px;padding:11px 13px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">DIVISION</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">1/8·</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">REPEATS</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">4</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">VEL DECAY</div>
+            <div style="position:relative;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+              <div style="position:absolute;left:50%;top:50%;width:2px;height:11px;margin:-11px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-25deg);background:#e8e2d2;border-radius:1px"></div>
+            </div>
+            <div style="font:500 9.5px 'IBM Plex Mono';color:#c4beb0">−12</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">TRANSPOSE</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">+12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- center: CC table -->
+    <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">CC ASSIGNMENTS</div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1e1c19;border:1px solid #3d3a35;border-radius:4px;padding:4px 9px;width:180px">
+          <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">⌕ SEARCH PARAMETERS…</div>
+        </div>
+        <div style="font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;padding:4px 11px;border-radius:3px;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.4)">LEARN MODE ON</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 64px 70px 70px;gap:10px;padding:0 10px">
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">PARAMETER</div>
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959;text-align:center">CC Nº</div>
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959;text-align:center">LEARN</div>
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959;text-align:center">CLEAR</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ ccRows }}" as="r" hint-placeholder-count="10">
+          <div style="{{ r.rs }}">
+            <div style="font:500 11px 'IBM Plex Mono';color:#c4beb0">{{ r.p }}</div>
+            <div style="{{ r.ccs }}">{{ r.cc }}</div>
+            <div style="{{ r.ls2 }}">{{ r.ll }}</div>
+            <div style="{{ r.cl }}">CLEAR</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font:400 9px 'IBM Plex Mono';color:#6e6959">MOVE A CONTROL ON YOUR CONTROLLER TO BIND THE HIGHLIGHTED ROW · 118 MORE PARAMETERS</div>
+    </div>
+
+    <!-- right: NRPN reference -->
+    <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">NRPN REFERENCE</div>
+        <div style="font:400 9px 'IBM Plex Mono';color:#6e6959">READ-ONLY</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 56px;gap:8px;padding:0 4px">
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">PARAMETER</div>
+        <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">MSB LSB</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <sc-for list="{{ nrpnRows }}" as="r" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:1fr 56px;gap:8px;padding:4px;border-bottom:1px solid #2e2c28">
+            <div style="font:500 10.5px 'IBM Plex Mono';color:#c4beb0">{{ r.p }}</div>
+            <div style="font:500 10.5px 'IBM Plex Mono';color:#96907f">{{ r.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:auto;padding:8px 10px;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+        <div style="font:500 10px 'IBM Plex Mono';color:#26310f">COPY FULL NRPN MAP → CLIPBOARD</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">RIGHT-CLICK ANY CONTROL ANYWHERE → ASSIGN CC / ADD TO SIZZLER</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0</div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">All 6 views drafted. Try next: "commit one theme and unify" · "make the voice panel interactive" · "explore the algorithm selector inside the committed panel"</p>
+</section>
+
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Effects + Generator — DX21 theme continued</span></div>
+<div class="dv-opts">
+
+<!-- ============ 4a EFFECTS ============ -->
+<div class="dv-opt" id="4a" data-screen-label="4a Effects">
+<div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>EFFECTS — signal flow, FX500 simul-chain, SPX90 with amber 7-seg program</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">EFFECTS</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="flex:1"></div>
+    <!-- signal flow -->
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f;padding:4px 8px;background:#262421;border:1px solid #3d3a35;border-radius:3px">MIDI IN</div>
+      <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">→</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f;padding:4px 8px;background:transparent;border:1px dashed #57523f;border-radius:3px">MEP4 · NOTE ECHO</div>
+        <div style="font:400 7.5px 'IBM Plex Mono';color:#6e6959">CONFIGURE IN MIDI VIEW</div>
+      </div>
+      <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">→</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;padding:4px 8px;background:linear-gradient(180deg,#a9c25c,#8fae4a);border-radius:3px">OP4 SYNTH</div>
+      <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">→</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#c4beb0;padding:4px 8px;background:#262421;border:1px solid #57523f;border-radius:3px">FX500</div>
+      <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">→</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#c4beb0;padding:4px 8px;background:#262421;border:1px solid #57523f;border-radius:3px">SPX90</div>
+      <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">→</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f;padding:4px 8px;background:#262421;border:1px solid #3d3a35;border-radius:3px">OUT</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <!-- FX500 rack unit -->
+  <div style="margin:12px 14px 0;background:#262421;border:1px solid #3d3a35;border-radius:6px">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #191713">
+      <div style="font:700 13px 'Barlow Condensed';letter-spacing:.08em;color:#d8d2c2">FX500</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">SIMUL-EFFECT PROCESSOR · FIXED CHAIN</div>
+      <div style="flex:1"></div>
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">RIGHT-CLICK ANY KNOB → ASSIGN CC / SIZZLER</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#191713;border-radius:0 0 6px 6px;overflow:hidden">
+      <sc-for list="{{ fxBlocks }}" as="b" hint-placeholder-count="5">
+        <div style="background:#262421;padding:11px 12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font:700 13px 'Barlow Condensed';letter-spacing:.1em;color:#d8d2c2">{{ b.name }}</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="{{ b.led }}"></div>
+              <div style="font:600 8px 'Barlow Condensed';letter-spacing:.12em;color:#96907f;padding:2px 6px;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border-radius:2px;color:#33312e;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)">BYP</div>
+            </div>
+          </div>
+          <div style="{{ b.bst }}">
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <sc-for list="{{ b.ks2 }}" as="k" hint-placeholder-count="3">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">{{ k.label }}</div>
+                  <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                    <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e8e2d2;border-radius:1px"></div>
+                  </div>
+                  <div style="font:500 9.5px 'IBM Plex Mono';color:#c4beb0">{{ k.val }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- SPX90 rack unit -->
+  <div style="margin:10px 14px 12px;background:#1e1c19;border:1px solid #3d3a35;border-radius:6px">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #14120f">
+      <div style="font:700 13px 'Barlow Condensed';letter-spacing:.08em;color:#d8d2c2">SPX90</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">MULTI-EFFECT · ONE ALGORITHM AT A TIME</div>
+      <div style="flex:1"></div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;padding:3px 10px;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border-radius:3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 1px 2px rgba(0,0,0,.4)">BYPASS</div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 230px 1fr;gap:14px;padding:12px 14px;align-items:center">
+      <!-- 7-seg program number -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">PROGRAM</div>
+        <div style="background:#120705;border:1px solid #38160c;border-radius:4px;padding:6px 16px;box-shadow:inset 0 2px 8px rgba(0,0,0,.8)">
+          <div style="font:600 34px 'IBM Plex Mono';color:#ffa63c;text-shadow:0 0 12px rgba(255,166,60,.6);letter-spacing:.05em">01</div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <div style="width:22px;height:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 9px 'IBM Plex Mono';color:#33312e">−</div>
+          <div style="width:22px;height:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 9px 'IBM Plex Mono';color:#33312e">+</div>
+        </div>
+      </div>
+      <!-- program list -->
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <sc-for list="{{ spxProgs }}" as="p" hint-placeholder-count="7">
+          <div style="{{ p.pst }}">
+            <div style="{{ p.pn }}">{{ p.n }}</div>
+            <div style="{{ p.pm }}">{{ p.name }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <!-- selected algorithm params -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <div style="font:700 14px 'Barlow Condensed';letter-spacing:.08em;color:#ffa63c">REV HALL</div>
+          <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">EARLY REFLECTIONS + DENSE TAIL</div>
+        </div>
+        <div style="display:flex;gap:18px">
+          <sc-for list="{{ spxParams }}" as="k" hint-placeholder-count="5">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">{{ k.label }}</div>
+              <div style="position:relative;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                <div style="position:absolute;left:50%;top:50%;width:2px;height:14px;margin:-14px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e8e2d2;border-radius:1px"></div>
+              </div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#c4beb0">{{ k.val }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">MEP4 PROCESSES NOTES, NOT AUDIO — IT SITS BEFORE THE SYNTH</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 4b GENERATOR ============ -->
+<div class="dv-opt" id="4b" data-screen-label="4b Generator">
+<div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>GENERATOR — category picker, mutation, results tray with keep/discard</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">PATCH GENERATOR</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">SEEDED FROM 4-OP CORPUS · EVERY RESULT IS A VALID SYSEX VOICE</div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <!-- controls band -->
+  <div style="display:flex;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid #191713">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">CATEGORY</div>
+      <div style="display:flex;gap:4px">
+        <sc-for list="{{ genCats }}" as="c" hint-placeholder-count="7">
+          <div style="{{ c.st }}">{{ c.c }}</div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:#191713"></div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">COUNT</div>
+      <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:3px 12px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">12</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">MUTATION</div>
+      <div style="position:relative;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+        <div style="position:absolute;left:50%;top:50%;width:2px;height:14px;margin:-14px 0 0 -1px;transform-origin:50% 100%;transform:rotate(15deg);background:#e8e2d2;border-radius:1px"></div>
+      </div>
+      <div style="font:500 10px 'IBM Plex Mono';color:#c4beb0">55</div>
+    </div>
+    <div style="padding:10px 22px;border-radius:4px;font:700 13px 'Barlow Condensed';letter-spacing:.14em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 4px rgba(0,0,0,.5)">GENERATE</div>
+    <div style="flex:1"></div>
+    <div style="display:flex;gap:4px">
+      <div style="padding:6px 12px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">UNDO GENERATE</div>
+      <div style="padding:6px 12px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">EXPORT KEPT AS .SYX</div>
+    </div>
+  </div>
+
+  <!-- results tray -->
+  <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <div style="font:700 14px 'Barlow Condensed';letter-spacing:.08em;color:#d8d2c2">SCI-FI · BATCH 06</div>
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">3 KEPT · 2 DISCARDED · CLICK CARD TO AUDITION</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      <sc-for list="{{ genResults }}" as="g" hint-placeholder-count="12">
+        <div style="{{ g.cs2 }}">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="{{ g.nn }}">{{ g.name }}</div>
+            <div style="font:400 10px 'IBM Plex Mono';color:#96907f">▶</div>
+          </div>
+          {{ g.wave }}
+          <div style="display:flex;gap:4px">
+            <div style="{{ g.kb }}">{{ g.kl }}</div>
+            <div style="{{ g.ds }}">DISCARD</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">KEPT PATCHES LAND IN A NEW BANK · GEN · SCI-FI 06</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0</div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "MIDI/Settings view" · "reskin everything in one committed theme" · "make the voice panel interactive"</p>
+</section>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Librarian + Drum Rack — in the 2a DX21 hardware theme (reskin is cheap if another theme wins)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 3a LIBRARIAN ============ -->
+<div class="dv-opt" id="3a" data-screen-label="3a Librarian">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>LIBRARIAN — 32-slot bank grid, multi-bank browser, sysex send/receive</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px">
+
+  <!-- header + nav -->
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">LIBRARIAN</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;gap:3px">
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4);opacity:.8">VOICE</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.4)">LIBRARY</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4);opacity:.8">DRUMS</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4);opacity:.8">FX</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4);opacity:.8">GEN</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4);opacity:.8">MIDI</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:216px 1fr;gap:10px;padding:12px 14px">
+    <!-- bank browser -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">BANKS</div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1e1c19;border:1px solid #3d3a35;border-radius:4px;padding:5px 8px">
+          <div style="font:400 10px 'IBM Plex Mono';color:#6e6959">⌕ SEARCH PATCHES…</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <sc-for list="{{ libTags }}" as="t" hint-placeholder-count="7">
+            <div style="{{ t.st }}">{{ t.t }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ banks }}" as="b" hint-placeholder-count="6">
+            <div style="{{ b.bs2 }}">
+              <div style="{{ b.ns3 }}">{{ b.name }}</div>
+              <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">{{ b.n }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#262421;border:1px dashed #57523f;border-radius:6px;padding:14px 12px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center">
+        <div style="font:600 11px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">DROP A .SYX FILE</div>
+        <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959;line-height:1.5">or receive from<br>your synth</div>
+      </div>
+    </div>
+
+    <!-- bank grid + transfer -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <div style="font:700 15px 'Barlow Condensed';letter-spacing:.06em;color:#d8d2c2">FACTORY A</div>
+            <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">30/32 · CLICK TO AUDITION · DRAG TO REORDER</div>
+          </div>
+          <div style="display:flex;gap:3px">
+            <div style="padding:4px 11px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">EXPORT .SYX</div>
+            <div style="padding:4px 11px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">NEW BANK</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
+          <sc-for list="{{ bankCells }}" as="c" hint-placeholder-count="32">
+            <div style="{{ c.cs }}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="{{ c.ss }}">{{ c.n }}</div>
+                <div style="{{ c.ts2 }}">{{ c.cat }}</div>
+              </div>
+              <div style="{{ c.ns2 }}">{{ c.name }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- transfer strip -->
+      <div style="display:grid;grid-template-columns:auto auto 1fr;gap:14px;align-items:center;background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:10px 14px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">DEVICE Nº</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">1</div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div style="width:16px;height:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 7px 'IBM Plex Mono';color:#33312e">▲</div>
+              <div style="width:16px;height:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:2px;font:600 7px 'IBM Plex Mono';color:#33312e">▼</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <div style="padding:8px 14px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.4)">SEND BANK TO SYNTH</div>
+          <div style="padding:8px 14px;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">RECEIVE BANK</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;padding:7px 12px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+          <div style="display:flex;justify-content:space-between">
+            <div style="font:500 11px 'IBM Plex Mono';color:#26310f">MIDI TRANSMIT? ▸ SENDING VOICE 14/32</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:#5a6630">44%</div>
+          </div>
+          <div style="height:5px;background:rgba(38,49,15,.2);border-radius:2px;overflow:hidden"><div style="height:100%;width:44%;background:#26310f;border-radius:2px"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">UNDO BANK IMPORT AVAILABLE · ⌘Z</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 3b DRUM RACK ============ -->
+<div class="dv-opt" id="3b" data-screen-label="3b Drum Rack">
+<div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>DRUM RACK — 32-slot mixer list, group buses, key-map strip, RX21 kit banner</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">DRUM RACK</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;padding:6px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+      <div style="font:500 12px 'IBM Plex Mono';color:#5a6630">KIT</div>
+      <div style="font:500 14px 'IBM Plex Mono';color:#26310f">RX21 STANDARD</div>
+      <div style="font:500 9px 'IBM Plex Mono';color:#26310f;border:1px solid #8a9a35;border-radius:3px;padding:1px 5px">9 SLOTS</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#262421;border:1px solid #3d3a35;border-radius:5px;padding:6px 12px">
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">AUTHENTIC '85</div>
+      <div style="width:30px;height:15px;border-radius:8px;background:linear-gradient(180deg,#a9c25c,#8fae4a);position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,.3)"><div style="position:absolute;right:1px;top:1px;width:13px;height:13px;border-radius:50%;background:#f2ecd9;box-shadow:0 1px 2px rgba(0,0,0,.4)"></div></div>
+      <div style="font:400 9px 'IBM Plex Mono';color:#6e6959">12-BIT</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <!-- group bus strip -->
+  <div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid #191713">
+    <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f;margin-right:6px">GROUPS</div>
+    <sc-for list="{{ drumGroups }}" as="g" hint-placeholder-count="6">
+      <div style="display:flex;align-items:center;gap:6px;background:#262421;border:1px solid #3d3a35;border-radius:4px;padding:4px 9px">
+        <div style="{{ g.dot }}"></div>
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#c4beb0">{{ g.g }}</div>
+        <div style="{{ g.ms }}">M</div>
+      </div>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">CHOKE A = HH PAIR · RIGHT-CLICK SLOT FOR GROUPS</div>
+  </div>
+
+  <!-- slot list -->
+  <div style="display:flex;flex-direction:column;gap:4px;padding:10px 14px">
+    <div style="display:grid;grid-template-columns:6px 30px 150px 52px 1fr 56px 56px 90px 50px 46px;gap:10px;align-items:center;padding:0 10px">
+      <div></div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">Nº</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">PATCH</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">KEY</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">LEVEL</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">PAN</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">TUNE</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">GROUP</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">CHOKE</div>
+      <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.14em;color:#6e6959">M / S</div>
+    </div>
+    <sc-for list="{{ drums }}" as="d" hint-placeholder-count="10">
+      <div style="display:grid;grid-template-columns:6px 30px 150px 52px 1fr 56px 56px 90px 50px 46px;gap:10px;align-items:center;background:#262421;border:1px solid #3d3a35;border-radius:5px;padding:6px 10px">
+        <div style="{{ d.gbar }}"></div>
+        <div style="font:500 10px 'IBM Plex Mono';color:#6e6959">{{ d.n }}</div>
+        <div style="font:500 11px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:3px 8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25);white-space:nowrap;overflow:hidden">{{ d.name }}</div>
+        <div style="font:500 11px 'IBM Plex Mono';color:#c4beb0">{{ d.key }}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;height:4px;background:#1e1c19;border-radius:2px;overflow:hidden"><div style="height:100%;background:#8fae4a;width:{{ d.lvlW }}"></div></div>
+          <div style="font:500 10px 'IBM Plex Mono';color:#c4beb0;width:20px;text-align:right">{{ d.lvl }}</div>
+        </div>
+        <div style="font:500 11px 'IBM Plex Mono';color:#c4beb0">{{ d.pan }}</div>
+        <div style="font:500 11px 'IBM Plex Mono';color:#c4beb0">{{ d.tune }}</div>
+        <div style="font:600 9.5px 'Barlow Condensed';letter-spacing:.1em;color:#96907f">{{ d.grp }}</div>
+        <div style="{{ d.chst }}">{{ d.choke }}</div>
+        <div style="display:flex;gap:4px">
+          <div style="{{ d.mst }}">M</div>
+          <div style="{{ d.sst }}">S</div>
+        </div>
+      </div>
+    </sc-for>
+    <div style="display:flex;justify-content:center;padding:5px">
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">+ 22 EMPTY SLOTS · DROP A VOICE OR CLICK TO ASSIGN</div>
+    </div>
+  </div>
+
+  <!-- keyboard strip -->
+  <div style="display:flex;align-items:flex-end;gap:2px;padding:4px 16px 12px">
+    <sc-for list="{{ keyStrip }}" as="k" hint-placeholder-count="25">
+      <div style="{{ k.ks }}"><div style="{{ k.ls }}">{{ k.label }}</div></div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">COLOR BAND = GROUP · KEY STRIP SHOWS MAPPING C1–C3</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0</div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "reskin <a class="dv-oid" href="#3a">3a</a>/<a class="dv-oid" href="#3b">3b</a> in the 2d TX rack theme" · "show the empty-state librarian" · "now FX + Generator views"</p>
+</section>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Hardware-chassis themes — DX21-faithful, graphite + LCD hybrid, TX81Z rack</span></div>
+<div class="dv-opts">
+
+<!-- ============ 2a DX21 FAITHFUL ============ -->
+<div class="dv-opt" id="2a" data-screen-label="2a Voice Panel — DX21 Hardware">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>DX21 HARDWARE — warm charcoal chassis, putty membrane keys, yellow-green LCD displays · DX21 mode</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)">
+
+  <!-- header -->
+  <div style="display:flex;align-items:center;gap:16px;padding:11px 16px;background:linear-gradient(180deg,#3d3a34,#312e29);border-bottom:2px solid #191713;border-radius:10px 10px 0 0">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <div style="font:700 20px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">OP4</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#96907f">FM VOICE EDITOR</div>
+      </div>
+      <div style="height:2px;width:120px;background:linear-gradient(90deg,#8fae4a,#8fae4a 60%,transparent)"></div>
+    </div>
+    <div style="display:flex;gap:3px;background:#211f1b;border:1px solid #46423b;border-radius:5px;padding:3px">
+      <div style="padding:5px 12px;border-radius:3px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)">DX21</div>
+      <div style="padding:5px 12px;border-radius:3px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">TX81Z</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:4px;color:#33312e;font:600 12px 'IBM Plex Mono';box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">‹</div>
+      <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;padding:6px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+        <div style="font:500 12px 'IBM Plex Mono';color:#5a6630">B12</div>
+        <div style="font:500 14px 'IBM Plex Mono';color:#26310f">NITE PAD</div>
+        <div style="font:500 9px 'IBM Plex Mono';color:#26310f;border:1px solid #8a9a35;border-radius:3px;padding:1px 5px">EDITED</div>
+      </div>
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:4px;color:#33312e;font:600 12px 'IBM Plex Mono';box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">›</div>
+      <div style="margin-left:6px;padding:6px 12px;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:4px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">COMPARE</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#a9c25c;box-shadow:0 0 8px rgba(169,194,92,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LINK · DX21 #1</div>
+    </div>
+  </div>
+
+  <!-- body -->
+  <div style="display:grid;grid-template-columns:236px 1fr;gap:10px;padding:12px 14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">ALGORITHM</div>
+          <div style="font:500 11px 'IBM Plex Mono';color:#a9c25c">3</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <sc-for list="{{ dxAlgos }}" as="a" hint-placeholder-count="8">
+            <div style="{{ a.bs }}">
+              {{ a.g }}
+              <div style="{{ a.ns }}">{{ a.n }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:14px">
+        <div style="position:relative;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.05)">
+          <div style="position:absolute;left:50%;top:50%;width:2px;height:17px;margin:-17px 0 0 -1px;transform-origin:50% 100%;transform:rotate(28deg);background:#e8e2d2;border-radius:1px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">FEEDBACK</div>
+          <div style="font:500 13px 'IBM Plex Mono';color:#d8d2c2">6</div>
+          <div style="font:400 9px 'IBM Plex Mono';color:#6e6959">OP4 → OP4</div>
+        </div>
+      </div>
+      <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:9px 12px;display:flex;gap:12px;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;background:#8fae4a"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">CARRIER</div></div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;border:1px solid #6e6959"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">MODULATOR</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ dxOps }}" as="op" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:148px 264px 1fr;gap:14px;align-items:center;background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:9px 14px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font:700 17px 'Barlow Condensed';letter-spacing:.06em;color:#d8d2c2">{{ op.name }}</div>
+              <div style="{{ op.ts }}">{{ op.role }}</div>
+              <div style="width:6px;height:6px;border-radius:50%;background:#a9c25c;box-shadow:0 0 6px rgba(169,194,92,.7)"></div>
+            </div>
+            <div style="display:flex;gap:5px;opacity:.35">
+              <div style="font:500 10px 'IBM Plex Mono';color:#d8d2c2;border:1px solid #4a4742;border-radius:4px;padding:3px 8px">{{ op.wave }}</div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#96907f;border:1px solid #4a4742;border-radius:4px;padding:3px 8px">TX ONLY</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">RATIO</div>
+              <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 7px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">{{ op.ratio }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">LEVEL</div>
+              <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 7px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">{{ op.lvl }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">DETUNE</div>
+              <div style="font:500 13px 'IBM Plex Mono';color:#26310f;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:3px;padding:2px 7px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)">{{ op.det }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">ENVELOPE</div>
+              <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">AR {{ op.eg }}</div>
+            </div>
+            {{ op.envG }}
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:8px">
+        <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">LFO</div>
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font:500 10px 'IBM Plex Mono';color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:4px;padding:3px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 1px 2px rgba(0,0,0,.35)">TRI</div>
+              <div style="font:500 9px 'IBM Plex Mono';color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);border:1px solid #77913a;border-radius:4px;padding:2px 6px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)">SYNC</div>
+            </div>
+            <sc-for list="{{ lfoKnobs }}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">{{ k.label }}</div>
+                <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #524e46;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                  <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e8e2d2;border-radius:1px"></div>
+                </div>
+                <div style="font:500 10px 'IBM Plex Mono';color:#c4beb0">{{ k.val }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">PITCH EG</div>
+            <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">R 72 · L 50</div>
+          </div>
+          {{ pegDX }}
+        </div>
+        <div style="background:#262421;border:1px solid #3d3a35;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#96907f">FUNCTION</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;gap:3px">
+              <div style="padding:4px 10px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)">POLY</div>
+              <div style="padding:4px 10px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">MONO</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:#d8d2c2">42</div></div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#96907f">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:#d8d2c2">−12</div></div>
+            <div style="display:flex;gap:3px">
+              <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">SNGL</div>
+              <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)">DUAL</div>
+              <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">SPLIT</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#282b1e;border:1px solid #4d5433;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#a9c25c">SIZZLER</div>
+            <div style="font:400 9px 'IBM Plex Mono';color:#7d8a52">9 TARGETS</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#45423c,#2a2825 70%);border:1px solid #4d5433;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-40deg);background:#a9c25c;border-radius:1px"></div>
+              </div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#c4beb0">35</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;gap:3px">
+                <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)">RND</div>
+                <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">MRF</div>
+                <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);opacity:.75">DRF</div>
+              </div>
+              <div style="align-self:flex-start;padding:3px 10px;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);border:1px solid #a89f8a;border-radius:4px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 1px 2px rgba(0,0,0,.35)">FREEZE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #191713">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6e6959">OP4 1.2.0 · 4% CPU</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 2b GRAPHITE + LCD ============ -->
+<div class="dv-opt" id="2b" data-screen-label="2b Voice Panel — Graphite + LCD">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>GRAPHITE + LCD — turn-1 graphite chassis, every display a yellow-green LCD window · TX81Z mode</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#2c2e33,#232529);border:1px solid #3d4046;border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:10px 16px;background:linear-gradient(180deg,#313339,#282a2e);border-bottom:1px solid #17181b;border-radius:10px 10px 0 0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="background:linear-gradient(180deg,#d9d2c2,#c2baa8);color:#26282b;border-radius:4px;padding:3px 9px;font:700 16px 'Barlow Condensed';letter-spacing:.06em;box-shadow:0 1px 2px rgba(0,0,0,.4)">OP4</div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#9a9da3">FM VOICE</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#6d7178">EDITOR</div>
+      </div>
+    </div>
+    <div style="display:flex;background:#1b1d20;border:1px solid #3a3d43;border-radius:6px;padding:2px;gap:2px">
+      <div style="padding:5px 12px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#8b8f96">DX21</div>
+      <div style="padding:5px 12px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#cdd964;background:#22260f;box-shadow:inset 0 1px 3px rgba(0,0,0,.5),0 0 10px rgba(205,217,100,.15)">TX81Z</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">‹</div>
+      <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;padding:6px 14px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+        <div style="font:500 12px 'IBM Plex Mono';color:#5a6630">A07</div>
+        <div style="font:500 14px 'IBM Plex Mono';color:#26310f">GLASS EP</div>
+        <div style="font:500 9px 'IBM Plex Mono';color:#26310f;border:1px solid #8a9a35;border-radius:3px;padding:1px 5px">EDITED</div>
+      </div>
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">›</div>
+      <div style="margin-left:6px;padding:5px 12px;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">COMPARE</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#cdd964;box-shadow:0 0 8px rgba(205,217,100,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#9a9da3">LINK · TX81Z #1</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:236px 1fr;gap:10px;padding:12px 14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">ALGORITHM</div>
+          <div style="font:500 11px 'IBM Plex Mono';color:#cdd964">3</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <sc-for list="{{ hybAlgos }}" as="a" hint-placeholder-count="8">
+            <div style="{{ a.bs }}">
+              {{ a.g }}
+              <div style="{{ a.ns }}">{{ a.n }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:14px">
+        <div style="position:relative;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.05)">
+          <div style="position:absolute;left:50%;top:50%;width:2px;height:17px;margin:-17px 0 0 -1px;transform-origin:50% 100%;transform:rotate(28deg);background:#e6e9ed;border-radius:1px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">FEEDBACK</div>
+          <div style="font:500 13px 'IBM Plex Mono';color:#e8e6e1">6</div>
+          <div style="font:400 9px 'IBM Plex Mono';color:#6d7178">OP4 → OP4</div>
+        </div>
+      </div>
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;gap:12px;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;background:#5b606a"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">CARRIER</div></div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;border:1px solid #5b606a"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">MODULATOR</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ hybOps }}" as="op" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:148px 264px 1fr;gap:14px;align-items:center;background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 14px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font:700 17px 'Barlow Condensed';letter-spacing:.06em;color:#e8e6e1">{{ op.name }}</div>
+              <div style="{{ op.ts }}">{{ op.role }}</div>
+              <div style="width:6px;height:6px;border-radius:50%;background:#cdd964;box-shadow:0 0 6px rgba(205,217,100,.7)"></div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <div style="font:500 10px 'IBM Plex Mono';color:#cdd964;border:1px solid #4a5426;background:#22260f;border-radius:4px;padding:3px 8px">{{ op.wave }}</div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#8b8f96;border:1px solid #3a3d43;border-radius:4px;padding:3px 8px">FIX {{ op.fixed }}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">RATIO</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.ratio }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">LEVEL</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.lvl }}</div>
+              <div style="height:3px;background:#2b2d32;border-radius:2px;overflow:hidden"><div style="height:100%;background:#cdd964;width:{{ op.lvlPct }}%"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">DETUNE</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.det }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">ENVELOPE</div>
+              <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">AR {{ op.eg }}</div>
+            </div>
+            {{ op.envG }}
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:8px">
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">LFO</div>
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font:500 10px 'IBM Plex Mono';color:#e8e6e1;border:1px solid #3a3d43;border-radius:4px;padding:3px 8px">TRI</div>
+              <div style="font:500 9px 'IBM Plex Mono';color:#cdd964;border:1px solid #4a5426;border-radius:4px;padding:2px 6px;text-align:center">SYNC</div>
+            </div>
+            <sc-for list="{{ lfoKnobs }}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">{{ k.label }}</div>
+                <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                  <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e6e9ed;border-radius:1px"></div>
+                </div>
+                <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">{{ k.val }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">PITCH EG</div>
+            <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">R 72 · L 50</div>
+          </div>
+          {{ pegHyb }}
+        </div>
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">FUNCTION</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+              <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#cdd964;background:#22260f">POLY</div>
+              <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MONO</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">18</div></div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">+0</div></div>
+            <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#cdd964;background:#22260f">SNGL</div>
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">DUAL</div>
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">SPLIT</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#20240f;border:1px solid #4a5426;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#cdd964">SIZZLER</div>
+            <div style="font:400 9px 'IBM Plex Mono';color:#8a9a52">14 TARGETS</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #4a5426;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-40deg);background:#cdd964;border-radius:1px"></div>
+              </div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">35</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">RND</div>
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MRF</div>
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#cdd964;background:#22260f">DRF</div>
+              </div>
+              <div style="align-self:flex-start;padding:3px 10px;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:4px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">FREEZE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #17181b">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">OP4 1.2.0 · 4% CPU</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 2d TX81Z RACK ============ -->
+<div class="dv-opt" id="2d" data-screen-label="2d Voice Panel — TX81Z Rack">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>TX81Z RACK — flat black 1U chassis, rack ears, red-orange LED segments · TX81Z mode</div>
+<div class="dv-card" style="width:1200px">
+<div style="display:flex;align-items:stretch;background:#0c0d0e;border-radius:10px">
+  <!-- left rack ear -->
+  <div style="width:34px;background:linear-gradient(180deg,#222326,#18191b);border-radius:10px 0 0 10px;border-right:1px solid #0a0a0b;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:14px 0">
+    <div style="width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d3f44,#141517 70%);border:1px solid #0a0a0b;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)"></div>
+    <div style="width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d3f44,#141517 70%);border:1px solid #0a0a0b;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)"></div>
+  </div>
+
+  <div style="flex:1;background:linear-gradient(180deg,#202124,#18191b);border-top:1px solid #303236">
+    <!-- header -->
+    <div style="display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:1px solid #0a0a0b">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font:700 18px 'Barlow Condensed';letter-spacing:.06em;color:#e4e2dd">OP4</div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.2em;color:#84878d">FM TONE GENERATOR</div>
+          <div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.2em;color:#55585e">4-OPERATOR</div>
+        </div>
+      </div>
+      <div style="display:flex;background:#121315;border:1px solid #2c2e32;border-radius:4px;padding:2px;gap:2px">
+        <div style="padding:4px 11px;border-radius:3px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#84878d">DX21</div>
+        <div style="padding:4px 11px;border-radius:3px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#ff6a3d;background:#170d09;box-shadow:inset 0 1px 3px rgba(0,0,0,.6),0 0 10px rgba(255,106,61,.18)">TX81Z</div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#2b2d31,#1f2124);border:1px solid #3a3c41;border-radius:3px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">‹</div>
+        <div style="display:flex;align-items:center;gap:12px;background:#120705;border:1px solid #38160c;border-radius:4px;padding:5px 14px;box-shadow:inset 0 2px 8px rgba(0,0,0,.8)">
+          <div style="font:500 12px 'IBM Plex Mono';color:#8a3a20">I07</div>
+          <div style="font:500 14px 'IBM Plex Mono';color:#ff6a3d;text-shadow:0 0 7px rgba(255,106,61,.55)">LATELY BASS</div>
+          <div style="font:500 9px 'IBM Plex Mono';color:#ff6a3d;border:1px solid #58260f;border-radius:3px;padding:1px 5px;opacity:.85">EDITED</div>
+        </div>
+        <div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#2b2d31,#1f2124);border:1px solid #3a3c41;border-radius:3px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">›</div>
+        <div style="margin-left:6px;padding:5px 12px;background:linear-gradient(180deg,#2b2d31,#1f2124);border:1px solid #3a3c41;border-radius:3px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">COMPARE</div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#ff6a3d;box-shadow:0 0 8px rgba(255,106,61,.8);animation:blip 2.4s ease-in-out infinite"></div>
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#84878d">LINK · TX81Z #1</div>
+      </div>
+    </div>
+
+    <!-- body -->
+    <div style="display:grid;grid-template-columns:236px 1fr;gap:10px;padding:12px 14px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#84878d">ALGORITHM</div>
+            <div style="font:500 11px 'IBM Plex Mono';color:#ff6a3d">3</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <sc-for list="{{ txAlgos }}" as="a" hint-placeholder-count="8">
+              <div style="{{ a.bs }}">
+                {{ a.g }}
+                <div style="{{ a.ns }}">{{ a.n }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:10px 12px;display:flex;align-items:center;gap:14px">
+          <div style="position:relative;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2f3135,#1a1b1d 70%);border:1px solid #383a3f;box-shadow:inset 0 2px 4px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.04)">
+            <div style="position:absolute;left:50%;top:50%;width:2px;height:17px;margin:-17px 0 0 -1px;transform-origin:50% 100%;transform:rotate(28deg);background:#e4e2dd;border-radius:1px"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#84878d">FEEDBACK</div>
+            <div style="font:500 13px 'IBM Plex Mono';color:#e4e2dd">6</div>
+            <div style="font:400 9px 'IBM Plex Mono';color:#55585e">OP4 → OP4</div>
+          </div>
+        </div>
+        <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:9px 12px;display:flex;gap:12px;align-items:center">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;background:#4d4f54"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#84878d">CARRIER</div></div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;border:1px solid #4d4f54"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#84878d">MODULATOR</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ txOps }}" as="op" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:148px 264px 1fr;gap:14px;align-items:center;background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:9px 14px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="font:700 17px 'Barlow Condensed';letter-spacing:.06em;color:#e4e2dd">{{ op.name }}</div>
+                <div style="{{ op.ts }}">{{ op.role }}</div>
+                <div style="width:6px;height:6px;border-radius:50%;background:#ff6a3d;box-shadow:0 0 6px rgba(255,106,61,.7)"></div>
+              </div>
+              <div style="display:flex;gap:5px">
+                <div style="font:500 10px 'IBM Plex Mono';color:#ff6a3d;border:1px solid #58260f;background:#170d09;border-radius:4px;padding:3px 8px">{{ op.wave }}</div>
+                <div style="font:500 10px 'IBM Plex Mono';color:#84878d;border:1px solid #2c2e32;border-radius:4px;padding:3px 8px">FIX {{ op.fixed }}</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#6c6f75">RATIO</div>
+                <div style="font:500 15px 'IBM Plex Mono';color:#e4e2dd">{{ op.ratio }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#6c6f75">LEVEL</div>
+                <div style="font:500 15px 'IBM Plex Mono';color:#e4e2dd">{{ op.lvl }}</div>
+                <div style="height:3px;background:#232529;border-radius:2px;overflow:hidden"><div style="height:100%;background:#ff6a3d;width:{{ op.lvlPct }}%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#6c6f75">DETUNE</div>
+                <div style="font:500 15px 'IBM Plex Mono';color:#e4e2dd">{{ op.det }}</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#6c6f75">ENVELOPE</div>
+                <div style="font:400 9.5px 'IBM Plex Mono';color:#6c6f75">AR {{ op.eg }}</div>
+              </div>
+              {{ op.envG }}
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:8px">
+          <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#84878d">LFO</div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="font:500 10px 'IBM Plex Mono';color:#e4e2dd;border:1px solid #2c2e32;border-radius:4px;padding:3px 8px">TRI</div>
+                <div style="font:500 9px 'IBM Plex Mono';color:#ff6a3d;border:1px solid #58260f;border-radius:4px;padding:2px 6px;text-align:center">SYNC</div>
+              </div>
+              <sc-for list="{{ lfoKnobs }}" as="k" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#6c6f75">{{ k.label }}</div>
+                  <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2f3135,#1a1b1d 70%);border:1px solid #383a3f;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)">
+                    <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e4e2dd;border-radius:1px"></div>
+                  </div>
+                  <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">{{ k.val }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#84878d">PITCH EG</div>
+              <div style="font:400 9.5px 'IBM Plex Mono';color:#6c6f75">R 72 · L 50</div>
+            </div>
+            {{ pegTX }}
+          </div>
+          <div style="background:#141518;border:1px solid #2c2e32;border-radius:5px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#84878d">FUNCTION</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <div style="display:flex;background:#0e0f11;border:1px solid #2c2e32;border-radius:4px;padding:2px;gap:2px">
+                <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#ff6a3d;background:#170d09">POLY</div>
+                <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#84878d">MONO</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#6c6f75">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:#e4e2dd">18</div></div>
+              <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#6c6f75">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:#e4e2dd">+0</div></div>
+              <div style="display:flex;background:#0e0f11;border:1px solid #2c2e32;border-radius:4px;padding:2px;gap:2px">
+                <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#ff6a3d;background:#170d09">SNGL</div>
+                <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#84878d">DUAL</div>
+                <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#84878d">SPLIT</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#1c0f08;border:1px solid #58260f;border-radius:5px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#ff6a3d">SIZZLER</div>
+              <div style="font:400 9px 'IBM Plex Mono';color:#a85632">14 TARGETS</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2f3135,#1a1b1d 70%);border:1px solid #58260f;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)">
+                  <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-40deg);background:#ff6a3d;border-radius:1px"></div>
+                </div>
+                <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">35</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;background:#0e0f11;border:1px solid #2c2e32;border-radius:4px;padding:2px;gap:2px">
+                  <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#84878d">RND</div>
+                  <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#84878d">MRF</div>
+                  <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#ff6a3d;background:#170d09">DRF</div>
+                </div>
+                <div style="align-self:flex-start;padding:3px 10px;background:linear-gradient(180deg,#2b2d31,#1f2124);border:1px solid #3a3c41;border-radius:3px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">FREEZE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #0a0a0b">
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#55585e">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#55585e">OP4 1.2.0 · 4% CPU</div>
+    </div>
+  </div>
+
+  <!-- right rack ear -->
+  <div style="width:34px;background:linear-gradient(180deg,#222326,#18191b);border-radius:0 10px 10px 0;border-left:1px solid #0a0a0b;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:14px 0">
+    <div style="width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d3f44,#141517 70%);border:1px solid #0a0a0b;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)"></div>
+    <div style="width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d3f44,#141517 70%);border:1px solid #0a0a0b;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 2c DX21 MATERIALS ============ -->
+<div class="dv-opt" id="2c" data-screen-label="2c DX21 Materials">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>DX21 materials — chassis, membrane, silkscreen, LCD</div>
+<div class="dv-card" style="width:420px;padding:22px;display:flex;flex-direction:column;gap:16px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <sc-for list="{{ dxSwatches }}" as="s" hint-placeholder-count="9">
+      <div style="display:flex;align-items:center;gap:8px;background:#17181b;border:1px solid #2b2d32;border-radius:6px;padding:7px 8px">
+        <div style="width:22px;height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.12);background:{{ s.hex }};flex:none"></div>
+        <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+          <div style="font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#c9ccd1;white-space:nowrap">{{ s.name }}</div>
+          <div style="font:400 9px 'IBM Plex Mono';color:#7c8188">{{ s.hex }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:linear-gradient(180deg,#37342f,#2b2825);border:1px solid #46423b;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="padding:5px 13px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#33312e;background:linear-gradient(180deg,#ddd6c6,#c8c0ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)">STORE</div>
+      <div style="padding:5px 13px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#1f2912;background:linear-gradient(180deg,#a9c25c,#8fae4a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.4)">COMPARE</div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">MEMBRANE KEYS</div>
+    </div>
+    <div style="background:linear-gradient(180deg,#cdd964,#b6c74b);border:1px solid #8a9a35;border-radius:4px;padding:8px 12px;box-shadow:inset 0 1px 5px rgba(0,0,0,.3)">
+      <div style="font:500 12px 'IBM Plex Mono';color:#26310f">MIDI TRANSMIT? · YES/NO</div>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:8px">
+      <div style="font:700 15px 'Barlow Condensed';letter-spacing:.05em;color:#d8d2c2">ALGORITHM</div>
+      <div style="height:2px;flex:1;background:linear-gradient(90deg,#8fae4a,transparent)"></div>
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#96907f">SILKSCREEN</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "<a class="dv-oid" href="#2a">2a</a> but keep the amber LED link light" · "merge: <a class="dv-oid" href="#2b">2b</a> chassis with <a class="dv-oid" href="#2a">2a</a>'s membrane buttons" · "librarian in the 2a theme"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">OP4 — identity, two voice-panel directions, three algorithm-selector treatments</span></div>
+<div class="dv-opts">
+
+<!-- ============ 1a IDENTITY ============ -->
+<div class="dv-opt" id="1a" data-screen-label="1a Identity">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Identity — palette, type, spacing</div>
+<div class="dv-card" style="width:560px;padding:24px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px">
+    <div style="background:linear-gradient(180deg,#d9d2c2,#c2baa8);color:#26282b;border-radius:4px;padding:4px 10px;font:700 18px 'Barlow Condensed';letter-spacing:.06em">OP4</div>
+    <div style="font:600 11px 'Barlow Condensed';letter-spacing:.2em;color:#8b8f96">4-OPERATOR FM VOICE EDITOR</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="9">
+      <div style="display:flex;align-items:center;gap:10px;background:#17181b;border:1px solid #2b2d32;border-radius:6px;padding:8px 10px">
+        <div style="width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.12);background:{{ s.hex }}"></div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">{{ s.name }}</div>
+          <div style="font:400 10px 'IBM Plex Mono';color:#7c8188">{{ s.hex }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:#17181b;border:1px solid #2b2d32;border-radius:6px;padding:14px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.18em;color:#7c8188;margin-bottom:10px">SILKSCREEN · BARLOW CONDENSED</div>
+      <div style="font:600 15px 'Barlow Condensed';letter-spacing:.14em;color:#e8e6e1">OPERATOR 4 — FREQUENCY RATIO</div>
+      <div style="font:600 11px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96;margin-top:6px">FEEDBACK · LFO SPEED · PITCH EG</div>
+    </div>
+    <div style="background:#17181b;border:1px solid #2b2d32;border-radius:6px;padding:14px">
+      <div style="font:600 9px 'Barlow Condensed';letter-spacing:.18em;color:#7c8188;margin-bottom:10px">VALUES · IBM PLEX MONO</div>
+      <div style="font:500 15px 'IBM Plex Mono';color:#ffa63c;text-shadow:0 0 8px rgba(255,166,60,.4)">A07 · 1.00 · +3 · 99</div>
+      <div style="font:500 11px 'IBM Plex Mono';color:#b5d94e;text-shadow:0 0 8px rgba(181,217,78,.35);margin-top:6px">GLASS EP · EDITED</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:flex-end;gap:6px">
+    <sc-for list="{{ spacing }}" as="sp" hint-placeholder-count="5">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="background:#3a3d43;border-radius:2px;width:{{ sp.px }}px;height:{{ sp.px }}px"></div>
+        <div style="font:400 9px 'IBM Plex Mono';color:#7c8188">{{ sp.px }}</div>
+      </div>
+    </sc-for>
+    <div style="font:400 10px 'IBM Plex Mono';color:#7c8188;margin-left:12px;line-height:1.5">4px base grid. Panels 10px radius, insets 6px.<br>Accents: LED amber vs LCD green — compared in <b>1b</b> / <b>1c</b>.</div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1b RACKMOUNT ============ -->
+<div class="dv-opt" id="1b" data-screen-label="1b Voice Panel — Rackmount">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Voice panel — RACKMOUNT · TX81Z density · LED amber · TX mode active</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#2c2e33,#232529);border:1px solid #3d4046;border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)">
+
+  <!-- header -->
+  <div style="display:flex;align-items:center;gap:16px;padding:10px 16px;background:linear-gradient(180deg,#313339,#282a2e);border-bottom:1px solid #17181b;border-radius:10px 10px 0 0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="background:linear-gradient(180deg,#d9d2c2,#c2baa8);color:#26282b;border-radius:4px;padding:3px 9px;font:700 16px 'Barlow Condensed';letter-spacing:.06em;box-shadow:0 1px 2px rgba(0,0,0,.4)">OP4</div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#9a9da3">FM VOICE</div>
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.2em;color:#6d7178">EDITOR</div>
+      </div>
+    </div>
+    <div style="display:flex;background:#1b1d20;border:1px solid #3a3d43;border-radius:6px;padding:2px;gap:2px">
+      <div style="padding:5px 12px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#8b8f96">DX21</div>
+      <div style="padding:5px 12px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#ffa63c;background:#26221a;box-shadow:inset 0 1px 3px rgba(0,0,0,.5),0 0 10px rgba(255,166,60,.15)">TX81Z</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">‹</div>
+      <div style="display:flex;align-items:center;gap:12px;background:#181209;border:1px solid #3a2c12;border-radius:5px;padding:5px 14px;box-shadow:inset 0 2px 8px rgba(0,0,0,.7)">
+        <div style="font:500 12px 'IBM Plex Mono';color:#8a5c1e">A07</div>
+        <div style="font:500 14px 'IBM Plex Mono';color:#ffa63c;text-shadow:0 0 7px rgba(255,166,60,.5)">GLASS EP</div>
+        <div style="font:500 9px 'IBM Plex Mono';color:#ffa63c;border:1px solid #5c421a;border-radius:3px;padding:1px 5px;opacity:.85">EDITED</div>
+      </div>
+      <div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;color:#c9ccd1;font:600 12px 'IBM Plex Mono'">›</div>
+      <div style="margin-left:6px;padding:5px 12px;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:5px;font:600 10.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">COMPARE</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#ffa63c;box-shadow:0 0 8px rgba(255,166,60,.8);animation:blip 2.4s ease-in-out infinite"></div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#9a9da3">LINK · TX81Z #1</div>
+    </div>
+  </div>
+
+  <!-- body -->
+  <div style="display:grid;grid-template-columns:236px 1fr;gap:10px;padding:12px 14px">
+
+    <!-- algorithm column -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">ALGORITHM</div>
+          <div style="font:500 11px 'IBM Plex Mono';color:#ffa63c">3</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <sc-for list="{{ rackAlgos }}" as="a" hint-placeholder-count="8">
+            <div style="{{ a.bs }}">
+              {{ a.g }}
+              <div style="{{ a.ns }}">{{ a.n }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:14px">
+        <div style="position:relative;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.05)">
+          <div style="position:absolute;left:50%;top:50%;width:2px;height:17px;margin:-17px 0 0 -1px;transform-origin:50% 100%;transform:rotate(28deg);background:#e6e9ed;border-radius:1px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">FEEDBACK</div>
+          <div style="font:500 13px 'IBM Plex Mono';color:#e8e6e1">6</div>
+          <div style="font:400 9px 'IBM Plex Mono';color:#6d7178">OP4 → OP4</div>
+        </div>
+      </div>
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;gap:12px;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;background:#5b606a"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">CARRIER</div></div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:8px;border-radius:2px;border:1px solid #5b606a"></div><div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">MODULATOR</div></div>
+      </div>
+    </div>
+
+    <!-- operator strips -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ ops }}" as="op" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:148px 264px 1fr;gap:14px;align-items:center;background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 14px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font:700 17px 'Barlow Condensed';letter-spacing:.06em;color:#e8e6e1">{{ op.name }}</div>
+              <div style="{{ op.ts }}">{{ op.role }}</div>
+              <div style="width:6px;height:6px;border-radius:50%;background:#ffa63c;box-shadow:0 0 6px rgba(255,166,60,.7)"></div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <div style="font:500 10px 'IBM Plex Mono';color:#ffa63c;border:1px solid #5c421a;background:#1e1810;border-radius:4px;padding:3px 8px">{{ op.wave }}</div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#8b8f96;border:1px solid #3a3d43;border-radius:4px;padding:3px 8px">FIX {{ op.fixed }}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">RATIO</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.ratio }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">LEVEL</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.lvl }}</div>
+              <div style="height:3px;background:#2b2d32;border-radius:2px;overflow:hidden"><div style="height:100%;background:#ffa63c;width:{{ op.lvlPct }}%"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">DETUNE</div>
+              <div style="font:500 15px 'IBM Plex Mono';color:#e8e6e1">{{ op.det }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">ENVELOPE</div>
+              <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">AR {{ op.eg }}</div>
+            </div>
+            {{ op.envG }}
+          </div>
+        </div>
+      </sc-for>
+
+      <!-- bottom sections -->
+      <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:8px">
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">LFO</div>
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font:500 10px 'IBM Plex Mono';color:#e8e6e1;border:1px solid #3a3d43;border-radius:4px;padding:3px 8px">TRI</div>
+              <div style="font:500 9px 'IBM Plex Mono';color:#ffa63c;border:1px solid #5c421a;border-radius:4px;padding:2px 6px;text-align:center">SYNC</div>
+            </div>
+            <sc-for list="{{ lfoKnobs }}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">{{ k.label }}</div>
+                <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                  <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e6e9ed;border-radius:1px"></div>
+                </div>
+                <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">{{ k.val }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">PITCH EG</div>
+            <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">R 72 · L 50</div>
+          </div>
+          {{ pegRack }}
+        </div>
+        <div style="background:#1c1e21;border:1px solid #33363c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">FUNCTION</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+              <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#ffa63c;background:#26221a">POLY</div>
+              <div style="padding:3px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MONO</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">18</div></div>
+            <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">+0</div></div>
+            <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#ffa63c;background:#26221a">SNGL</div>
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">DUAL</div>
+              <div style="padding:3px 8px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">SPLIT</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#221d14;border:1px solid #5c421a;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#ffa63c">SIZZLER</div>
+            <div style="font:400 9px 'IBM Plex Mono';color:#a87c3c">14 TARGETS</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="position:relative;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #5c421a;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+                <div style="position:absolute;left:50%;top:50%;width:2px;height:12px;margin:-12px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-40deg);background:#ffa63c;border-radius:1px"></div>
+              </div>
+              <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">35</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">RND</div>
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MRF</div>
+                <div style="padding:2px 7px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#ffa63c;background:#26221a">DRF</div>
+              </div>
+              <div style="align-self:flex-start;padding:3px 10px;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:4px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">FREEZE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div style="display:flex;justify-content:space-between;padding:6px 16px 8px;border-top:1px solid #17181b">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">OP4 1.2.0 · 4% CPU</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 1c CONSOLE ============ -->
+<div class="dv-opt" id="1c" data-screen-label="1c Voice Panel — Console">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Voice panel — CONSOLE · airier channel strips · LCD green · DX21 mode (TX controls dimmed, not hidden)</div>
+<div class="dv-card" style="width:1200px">
+<div style="background:linear-gradient(180deg,#2c2e33,#242629);border:1px solid #3d4046;border-radius:10px">
+
+  <!-- beige header band -->
+  <div style="display:flex;align-items:center;gap:18px;padding:12px 20px;background:linear-gradient(180deg,#d7d0c0,#c6bead);border-bottom:1px solid #17181b;border-radius:10px 10px 0 0">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <div style="font:700 22px 'Barlow Condensed';letter-spacing:.05em;color:#26282b">OP4</div>
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.2em;color:#5c5648">4-OPERATOR FM VOICE EDITOR</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#3a3d43,#2b2d31);border:1px solid #1d1f22;border-radius:5px;color:#c9ccd1;font:600 13px 'IBM Plex Mono';box-shadow:0 1px 2px rgba(0,0,0,.3)">‹</div>
+      <div style="display:flex;align-items:center;gap:14px;background:#141a0e;border:1px solid #1d1f22;border-radius:5px;padding:6px 16px;box-shadow:inset 0 2px 8px rgba(0,0,0,.7)">
+        <div style="font:500 12px 'IBM Plex Mono';color:#5f7a2c">B12</div>
+        <div style="font:500 15px 'IBM Plex Mono';color:#b5d94e;text-shadow:0 0 8px rgba(181,217,78,.5)">NITE PAD</div>
+        <div style="font:500 9px 'IBM Plex Mono';color:#b5d94e;border:1px solid #3c4d1e;border-radius:3px;padding:1px 5px;opacity:.85">EDITED</div>
+      </div>
+      <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#3a3d43,#2b2d31);border:1px solid #1d1f22;border-radius:5px;color:#c9ccd1;font:600 13px 'IBM Plex Mono';box-shadow:0 1px 2px rgba(0,0,0,.3)">›</div>
+      <div style="margin-left:6px;padding:6px 14px;background:linear-gradient(180deg,#3a3d43,#2b2d31);border:1px solid #1d1f22;border-radius:5px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1;box-shadow:0 1px 2px rgba(0,0,0,.3)">COMPARE</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#b5d94e;box-shadow:0 0 8px rgba(181,217,78,.8);animation:blip 2.4s ease-in-out infinite"></div>
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.14em;color:#5c5648">LINK · DX21 #1</div>
+      </div>
+      <div style="display:flex;background:rgba(38,40,43,.14);border:1px solid rgba(38,40,43,.3);border-radius:6px;padding:2px;gap:2px">
+        <div style="padding:5px 13px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#e8e6e1;background:#26282b">DX21</div>
+        <div style="padding:5px 13px;border-radius:4px;font:600 11px 'Barlow Condensed';letter-spacing:.12em;color:#5c5648">TX81Z</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- algorithm band -->
+  <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #1a1b1e">
+    <div style="display:flex;flex-direction:column;gap:3px;min-width:74px">
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">ALGORITHM</div>
+      <div style="font:500 15px 'IBM Plex Mono';color:#b5d94e;text-shadow:0 0 7px rgba(181,217,78,.4)">5</div>
+    </div>
+    <div style="display:flex;gap:8px;flex:1">
+      <sc-for list="{{ consoleAlgos }}" as="a" hint-placeholder-count="8">
+        <div style="{{ a.bs }}">
+          {{ a.g }}
+          <div style="{{ a.ns }}">{{ a.n }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding-left:16px;border-left:1px solid #33363c">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">FEEDBACK</div>
+        <div style="position:relative;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+          <div style="position:absolute;left:50%;top:50%;width:2px;height:15px;margin:-15px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-12deg);background:#e6e9ed;border-radius:1px"></div>
+        </div>
+        <div style="font:500 11px 'IBM Plex Mono';color:#c9ccd1">4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- operator channel strips -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 20px">
+    <sc-for list="{{ cops }}" as="op" hint-placeholder-count="4">
+      <div style="background:#1c1e21;border:1px solid #33363c;border-radius:8px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="font:700 19px 'Barlow Condensed';letter-spacing:.06em;color:#e8e6e1">{{ op.name }}</div>
+            <div style="{{ op.ts }}">{{ op.role }}</div>
+          </div>
+          <div style="width:7px;height:7px;border-radius:50%;background:#b5d94e;box-shadow:0 0 7px rgba(181,217,78,.7)"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#7c8188">ENVELOPE</div>
+            <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">{{ op.eg }}</div>
+          </div>
+          {{ op.envG }}
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0 2px">
+          <sc-for list="{{ op.knobs }}" as="k" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+              <div style="font:600 9px 'Barlow Condensed';letter-spacing:.13em;color:#7c8188">{{ k.label }}</div>
+              <div style="position:relative;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.05)">
+                <div style="position:absolute;left:50%;top:50%;width:2px;height:15px;margin:-15px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e6e9ed;border-radius:1px"></div>
+              </div>
+              <div style="font:500 11px 'IBM Plex Mono';color:#e8e6e1">{{ k.val }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;opacity:.35;border-top:1px dashed #33363c;padding-top:9px">
+          <div style="font:500 9.5px 'IBM Plex Mono';color:#c9ccd1;border:1px solid #3a3d43;border-radius:4px;padding:2px 7px">{{ op.wave }}</div>
+          <div style="font:500 9.5px 'IBM Plex Mono';color:#c9ccd1;border:1px solid #3a3d43;border-radius:4px;padding:2px 7px">FIX OFF</div>
+          <div style="flex:1"></div>
+          <div style="font:600 8px 'Barlow Condensed';letter-spacing:.14em;color:#8b8f96">TX81Z ONLY</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- console bottom row -->
+  <div style="display:grid;grid-template-columns:1.25fr 0.95fr 1.35fr 1.05fr;gap:14px;padding:0 20px 18px">
+    <div style="background:#1c1e21;border:1px solid #33363c;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">LFO</div>
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font:500 10px 'IBM Plex Mono';color:#e8e6e1;border:1px solid #3a3d43;border-radius:4px;padding:3px 9px">SIN</div>
+          <div style="font:500 9px 'IBM Plex Mono';color:#b5d94e;border:1px solid #3c4d1e;border-radius:4px;padding:2px 7px;text-align:center">SYNC</div>
+        </div>
+        <sc-for list="{{ lfoKnobsC }}" as="k" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 9px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">{{ k.label }}</div>
+            <div style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #43474e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+              <div style="position:absolute;left:50%;top:50%;width:2px;height:13px;margin:-13px 0 0 -1px;transform-origin:50% 100%;transform:rotate({{ k.deg }}deg);background:#e6e9ed;border-radius:1px"></div>
+            </div>
+            <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">{{ k.val }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:#1c1e21;border:1px solid #33363c;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">PITCH EG</div>
+        <div style="font:400 9.5px 'IBM Plex Mono';color:#7c8188">R 58 · L 50</div>
+      </div>
+      {{ pegConsole }}
+    </div>
+    <div style="background:#1c1e21;border:1px solid #33363c;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+      <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#8b8f96">FUNCTION</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+          <div style="padding:4px 10px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#b5d94e;background:#1e2417">POLY</div>
+          <div style="padding:4px 10px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MONO</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">PORTA</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">42</div></div>
+        <div style="display:flex;flex-direction:column;gap:1px"><div style="font:600 8.5px 'Barlow Condensed';letter-spacing:.12em;color:#7c8188">TRANSP</div><div style="font:500 12px 'IBM Plex Mono';color:#e8e6e1">−12</div></div>
+        <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+          <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">SNGL</div>
+          <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#b5d94e;background:#1e2417">DUAL</div>
+          <div style="padding:4px 9px;border-radius:3px;font:600 10px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">SPLIT</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#1a2113;border:1px solid #3c4d1e;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font:600 10px 'Barlow Condensed';letter-spacing:.16em;color:#b5d94e">SIZZLER</div>
+        <div style="font:400 9px 'IBM Plex Mono';color:#7a9440">9 TARGETS</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d43,#232529 70%);border:1px solid #3c4d1e;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)">
+            <div style="position:absolute;left:50%;top:50%;width:2px;height:13px;margin:-13px 0 0 -1px;transform-origin:50% 100%;transform:rotate(-70deg);background:#b5d94e;border-radius:1px"></div>
+          </div>
+          <div style="font:500 10px 'IBM Plex Mono';color:#c9ccd1">18</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;background:#141518;border:1px solid #3a3d43;border-radius:5px;padding:2px;gap:2px">
+            <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#b5d94e;background:#1e2417">RND</div>
+            <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">MRF</div>
+            <div style="padding:2px 8px;border-radius:3px;font:600 9px 'Barlow Condensed';letter-spacing:.1em;color:#8b8f96">DRF</div>
+          </div>
+          <div style="align-self:flex-start;padding:3px 11px;background:linear-gradient(180deg,#35383e,#282a2f);border:1px solid #464a51;border-radius:4px;font:600 9.5px 'Barlow Condensed';letter-spacing:.12em;color:#c9ccd1">FREEZE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 20px 9px;border-top:1px solid #1a1b1e">
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">ENGINE VINTAGE 8-VOICE · OVERSAMPLE 2×</div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">OP4 1.2.0 · 4% CPU</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ============ 1d MEMBRANE GRID ============ -->
+<div class="dv-opt" id="1d" data-screen-label="1d Algorithm — Membrane Grid">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Algorithm selector — membrane grid · 2×4 backlit buttons, live op pulse in selection</div>
+<div class="dv-card" style="width:440px;padding:20px">
+  <div style="background:linear-gradient(180deg,#2c2e33,#242629);border:1px solid #3d4046;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font:600 11px 'Barlow Condensed';letter-spacing:.18em;color:#9a9da3">ALGORITHM</div>
+      <div style="font:500 13px 'IBM Plex Mono';color:#b5d94e;text-shadow:0 0 8px rgba(181,217,78,.45)">3 · 1 CARRIER</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      <sc-for list="{{ memAlgos }}" as="a" hint-placeholder-count="8">
+        <div style="{{ a.bs }}">
+          {{ a.g }}
+          <div style="{{ a.ns }}">{{ a.n }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">Selected diagram pulses with each operator's live envelope. Click = select · drag across = audition-scrub.</div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1e MARQUEE ============ -->
+<div class="dv-opt" id="1e" data-screen-label="1e Algorithm — Marquee">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Algorithm selector — marquee strip · selected large on display glass, neighbors receding</div>
+<div class="dv-card" style="width:660px;padding:20px">
+  <div style="background:linear-gradient(180deg,#2c2e33,#242629);border:1px solid #3d4046;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font:600 11px 'Barlow Condensed';letter-spacing:.18em;color:#9a9da3">ALGORITHM</div>
+      <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">SCROLL OR DRAG · ‹ › KEYS</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;justify-content:center">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.4">{{ mqFar1 }}<div style="font:500 9px 'IBM Plex Mono';color:#8b8f96">1</div></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.65">{{ mqPrev }}<div style="font:500 10px 'IBM Plex Mono';color:#9aa0a8">2</div></div>
+      <div style="background:#181209;border:1px solid #3a2c12;border-radius:8px;box-shadow:inset 0 3px 12px rgba(0,0,0,.75),0 0 22px rgba(255,166,60,.08);padding:16px 26px;display:flex;flex-direction:column;align-items:center;gap:8px">
+        {{ mqMain }}
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <div style="font:500 15px 'IBM Plex Mono';color:#ffa63c;text-shadow:0 0 8px rgba(255,166,60,.5)">ALG 3</div>
+          <div style="font:600 9px 'Barlow Condensed';letter-spacing:.14em;color:#a87c3c">1 CARRIER · 3 MODULATORS</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.65">{{ mqNext }}<div style="font:500 10px 'IBM Plex Mono';color:#9aa0a8">4</div></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.4">{{ mqFar2 }}<div style="font:500 9px 'IBM Plex Mono';color:#8b8f96">5</div></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:5px">
+      <sc-for list="{{ mqDots }}" as="d" hint-placeholder-count="8">
+        <div style="{{ d.st }}"></div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1f BLUEPRINT PLATE ============ -->
+<div class="dv-opt" id="1f" data-screen-label="1f Algorithm — Blueprint Plate">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Algorithm selector — blueprint plate · one annotated diagram with live levels, 7-seg program number</div>
+<div class="dv-card" style="width:560px;padding:20px">
+  <div style="background:linear-gradient(180deg,#2c2e33,#242629);border:1px solid #3d4046;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:600 11px 'Barlow Condensed';letter-spacing:.18em;color:#9a9da3">ALGORITHM</div>
+      <div style="background:#181209;border:1px solid #3a2c12;border-radius:4px;padding:3px 12px;box-shadow:inset 0 2px 6px rgba(0,0,0,.7)">
+        <div style="font:600 22px 'IBM Plex Mono';color:#ffa63c;text-shadow:0 0 10px rgba(255,166,60,.6)">5</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;background:#17191c;border:1px solid #2b2d32;border-radius:8px;padding:18px 12px">
+      {{ plateG }}
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center">
+      <sc-for list="{{ plateAlgos }}" as="a" hint-placeholder-count="8">
+        <div style="{{ a.bs }}">
+          {{ a.g }}
+          <div style="{{ a.ns }}">{{ a.n }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:400 9.5px 'IBM Plex Mono';color:#6d7178">Boxes carry ratio + live output level. Carriers filled, modulators outlined. FB bracket labeled with feedback depth.</div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "commit to <a class="dv-oid" href="#1b">1b</a>'s amber but with <a class="dv-oid" href="#1c">1c</a>'s channel strips" · "put <a class="dv-oid" href="#1e">1e</a> into the voice panel" · "now the librarian in the winning direction"</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const e = React.createElement;
+    const AMBER = '#ffa63c', GREEN = '#b5d94e';
+
+    // 4-op algorithm topologies (carriers at bottom). Approximations of the Yamaha 4-op set.
+    const ALGS = [
+      { nodes: {1:[0,0],2:[0,1],3:[0,2],4:[0,3]}, edges: [[4,3],[3,2],[2,1]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0.5,1],3:[0,2],4:[1,2]}, edges: [[3,2],[4,2],[2,1]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0,1],3:[1,1],4:[1,2]}, edges: [[2,1],[3,1],[4,3]], carriers: [1] },
+      { nodes: {1:[0.5,0],2:[0,1],3:[1,1],4:[0.5,2]}, edges: [[4,2],[4,3],[2,1],[3,1]], carriers: [1] },
+      { nodes: {1:[0,0],2:[0,1],3:[1,0],4:[1,1]}, edges: [[2,1],[4,3]], carriers: [1,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[1,1]}, edges: [[4,1],[4,2],[4,3]], carriers: [1,2,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[2,1]}, edges: [[4,3]], carriers: [1,2,3] },
+      { nodes: {1:[0,0],2:[1,0],3:[2,0],4:[3,0]}, edges: [], carriers: [1,2,3,4] }
+    ];
+
+    // algorithm glyph builder
+    const gl = (i, o) => {
+      o = o || {};
+      const A = ALGS[i];
+      const ac = o.ac || '#8b8f96';
+      const base = o.base || '#61666e', baseB = o.baseB || '#5b606a', baseT = o.baseT || '#9aa0a8', carInk = o.carInk || '#15170f';
+      const big = o.big;
+      const bw = big ? 30 : 13, bh = big ? 20 : 10, gx = big ? 26 : 9, gy = big ? 20 : 8, pad = big ? 8 : 4;
+      const ns = Object.entries(A.nodes);
+      const maxX = Math.max.apply(null, ns.map(kv => kv[1][0]));
+      const maxY = Math.max.apply(null, ns.map(kv => kv[1][1]));
+      const topPad = big ? 9 : 5;
+      const W = pad * 2 + maxX * (bw + gx) + bw + (big ? 12 : 7);
+      const H = pad + topPad + maxY * (bh + gy) + bh + pad;
+      const pos = {};
+      ns.forEach(kv => { pos[kv[0]] = { x: pad + kv[1][0] * (bw + gx), y: pad + topPad + (maxY - kv[1][1]) * (bh + gy) }; });
+      const kids = [];
+      A.edges.forEach((ed, j) => {
+        kids.push(e('line', { key: 'e' + j, x1: pos[ed[0]].x + bw / 2, y1: pos[ed[0]].y + bh, x2: pos[ed[1]].x + bw / 2, y2: pos[ed[1]].y, stroke: o.sel ? ac : base, strokeWidth: big ? 1.6 : 1.2, opacity: 0.85 }));
+      });
+      const p4 = pos[4];
+      kids.push(e('path', { key: 'fb', d: 'M ' + (p4.x + bw) + ' ' + (p4.y + bh / 2) + ' h ' + (big ? 9 : 4) + ' V ' + (p4.y - (big ? 7 : 3)) + ' H ' + (p4.x + bw / 2), fill: 'none', stroke: o.sel ? ac : base, strokeWidth: 1, opacity: 0.7 }));
+      ns.forEach((kv, j) => {
+        const k = kv[0];
+        const isC = A.carriers.indexOf(+k) >= 0;
+        const P = pos[k];
+        const st = o.sel ? { animation: 'opPulse 1.8s ease-in-out ' + (j * 0.22) + 's infinite' } : null;
+        kids.push(e('rect', { key: 'b' + k, x: P.x, y: P.y, width: bw, height: bh, rx: 2, fill: isC ? (o.sel ? ac : baseB) : 'none', stroke: isC ? 'none' : (o.sel ? ac : baseB), strokeWidth: 1.3, style: st }));
+        if (o.nums) {
+          kids.push(e('text', { key: 't' + k, x: P.x + bw / 2, y: P.y + bh / 2 + (big ? 4 : 3), textAnchor: 'middle', fill: isC ? carInk : (o.sel ? ac : baseT), style: { font: '600 ' + (big ? 11 : 7) + "px 'IBM Plex Mono'" } }, k));
+        }
+      });
+      const sc = (o.s || 40) / Math.max(W, H);
+      return e('svg', { width: Math.round(W * sc), height: Math.round(H * sc), viewBox: '0 0 ' + W + ' ' + H, style: { display: 'block', opacity: o.dim ? 0.55 : 1 } }, kids);
+    };
+
+    // envelope svg
+    const env = (p, w, h, ac) => {
+      const px = 5, py = 6, iw = w - px * 2, ih = h - py * 2, yb = h - py;
+      const xa = px + iw * (0.03 + p.a * 0.24);
+      const xd = Math.min(xa + iw * (0.05 + p.d1 * 0.3), px + iw * 0.66);
+      const ys = py + (1 - p.s) * ih;
+      const xs = px + iw * 0.78;
+      const xr = Math.min(xs + iw * (0.05 + p.r * 0.17), px + iw);
+      const P = [[px, yb], [xa, py], [xd, ys], [xs, ys], [xr, yb]];
+      const pts = P.map(q => q.join(',')).join(' ');
+      const area = 'M' + P.map(q => q.join(',')).join(' L') + ' Z';
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: '#141619', borderRadius: 4, border: '1px solid #2b2d32', boxSizing: 'border-box' } },
+        e('line', { x1: px, y1: yb, x2: w - px, y2: yb, stroke: '#33363c', strokeWidth: 1 }),
+        e('path', { d: area, fill: ac, opacity: 0.09 }),
+        e('polyline', { points: pts, fill: 'none', stroke: ac, strokeWidth: 1.6, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 3, fill: '#17191c', stroke: ac, strokeWidth: 1.4 }))
+      );
+    };
+
+    // LCD-styled envelope (dark trace on yellow-green field)
+    const LCD_BG = 'linear-gradient(180deg,#cdd964,#b6c74b)', LCD_INK = '#26310f', LCD_BRD = '#8a9a35';
+    const lcdEnv = (p, w, h) => {
+      const px = 5, py = 6, iw = w - px * 2, ih = h - py * 2, yb = h - py;
+      const xa = px + iw * (0.03 + p.a * 0.24);
+      const xd = Math.min(xa + iw * (0.05 + p.d1 * 0.3), px + iw * 0.66);
+      const ys = py + (1 - p.s) * ih;
+      const xs = px + iw * 0.78;
+      const xr = Math.min(xs + iw * (0.05 + p.r * 0.17), px + iw);
+      const P = [[px, yb], [xa, py], [xd, ys], [xs, ys], [xr, yb]];
+      const pts = P.map(q => q.join(',')).join(' ');
+      const area = 'M' + P.map(q => q.join(',')).join(' L') + ' Z';
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: LCD_BG, borderRadius: 3, border: '1px solid ' + LCD_BRD, boxSizing: 'border-box', boxShadow: 'inset 0 1px 4px rgba(0,0,0,.3)' } },
+        e('line', { x1: px, y1: yb, x2: w - px, y2: yb, stroke: LCD_INK, strokeWidth: 1, opacity: 0.25 }),
+        e('path', { d: area, fill: LCD_INK, opacity: 0.12 }),
+        e('polyline', { points: pts, fill: 'none', stroke: LCD_INK, strokeWidth: 1.7, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 3, fill: '#c3d254', stroke: LCD_INK, strokeWidth: 1.4 }))
+      );
+    };
+    const lcdPeg = (w, h) => {
+      const mid = h / 2;
+      const P = [[5, mid], [w * 0.28, h * 0.18], [w * 0.58, h * 0.78], [w - 5, mid]];
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: LCD_BG, borderRadius: 3, border: '1px solid ' + LCD_BRD, boxSizing: 'border-box', boxShadow: 'inset 0 1px 4px rgba(0,0,0,.3)' } },
+        e('line', { x1: 4, y1: mid, x2: w - 4, y2: mid, stroke: LCD_INK, strokeWidth: 1, strokeDasharray: '3 3', opacity: 0.3 }),
+        e('polyline', { points: P.map(q => q.join(',')).join(' '), fill: 'none', stroke: LCD_INK, strokeWidth: 1.7, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 2.6, fill: '#c3d254', stroke: LCD_INK, strokeWidth: 1.3 }))
+      );
+    };
+
+    // pitch EG svg
+    const peg = (w, h, ac) => {
+      const mid = h / 2;
+      const P = [[5, mid], [w * 0.28, h * 0.18], [w * 0.58, h * 0.78], [w - 5, mid]];
+      return e('svg', { width: '100%', height: h, viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none', style: { display: 'block', background: '#141619', borderRadius: 4, border: '1px solid #2b2d32', boxSizing: 'border-box' } },
+        e('line', { x1: 4, y1: mid, x2: w - 4, y2: mid, stroke: '#33363c', strokeWidth: 1, strokeDasharray: '3 3' }),
+        e('polyline', { points: P.map(q => q.join(',')).join(' '), fill: 'none', stroke: ac, strokeWidth: 1.6, strokeLinejoin: 'round' }),
+        P.map((q, i) => e('circle', { key: i, cx: q[0], cy: q[1], r: 2.6, fill: '#17191c', stroke: ac, strokeWidth: 1.3 }))
+      );
+    };
+
+    // blueprint plate (alg 5, annotated)
+    const plate = () => {
+      const A = ALGS[4], ac = AMBER;
+      const bw = 96, bh = 52, gx = 56, gy = 42, pad = 12, topPad = 14;
+      const data = { 1: { r: '1.00', l: 99, role: 'CAR' }, 2: { r: '2.00', l: 54, role: 'MOD' }, 3: { r: '1.01', l: 92, role: 'CAR' }, 4: { r: '6.00', l: 37, role: 'MOD' } };
+      const ns = Object.entries(A.nodes);
+      const maxX = 1, maxY = 1;
+      const W = pad * 2 + maxX * (bw + gx) + bw + 26;
+      const H = pad + topPad + maxY * (bh + gy) + bh + pad;
+      const pos = {};
+      ns.forEach(kv => { pos[kv[0]] = { x: pad + kv[1][0] * (bw + gx), y: pad + topPad + (maxY - kv[1][1]) * (bh + gy) }; });
+      const kids = [];
+      A.edges.forEach((ed, j) => {
+        kids.push(e('line', { key: 'e' + j, x1: pos[ed[0]].x + bw / 2, y1: pos[ed[0]].y + bh, x2: pos[ed[1]].x + bw / 2, y2: pos[ed[1]].y, stroke: ac, strokeWidth: 1.8, opacity: 0.7 }));
+      });
+      const p4 = pos[4];
+      kids.push(e('path', { key: 'fb', d: 'M ' + (p4.x + bw) + ' ' + (p4.y + bh / 2) + ' h 14 V ' + (p4.y - 9) + ' H ' + (p4.x + bw / 2), fill: 'none', stroke: ac, strokeWidth: 1.2, opacity: 0.7 }));
+      kids.push(e('text', { key: 'fbt', x: p4.x + bw + 20, y: p4.y + bh / 2 - 8, fill: '#a87c3c', style: { font: "500 10px 'IBM Plex Mono'" } }, 'FB 4'));
+      ns.forEach((kv, j) => {
+        const k = kv[0], d = data[k], P = pos[k];
+        const isC = d.role === 'CAR';
+        kids.push(e('rect', { key: 'b' + k, x: P.x, y: P.y, width: bw, height: bh, rx: 5, fill: isC ? 'rgba(255,166,60,.13)' : '#1f2125', stroke: isC ? ac : '#4a4e55', strokeWidth: 1.4, style: isC ? { animation: 'opPulse 2s ease-in-out ' + (j * 0.3) + 's infinite' } : null }));
+        kids.push(e('text', { key: 'n' + k, x: P.x + 10, y: P.y + 18, fill: isC ? ac : '#c9ccd1', style: { font: "700 13px 'Barlow Condensed'", letterSpacing: '.06em' } }, 'OP' + k));
+        kids.push(e('text', { key: 'r' + k, x: P.x + bw - 10, y: P.y + 18, textAnchor: 'end', fill: isC ? ac : '#9aa0a8', style: { font: "500 11px 'IBM Plex Mono'" } }, d.r));
+        kids.push(e('text', { key: 'ro' + k, x: P.x + 10, y: P.y + 33, fill: '#7c8188', style: { font: "600 8px 'Barlow Condensed'", letterSpacing: '.14em' } }, d.role === 'CAR' ? 'CARRIER' : 'MODULATOR'));
+        kids.push(e('rect', { key: 'lb' + k, x: P.x + 10, y: P.y + bh - 12, width: bw - 20, height: 4, rx: 2, fill: '#2b2d32' }));
+        kids.push(e('rect', { key: 'lf' + k, x: P.x + 10, y: P.y + bh - 12, width: (bw - 20) * d.l / 99, height: 4, rx: 2, fill: isC ? ac : '#8b8f96' }));
+      });
+      return e('svg', { width: Math.round(W * 1.35), height: Math.round(H * 1.35), viewBox: '0 0 ' + W + ' ' + H, style: { display: 'block' } }, kids);
+    };
+
+    // button style factories
+    const algBtn = (sel, ac, h, glow) => ({
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px',
+      height: h + 'px', borderRadius: '6px', flex: '1',
+      background: sel ? '#191b16' : 'linear-gradient(180deg,#33363c,#26282d)',
+      border: sel ? '1px solid ' + ac + '66' : '1px solid #43474e',
+      boxShadow: sel ? 'inset 0 2px 6px rgba(0,0,0,.6), 0 0 ' + (glow || 12) + 'px ' + ac + '2e' : 'inset 0 1px 0 rgba(255,255,255,.06), 0 2px 3px rgba(0,0,0,.35)'
+    });
+    const algNum = (sel, ac) => ({ font: "600 9px 'IBM Plex Mono'", color: sel ? ac : '#8b8f96' });
+    const roleTag = (isC, ac, tint) => ({
+      font: "600 9px 'Barlow Condensed'", letterSpacing: '.13em', padding: '2px 6px', borderRadius: '3px',
+      background: isC ? tint : 'rgba(255,255,255,.06)', color: isC ? ac : '#9aa0a8', border: '1px solid ' + (isC ? ac + '44' : '#3a3d43')
+    });
+
+    const deg = v => Math.round(v / 99 * 270 - 135);
+
+    // ---- rack patch: GLASS EP, alg 3 (carrier 1) ----
+    const OPD = [
+      { name: 'OP 1', role: 'CARRIER', c: true, ratio: '1.00', lvl: '99', lvlPct: 99, det: '+0', wave: 'W1 SIN', fixed: 'OFF', eg: '31·18·06·24', ep: { a: 0.04, d1: 0.5, s: 0.62, r: 0.4 } },
+      { name: 'OP 2', role: 'MOD', c: false, ratio: '14.00', lvl: '58', lvlPct: 58, det: '+2', wave: 'W1 SIN', fixed: 'OFF', eg: '31·26·00·31', ep: { a: 0.02, d1: 0.18, s: 0.1, r: 0.15 } },
+      { name: 'OP 3', role: 'MOD', c: false, ratio: '1.00', lvl: '66', lvlPct: 66, det: '−4', wave: 'W2 SQR', fixed: 'OFF', eg: '28·14·10·20', ep: { a: 0.1, d1: 0.42, s: 0.45, r: 0.35 } },
+      { name: 'OP 4', role: 'MOD', c: false, ratio: '5.00', lvl: '41', lvlPct: 41, det: '+0', wave: 'W3 TRI', fixed: 'OFF', eg: '31·30·00·28', ep: { a: 0.02, d1: 0.1, s: 0.05, r: 0.1 } }
+    ];
+    const ops = OPD.map(o => Object.assign({}, o, {
+      ts: roleTag(o.c, AMBER, 'rgba(255,166,60,.13)'),
+      envG: env(o.ep, 380, 58, AMBER)
+    }));
+
+    // ---- turn 2 themes ----
+    const SILK_GREEN = '#8fae4a', LCD_LIT = '#cdd964';
+    const roleTagDX = isC => ({
+      font: "600 9px 'Barlow Condensed'", letterSpacing: '.13em', padding: '2px 6px', borderRadius: '3px',
+      background: isC ? 'rgba(143,174,74,.18)' : 'rgba(216,210,194,.07)', color: isC ? '#a9c25c' : '#96907f',
+      border: '1px solid ' + (isC ? '#8fae4a55' : '#4a4742')
+    });
+    const dxOps = OPD.map(o => Object.assign({}, o, {
+      ts: roleTagDX(o.c),
+      envG: lcdEnv(o.ep, 380, 58)
+    }));
+    const hybOps = OPD.map(o => Object.assign({}, o, {
+      ts: roleTag(o.c, LCD_LIT, 'rgba(205,217,100,.12)'),
+      envG: lcdEnv(o.ep, 380, 58)
+    }));
+    // TX81Z-faithful: black rack, red-orange LED segments
+    const TXLED = '#ff6a3d';
+    const txOps = OPD.map(o => Object.assign({}, o, {
+      ts: roleTag(o.c, TXLED, 'rgba(255,106,61,.13)'),
+      envG: env(o.ep, 380, 58, TXLED)
+    }));
+    const txBtn = sel => ({
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px',
+      height: '62px', borderRadius: '4px', flex: '1',
+      background: sel ? '#170d09' : 'linear-gradient(180deg,#26272a,#1c1d20)',
+      border: sel ? '1px solid #ff6a3d55' : '1px solid #34363a',
+      boxShadow: sel ? 'inset 0 2px 6px rgba(0,0,0,.7), 0 0 12px rgba(255,106,61,.2)' : 'inset 0 1px 0 rgba(255,255,255,.05), 0 2px 3px rgba(0,0,0,.45)'
+    });
+    const txAlgos = ALGS.map((_, i) => ({
+      n: i + 1,
+      g: gl(i, { s: 34, sel: i === 2, ac: TXLED, nums: true, base: '#4d4f54', baseB: '#4d4f54', baseT: '#84878d', carInk: '#170d09' }),
+      bs: txBtn(i === 2),
+      ns: { font: "600 9px 'IBM Plex Mono'", color: i === 2 ? TXLED : '#84878d' }
+    }));
+    const dxBtn = sel => ({
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px',
+      height: '62px', borderRadius: '5px', flex: '1',
+      background: sel ? LCD_BG : 'linear-gradient(180deg,#ddd6c6,#c8c0ad)',
+      border: sel ? '1px solid ' + LCD_BRD : '1px solid #a89f8a',
+      boxShadow: sel ? 'inset 0 2px 5px rgba(0,0,0,.3)' : 'inset 0 1px 0 rgba(255,255,255,.5), 0 2px 3px rgba(0,0,0,.4)'
+    });
+    const dxAlgos = ALGS.map((_, i) => ({
+      n: i + 1,
+      g: gl(i, { s: 34, sel: i === 2, ac: LCD_INK, nums: true, base: '#57523f', baseB: '#57523f', baseT: '#57523f', carInk: '#c3d254' }),
+      bs: dxBtn(i === 2),
+      ns: { font: "600 9px 'IBM Plex Mono'", color: i === 2 ? LCD_INK : '#57523f' }
+    }));
+    const hybAlgos = ALGS.map((_, i) => ({
+      n: i + 1,
+      g: gl(i, { s: 34, sel: i === 2, ac: LCD_LIT, nums: true, carInk: '#1a1d0d' }),
+      bs: algBtn(i === 2, LCD_LIT, 62),
+      ns: algNum(i === 2, LCD_LIT)
+    }));
+
+    // ---- console patch: NITE PAD, alg 5 (carriers 1,3) ----
+    const cops = [
+      { name: 'OP 1', role: 'CARRIER', c: true, eg: 'A 06 · R 12', ep: { a: 0.7, d1: 0.5, s: 0.85, r: 0.8 }, knobs: [{ label: 'RATIO', val: '1.00', deg: -90 }, { label: 'LEVEL', val: '99', deg: deg(99) }, { label: 'DETUNE', val: '+0', deg: 0 }], wave: 'W1 SIN' },
+      { name: 'OP 2', role: 'MOD', c: false, eg: 'A 12 · R 18', ep: { a: 0.5, d1: 0.6, s: 0.55, r: 0.6 }, knobs: [{ label: 'RATIO', val: '2.00', deg: -58 }, { label: 'LEVEL', val: '54', deg: deg(54) }, { label: 'DETUNE', val: '+3', deg: 24 }], wave: 'W1 SIN' },
+      { name: 'OP 3', role: 'CARRIER', c: true, eg: 'A 08 · R 14', ep: { a: 0.62, d1: 0.45, s: 0.78, r: 0.85 }, knobs: [{ label: 'RATIO', val: '1.01', deg: -88 }, { label: 'LEVEL', val: '92', deg: deg(92) }, { label: 'DETUNE', val: '+6', deg: 46 }], wave: 'W1 SIN' },
+      { name: 'OP 4', role: 'MOD', c: false, eg: 'A 20 · R 22', ep: { a: 0.35, d1: 0.7, s: 0.4, r: 0.5 }, knobs: [{ label: 'RATIO', val: '6.00', deg: 42 }, { label: 'LEVEL', val: '37', deg: deg(37) }, { label: 'DETUNE', val: '−2', deg: -16 }], wave: 'W1 SIN' }
+    ].map(o => Object.assign(o, {
+      ts: roleTag(o.c, GREEN, 'rgba(181,217,78,.12)'),
+      envG: env(o.ep, 250, 96, GREEN)
+    }));
+
+    const rackAlgos = ALGS.map((_, i) => ({ n: i + 1, g: gl(i, { s: 34, sel: i === 2, ac: AMBER, nums: true }), bs: algBtn(i === 2, AMBER, 62), ns: algNum(i === 2, AMBER) }));
+    const consoleAlgos = ALGS.map((_, i) => ({ n: i + 1, g: gl(i, { s: 36, sel: i === 4, ac: GREEN, nums: true }), bs: algBtn(i === 4, GREEN, 62), ns: algNum(i === 4, GREEN) }));
+    const memAlgos = ALGS.map((_, i) => ({ n: i + 1, g: gl(i, { s: 48, sel: i === 2, ac: GREEN, nums: true }), bs: algBtn(i === 2, GREEN, 92, 18), ns: algNum(i === 2, GREEN) }));
+    const plateAlgos = ALGS.map((_, i) => ({ n: i + 1, g: gl(i, { s: 24, sel: i === 4, ac: AMBER }), bs: algBtn(i === 4, AMBER, 48), ns: algNum(i === 4, AMBER) }));
+    const mqDots = ALGS.map((_, i) => ({ st: { width: '6px', height: '6px', borderRadius: '50%', background: i === 2 ? AMBER : '#3a3d43', boxShadow: i === 2 ? '0 0 6px rgba(255,166,60,.7)' : 'none' } }));
+
+    // ---- turn 3: librarian + drum rack data (DX21 theme) ----
+    const CATS = { EP: '#a9c25c', BASS: '#c2704a', BRASS: '#d0b45a', PAD: '#9aa3ad', LEAD: '#cdd964', SFX: '#b08bb5', ORG: '#7fa8a0', STR: '#c4beb0', PERC: '#c2704a', KEY: '#a9c25c' };
+    const NAMES = ['GLASS EP', 'FULLTINES', 'LATELY BASS', 'SOLID BASS', 'BRASS 1', 'SAX BC1', 'GLASS EP', 'NITE PAD', 'WARM STR', 'CHIME PAD', 'SYN LEAD', 'SQUARE LD', 'PIPE ORG', 'ROCK ORG', 'CLAV 1', 'HARPSI', 'MARIMBA', 'VIBES', 'STEEL DRM', 'TIMPANI', 'WOOD BASS', 'FRETLESS', 'HORN SECT', 'TRUMPET', 'ANLG PAD', 'ICE FIELD', 'ZAP SFX', 'STARSHIP', 'BELL TREE', 'TUB BELLS', '', ''];
+    const CATSEQ = ['EP', 'EP', 'BASS', 'BASS', 'BRASS', 'BRASS', 'EP', 'PAD', 'STR', 'PAD', 'LEAD', 'LEAD', 'ORG', 'ORG', 'KEY', 'KEY', 'PERC', 'PERC', 'PERC', 'PERC', 'BASS', 'BASS', 'BRASS', 'BRASS', 'PAD', 'PAD', 'SFX', 'SFX', 'PERC', 'PERC', '', ''];
+    const bankCells = NAMES.map((nm, i) => {
+      const empty = !nm, sel = i === 6 - 1 + 1 && i === 6; // slot A07 selected (index 6)
+      return {
+        n: (i + 1 < 10 ? '0' : '') + (i + 1),
+        name: empty ? '— — — —' : nm,
+        cat: CATSEQ[i],
+        catCol: empty ? 'transparent' : CATS[CATSEQ[i]],
+        cs: {
+          display: 'flex', flexDirection: 'column', gap: '4px', padding: '7px 9px', borderRadius: '4px', minWidth: 0,
+          background: i === 6 ? LCD_BG : '#262421',
+          border: i === 6 ? '1px solid ' + LCD_BRD : '1px solid #3d3a35',
+          boxShadow: i === 6 ? 'inset 0 1px 4px rgba(0,0,0,.25)' : 'none',
+          opacity: empty ? 0.45 : 1
+        },
+        ns2: { font: "500 11px 'IBM Plex Mono'", color: i === 6 ? LCD_INK : (empty ? '#6e6959' : '#d8d2c2'), whiteSpace: 'nowrap', overflow: 'hidden' },
+        ss: { font: "500 9px 'IBM Plex Mono'", color: i === 6 ? '#5a6630' : '#6e6959' },
+        ts2: { font: "600 8px 'Barlow Condensed'", letterSpacing: '.12em', color: i === 6 ? LCD_INK : CATS[CATSEQ[i]] || 'transparent' }
+      };
+    });
+    const banks = [
+      { name: 'FACTORY A', n: '32', sel: true }, { name: 'E.PIANO COLLECTION', n: '32' }, { name: 'USER 01', n: '27' },
+      { name: 'TX ROM 1', n: '32' }, { name: 'GEN · SCI-FI 06', n: '18' }, { name: 'RX21 KITS', n: '12' }
+    ].map(b => Object.assign(b, {
+      bs2: {
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 10px', borderRadius: '4px',
+        background: b.sel ? 'rgba(143,174,74,.14)' : 'transparent',
+        border: b.sel ? '1px solid #8fae4a55' : '1px solid transparent'
+      },
+      ns3: { font: "600 11px 'Barlow Condensed'", letterSpacing: '.08em', color: b.sel ? '#a9c25c' : '#c4beb0' }
+    }));
+    const libTags = ['ALL', 'EP', 'BASS', 'PAD', 'LEAD', 'BRASS', 'SFX'].map((t, i) => ({
+      t, st: {
+        font: "600 9.5px 'Barlow Condensed'", letterSpacing: '.12em', padding: '3px 9px', borderRadius: '3px',
+        color: i === 0 ? '#1f2912' : '#96907f',
+        background: i === 0 ? 'linear-gradient(180deg,#a9c25c,#8fae4a)' : '#262421',
+        border: i === 0 ? '1px solid #77913a' : '1px solid #3d3a35'
+      }
+    }));
+    const GRP = { KICKS: '#c2704a', SNARES: '#a9c25c', HATS: '#d0b45a', TOMS: '#9aa3ad', CYMB: '#b08bb5', PERC: '#cdd964' };
+    const drumGroups = Object.keys(GRP).map((g, i) => ({
+      g, dot: { width: '8px', height: '8px', borderRadius: '2px', background: GRP[g], flex: 'none' },
+      ms: {
+        font: "600 9px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 7px', borderRadius: '3px',
+        color: i === 3 ? '#1f2912' : '#96907f',
+        background: i === 3 ? 'linear-gradient(180deg,#d0b45a,#b89a3e)' : '#262421',
+        border: i === 3 ? '1px solid #a3873a' : '1px solid #3d3a35'
+      }
+    }));
+    const DRUMS = [
+      ['01', 'BD TIGHT', 'C1', 92, 'C', '+0', 'KICKS', '', 0, 0],
+      ['02', 'BD ROOM', 'C#1', 84, 'C', '−3', 'KICKS', '', 0, 0],
+      ['03', 'SD CRACK', 'D1', 88, 'R4', '+0', 'SNARES', '', 0, 1],
+      ['04', 'SD RIM', 'D#1', 70, 'L6', '+2', 'SNARES', '', 0, 0],
+      ['05', 'HH CLOSED', 'F#1', 76, 'L12', '+0', 'HATS', 'A', 0, 0],
+      ['06', 'HH OPEN', 'A#1', 74, 'L12', '+0', 'HATS', 'A', 0, 0],
+      ['07', 'TOM LO', 'F1', 81, 'R10', '−5', 'TOMS', '', 1, 0],
+      ['08', 'TOM HI', 'G1', 81, 'L10', '+4', 'TOMS', '', 1, 0],
+      ['09', 'CRASH', 'C#2', 66, 'R16', '+0', 'CYMB', '', 0, 0],
+      ['10', 'COWBELL', 'G#2', 58, 'R20', '+0', 'PERC', '', 0, 0]
+    ].map(d => ({
+      n: d[0], name: d[1], key: d[2], lvl: d[3], pan: d[4], tune: d[5], grp: d[6], choke: d[7], m: d[8], s: d[9],
+      gbar: { width: '3px', alignSelf: 'stretch', borderRadius: '2px', background: GRP[d[6]], flex: 'none' },
+      lvlW: Math.round(d[3] / 99 * 100) + '%',
+      mst: { font: "600 9px 'IBM Plex Mono'", width: '20px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', color: d[8] ? '#1f2912' : '#96907f', background: d[8] ? 'linear-gradient(180deg,#d0b45a,#b89a3e)' : '#262421', border: d[8] ? '1px solid #a3873a' : '1px solid #3d3a35' },
+      sst: { font: "600 9px 'IBM Plex Mono'", width: '20px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', color: d[9] ? '#1f2912' : '#96907f', background: d[9] ? 'linear-gradient(180deg,#a9c25c,#8fae4a)' : '#262421', border: d[9] ? '1px solid #77913a' : '1px solid #3d3a35' },
+      chst: { font: "600 8.5px 'IBM Plex Mono'", padding: '1px 5px', borderRadius: '3px', color: d[7] ? '#26310f' : 'transparent', background: d[7] ? '#cdd964' : 'transparent', border: d[7] ? '1px solid #8a9a35' : '1px solid transparent' }
+    }));
+    const KEYMAP = { 0: 'KICKS', 1: 'KICKS', 2: 'SNARES', 3: 'SNARES', 5: 'TOMS', 6: 'HATS', 7: 'TOMS', 10: 'HATS', 13: 'CYMB', 20: 'PERC' };
+    const NOTE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const keyStrip = Array.from({ length: 25 }, (_, i) => {
+      const black = [1, 3, 6, 8, 10].indexOf(i % 12) >= 0;
+      const grp = KEYMAP[i];
+      return {
+        label: i % 12 === 0 ? 'C' + (1 + i / 12) : '',
+        ks: {
+          flex: '1', height: '38px', borderRadius: '0 0 3px 3px', position: 'relative',
+          background: black ? '#33312e' : '#d8d2c2',
+          border: '1px solid ' + (black ? '#211f1c' : '#a89f8a'),
+          borderTop: grp ? '4px solid ' + GRP[grp] : '4px solid transparent',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'center'
+        },
+        ls: { font: "500 8px 'IBM Plex Mono'", color: black ? '#96907f' : '#6e6959', paddingBottom: '2px' }
+      };
+    });
+
+    // ---- turn 4: FX + Generator ----
+    const fxBlocks = [
+      { name: 'COMP', on: 1, knobs: [['THRESH', '−18', -50], ['RATIO', '4:1', 20], ['GAIN', '+4', 30]] },
+      { name: 'DIST', on: 0, knobs: [['DRIVE', '22', -70], ['TONE', '58', 10], ['LEVEL', '80', 60]] },
+      { name: 'EQ', on: 1, knobs: [['LOW', '+2', 10], ['MID', '−3', -14], ['HIGH', '+4', 22], ['FREQ', '2.4K', 35]] },
+      { name: 'CHORUS', on: 1, knobs: [['RATE', '0.8', -40], ['DEPTH', '46', 5], ['MIX', '35', -20]] },
+      { name: 'DELAY', on: 1, knobs: [['TIME', '380', 25], ['FDBK', '28', -35], ['MIX', '22', -48]] }
+    ].map(b => Object.assign(b, {
+      led: { width: '8px', height: '8px', borderRadius: '50%', background: b.on ? '#a9c25c' : '#454239', boxShadow: b.on ? '0 0 7px rgba(169,194,92,.8)' : 'inset 0 1px 2px rgba(0,0,0,.6)' },
+      bst: { opacity: b.on ? 1 : 0.45 },
+      ks2: b.knobs.map(k => ({ label: k[0], val: k[1], deg: k[2] }))
+    }));
+    const spxProgs = [
+      { n: '01', name: 'REV HALL', sel: true }, { n: '02', name: 'REV ROOM' }, { n: '03', name: 'REV PLATE' },
+      { n: '09', name: 'STEREO ECHO' }, { n: '12', name: 'PITCH CHG A' }, { n: '17', name: 'GATE REV' }, { n: '21', name: 'FREEZE A' }
+    ].map(p => Object.assign(p, {
+      pst: {
+        display: 'flex', gap: '8px', alignItems: 'baseline', padding: '4px 9px', borderRadius: '3px',
+        background: p.sel ? 'rgba(255,166,60,.13)' : 'transparent',
+        border: p.sel ? '1px solid #ffa63c44' : '1px solid transparent'
+      },
+      pn: { font: "500 10px 'IBM Plex Mono'", color: p.sel ? '#ffa63c' : '#6e6959' },
+      pm: { font: "600 11px 'Barlow Condensed'", letterSpacing: '.08em', color: p.sel ? '#ffa63c' : '#c4beb0' }
+    }));
+    const spxParams = [
+      { label: 'REV TIME', val: '2.6 s', deg: 20 }, { label: 'PRE DELAY', val: '32 ms', deg: -40 },
+      { label: 'HF DAMP', val: '0.7', deg: -10 }, { label: 'E/R LEVEL', val: '64', deg: 34 }, { label: 'MIX', val: '28', deg: -46 }
+    ];
+    const genCats = ['PADS', 'SCI-FI', 'RPG', 'PERCUSSION', 'GM', 'E.PIANO', 'BASS'].map((c, i) => ({
+      c, st: {
+        font: "600 10.5px 'Barlow Condensed'", letterSpacing: '.12em', padding: '6px 14px', borderRadius: '3px',
+        color: i === 1 ? '#1f2912' : '#33312e',
+        background: i === 1 ? 'linear-gradient(180deg,#a9c25c,#8fae4a)' : 'linear-gradient(180deg,#ddd6c6,#c8c0ad)',
+        boxShadow: i === 1 ? 'inset 0 1px 0 rgba(255,255,255,.3), 0 2px 3px rgba(0,0,0,.4)' : 'inset 0 1px 0 rgba(255,255,255,.5), 0 2px 3px rgba(0,0,0,.4)',
+        opacity: i === 1 ? 1 : 0.85
+      }
+    }));
+    const GENR = [
+      ['VOID BEACON', 'kept'], ['ION WASH', ''], ['CRYO PAD', 'kept'], ['SOLAR WIND', ''],
+      ['DARK ORBIT', 'x'], ['NEBULA CRY', ''], ['PULSAR 7', 'kept'], ['STATIC MOON', ''],
+      ['WARP SIREN', 'x'], ['GAMMA BELL', ''], ['RED SHIFT', ''], ['ECHO PROBE', '']
+    ];
+    const genResults = GENR.map(g => ({
+      name: g[0],
+      state: g[1],
+      cs2: {
+        display: 'flex', flexDirection: 'column', gap: '7px', padding: '10px 11px', borderRadius: '5px',
+        background: g[1] === 'kept' ? LCD_BG : '#262421',
+        border: g[1] === 'kept' ? '1px solid ' + LCD_BRD : '1px solid #3d3a35',
+        boxShadow: g[1] === 'kept' ? 'inset 0 1px 4px rgba(0,0,0,.25)' : 'none',
+        opacity: g[1] === 'x' ? 0.35 : 1
+      },
+      nn: { font: "500 11.5px 'IBM Plex Mono'", color: g[1] === 'kept' ? LCD_INK : '#d8d2c2', whiteSpace: 'nowrap' },
+      wave: (g[1] === 'kept' ? lcdEnv : env)({ a: Math.random() * 0.6 + 0.05, d1: Math.random() * 0.7 + 0.1, s: Math.random() * 0.8, r: Math.random() * 0.6 + 0.1 }, 150, 30, '#8fae4a'),
+      kb: { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 8px', borderRadius: '3px', color: g[1] === 'kept' ? '#1f2912' : '#33312e', background: g[1] === 'kept' ? 'linear-gradient(180deg,#a9c25c,#8fae4a)' : 'linear-gradient(180deg,#ddd6c6,#c8c0ad)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.4)' },
+      kl: g[1] === 'kept' ? 'KEPT ✓' : 'KEEP',
+      ds: { font: "600 8.5px 'Barlow Condensed'", letterSpacing: '.1em', padding: '2px 8px', borderRadius: '3px', color: g[1] === 'kept' ? '#5a6630' : '#96907f', border: '1px solid ' + (g[1] === 'kept' ? '#8a9a35' : '#3d3a35') }
+    }));
+
+    // ---- turn 5: MIDI / Settings ----
+    const CCROWS = [
+      ['OP1 LEVEL', '16', 1], ['OP2 LEVEL', '17', 1], ['OP3 LEVEL', '18', 1], ['OP4 LEVEL', '19', 1],
+      ['FEEDBACK', '20', 1], ['LFO SPEED', '21', 1], ['LFO PMD', '22', 0], ['ALGORITHM', '—', 0],
+      ['PORTA TIME', '5', 1], ['SIZZLER AMT', '70', 1]
+    ];
+    const ccRows = CCROWS.map((r, i) => ({
+      p: r[0], cc: r[1], learn: i === 6,
+      rs: {
+        display: 'grid', gridTemplateColumns: '1fr 64px 70px 70px', gap: '10px', alignItems: 'center',
+        padding: '5px 10px', borderRadius: '4px',
+        background: i === 6 ? 'rgba(169,194,92,.14)' : (i % 2 ? '#22201d' : 'transparent'),
+        border: i === 6 ? '1px solid #8fae4a66' : '1px solid transparent'
+      },
+      ccs: {
+        font: "500 11px 'IBM Plex Mono'", textAlign: 'center', padding: '2px 0', borderRadius: '3px',
+        color: r[2] ? '#26310f' : '#6e6959',
+        background: r[2] ? 'linear-gradient(180deg,#cdd964,#b6c74b)' : '#1e1c19',
+        border: r[2] ? '1px solid #8a9a35' : '1px solid #3d3a35',
+        boxShadow: r[2] ? 'inset 0 1px 3px rgba(0,0,0,.25)' : 'none'
+      },
+      ls2: i === 6
+        ? { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: '#1f2912', background: 'linear-gradient(180deg,#a9c25c,#8fae4a)', animation: 'blip 1.2s ease-in-out infinite' }
+        : { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: '#96907f', border: '1px solid #3d3a35' },
+      ll: i === 6 ? 'LISTENING…' : 'LEARN',
+      cl: { font: "600 9px 'Barlow Condensed'", letterSpacing: '.12em', textAlign: 'center', padding: '3px 0', borderRadius: '3px', color: r[1] === '—' ? '#4a4742' : '#96907f', border: '1px solid #3d3a35', opacity: r[1] === '—' ? 0.4 : 1 }
+    }));
+    const nrpnRows = [
+      ['ALGORITHM', '00 07'], ['FEEDBACK', '00 08'], ['OP1 RATIO', '01 00'], ['OP1 LEVEL', '01 01'],
+      ['OP1 EG ATK', '01 02'], ['LFO SPEED', '00 10'], ['PITCH EG R1', '00 20'], ['WAVE SELECT', '01 0A']
+    ].map(r => ({ p: r[0], v: r[1] }));
+
+    return {
+      ccRows, nrpnRows,
+      fxBlocks, spxProgs, spxParams, genCats, genResults,
+      bankCells, banks, libTags, drumGroups, drums: DRUMS, keyStrip,
+      swatches: [
+        { name: 'GRAPHITE 950', hex: '#131416' }, { name: 'PANEL', hex: '#2B2D31' }, { name: 'INSET', hex: '#1C1E21' },
+        { name: 'LINE', hex: '#3A3D43' }, { name: 'SILKSCREEN', hex: '#8B8F96' }, { name: 'INK', hex: '#E8E6E1' },
+        { name: 'PUTTY', hex: '#CFC7B4' }, { name: 'LED AMBER', hex: '#FFA63C' }, { name: 'LCD GREEN', hex: '#B5D94E' }
+      ],
+      spacing: [{ px: 4 }, { px: 8 }, { px: 12 }, { px: 16 }, { px: 24 }],
+      ops, cops, rackAlgos, consoleAlgos, memAlgos, plateAlgos, mqDots,
+      dxOps, hybOps, dxAlgos, hybAlgos, txOps, txAlgos,
+      pegDX: lcdPeg(280, 52), pegHyb: lcdPeg(280, 52), pegTX: peg(280, 52, TXLED),
+      dxSwatches: [
+        { name: 'CHASSIS', hex: '#34312D' }, { name: 'PANEL INSET', hex: '#262421' }, { name: 'SILK CREAM', hex: '#D8D2C2' },
+        { name: 'SILK GREEN', hex: '#8FAE4A' }, { name: 'PUTTY KEY', hex: '#D6CFC0' }, { name: 'KEY EDGE', hex: '#A89F8A' },
+        { name: 'LCD FIELD', hex: '#C3D254' }, { name: 'LCD INK', hex: '#26310F' }, { name: 'DATA SLIDER', hex: '#1E1C19' }
+      ],
+      lfoKnobs: [{ label: 'SPEED', val: '35', deg: deg(35) }, { label: 'DELAY', val: '0', deg: -135 }, { label: 'PMD', val: '24', deg: deg(24) }, { label: 'AMD', val: '0', deg: -135 }],
+      lfoKnobsC: [{ label: 'SPEED', val: '12', deg: deg(12) }, { label: 'DELAY', val: '30', deg: deg(30) }, { label: 'PMD', val: '41', deg: deg(41) }, { label: 'AMD', val: '8', deg: deg(8) }],
+      pegRack: peg(280, 52, AMBER),
+      pegConsole: peg(280, 78, GREEN),
+      mqFar1: gl(0, { s: 52, dim: true }),
+      mqPrev: gl(1, { s: 72, dim: true }),
+      mqMain: gl(2, { s: 150, sel: true, ac: AMBER, nums: true, big: true }),
+      mqNext: gl(3, { s: 72, dim: true }),
+      mqFar2: gl(4, { s: 52, dim: true }),
+      plateG: plate()
+    };
+  }
+}
+</script>
+</body>
+</html>
