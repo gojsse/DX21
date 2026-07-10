@@ -75,15 +75,18 @@ uint8_t OPZChip::carrierMask(int algorithm) {
 // KC layout: bits 6-4 octave, bits 3-0 note. Valid note nibbles skip every 4th
 // value: semitone s -> (s/3)*4 + (s%3). [verify] absolute octave reference.
 void OPZChip::computeKeyCode(double midiNote, uint8_t& kc, uint8_t& kf) {
-  // The chip's key-code octave field is 3 bits (0-7), so it spans 8 octaves.
-  // Clamp into that window; out-of-range notes saturate flat rather than
-  // wrapping. [verify] absolute octave reference against A440.
-  midiNote = std::clamp(midiNote, 12.0, 107.999);
+  // OPM/OPZ key code: 3-bit octave field (spans 8 octaves) + a note nibble that
+  // skips every 4th value. The nibble reference is one semitone below the MIDI
+  // note (verified by measuring the engine's own output against A440), and this
+  // -1 shift also makes C fall at the top of the octave field (the OPM quirk)
+  // without special-casing. Out-of-range notes saturate flat.
+  midiNote = std::clamp(midiNote, 13.0, 108.999);
   const int base = static_cast<int>(std::floor(midiNote));
   const double frac = midiNote - base;          // 0..1 within the semitone
-  const int semitone = base % 12;               // 0 = C
+  const int n = base - 1;                        // OPM note reference (A4 = 440)
+  const int semitone = n % 12;
   const int note = (semitone / 3) * 4 + (semitone % 3);
-  const int octave = base / 12 - 1;             // 0..7 within [12,107]
+  const int octave = n / 12 - 1;                 // 0..7 within the clamped range
   kc = static_cast<uint8_t>((octave << 4) | note);
   kf = static_cast<uint8_t>(std::clamp(static_cast<int>(std::lround(frac * 64.0)), 0, 63));
 }
