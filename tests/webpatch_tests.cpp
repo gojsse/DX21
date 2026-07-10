@@ -64,6 +64,7 @@ int main() {
   CHECK(p.lfo_sync == 1, "lfo sync true -> 1");
   CHECK(p.lfo_speed == 42, "lfo knob speed 42 -> lfo_speed");
   CHECK(p.pmd == 10, "lfo knob pmd 10 -> pmd");
+  CHECK(p.pms >= 4, "lfo PMD>0 nudges PMS so the LFO is audible");
   CHECK(p.poly_mono == 1, "fn voice MONO -> poly_mono 1");
   CHECK(p.transpose == 12, "fn transpose -12 -> 12 (center 24)");
 

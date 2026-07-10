@@ -83,6 +83,29 @@ int main() {
   };
   CHECK(peakExpr(1.0f) > peakExpr(0.4f) * 1.3f, "lower expression is quieter (carrier TL)");
 
+  // 3d. LFO: with rate + PM depth + PMS the tone is modulated (differs from off);
+  //     the mod wheel adds vibrato even when the patch PMD is zero.
+  auto renderPatch = [](bool lfoOn, float modWheel) {
+    OPZChip c; c.prepare(44100.0);
+    Patch p = flatPatch(0);
+    if (lfoOn) { p.lfo_speed = 60; p.pmd = 80; p.pms = 6; }
+    else       { p.pms = 6; p.lfo_speed = 60; }  // sensitivity + rate, but PMD 0
+    c.programChannel(0, p, true);
+    c.programLFO(p);
+    c.noteOn(0, 60, 1.0f);
+    c.setModWheel(modWheel);
+    const int N = 44100; std::vector<float> L(N), R(N); c.render(L.data(), R.data(), N);
+    return L;
+  };
+  auto diffEnergy = [](const std::vector<float>& a, const std::vector<float>& b) {
+    double diff = 0, sig = 0;
+    for (size_t i = 0; i < a.size(); ++i) { const double d = a[i] - b[i]; diff += d * d; sig += b[i] * b[i]; }
+    return sig > 0 ? diff / sig : 0.0;
+  };
+  const auto lfoOff = renderPatch(false, 0.0f);
+  CHECK(diffEnergy(renderPatch(true, 0.0f), lfoOff) > 1e-3, "LFO (rate+PMD+PMS) modulates the tone");
+  CHECK(diffEnergy(renderPatch(false, 1.0f), lfoOff) > 1e-3, "mod wheel adds vibrato when patch PMD is 0");
+
   // 4. note->keycode invariants
   bool validNibbles = true, monotonic = true;
   uint8_t prevKc = 0, kc, kf;

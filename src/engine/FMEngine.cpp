@@ -23,6 +23,7 @@ void FMEngine::release() {
 void FMEngine::reprogramAllChannels() {
   for (int ch = 0; ch < kPolyphony; ++ch)
     chip_->programChannel(ch, currentPatch_, dx21Mask_);
+  chip_->programLFO(currentPatch_);  // chip-global LFO (once)
   patchDirty_ = false;
 }
 
@@ -90,12 +91,13 @@ void FMEngine::handleController(int cc, int value) {
       if (value >= 64) { sustainOn_ = true; }
       else { sustainOn_ = false; releaseSustained(); }
       break;
+    case 1:   chip_->setModWheel(value / 127.0f); break;         // mod wheel -> vibrato
     case 7:   ccVolume_ = value;     updateExpression(); break;  // channel volume
     case 11:  ccExpression_ = value; updateExpression(); break;  // expression
     case 123: // all notes off
       for (int ch = 0; ch < kPolyphony; ++ch) { chip_->noteOff(ch); voices_[ch].reset(); voices_[ch].channel = ch; }
       break;
-    default: break;  // TODO: mod wheel / breath (need the LFO wired)
+    default: break;  // TODO(M4): breath (amplitude + EG bias), NRPN
   }
 }
 

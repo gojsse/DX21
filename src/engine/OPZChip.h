@@ -37,6 +37,13 @@ public:
   void noteOn(int ch, int midiNote, float velocity);
   void noteOff(int ch);
 
+  // Program the chip-global LFO from the patch (rate/waveform/sync + PM/AM
+  // depth). Per-channel PM/AM sensitivity (PMS/AMS) is written by programChannel.
+  void programLFO(const Patch& p);
+
+  // Mod wheel 0..1 -> extra LFO pitch-mod depth (adds to the patch's PMD).
+  void setModWheel(float amount01);
+
   // Global pitch bend in semitones (applied to every channel via KC/KF).
   void setPitchBendSemitones(float semitones);
   // Global expression/volume gain 0..1, applied as carrier attenuation
@@ -72,6 +79,10 @@ private:
   void pullChipSample();
   void writePitch(int ch);        // KC/KF from note + bend
   void writeCarrierTL(int ch);    // base TL + velocity + expression attenuation
+  void writePmDepth();            // LFO PM depth = patch PMD + mod wheel
+
+  // Mod wheel fully up adds this many steps of LFO pitch-mod depth (0..127). [verify]
+  static constexpr int kModWheelDepthPMD = 64;
 
   // Velocity -> carrier TL: attenuation in TL steps (~0.75 dB each) at velocity
   // 0; at velocity 1.0 the carriers play at their programmed level. [verify]
@@ -95,6 +106,8 @@ private:
   std::array<int, kChannels> m_velAtten{};     // velocity attenuation (TL steps)
   float m_bendSemitones = 0.0f;
   float m_expression = 1.0f;                    // CC7*CC11 gain 0..1
+  int m_basePmd = 0;                            // patch LFO PM depth (reg units)
+  int m_modWheelPmd = 0;                        // mod-wheel PM depth boost
 
   // linear-resampler state (spike-quality; [verify] — replace with polyphase)
   double m_phase = 0.0;

@@ -162,6 +162,12 @@ void applyWebVar(Patch& p, const var& web) {
     // web transpose is signed semitones; native centers at 24 (0..48).
     if (has(fn, "transpose")) p.transpose = clampU8(24 + static_cast<int>(fn["transpose"]), 0, 48);
   }
+
+  // The web LFO exposes depth (PMD/AMD) but not per-op sensitivity (PMS/AMS);
+  // assume a musical sensitivity so the LFO is actually audible from the UI.
+  // [verify]
+  if (p.pmd > 0 && p.pms == 0) p.pms = 4;
+  if (p.amd > 0 && p.ams == 0) p.ams = 2;
 }
 
 }  // namespace op4::webpatch

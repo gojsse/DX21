@@ -19,6 +19,8 @@ void OPZChip::reset() {
   m_velAtten.fill(0);
   m_bendSemitones = 0.0f;
   m_expression = 1.0f;
+  m_basePmd = 0;
+  m_modWheelPmd = 0;
   m_phase = 0.0;
   m_prevL = m_prevR = m_curL = m_curR = 0.0f;
   // prime the resampler with two chip samples
@@ -165,6 +167,27 @@ void OPZChip::noteOn(int ch, int midiNote, float velocity) {
   writeCarrierTL(ch);
   writeReg(0x08, static_cast<uint8_t>(ch));                     // select channel for key event
   writeReg(0x20 + ch, static_cast<uint8_t>(m_ch20base[ch] | 0x40));  // key on (bit6)
+}
+
+void OPZChip::writePmDepth() {
+  const int pm = std::clamp(m_basePmd + m_modWheelPmd, 0, 127);
+  writeReg(0x19, static_cast<uint8_t>(0x80 | pm));  // bit7=1 routes to LFO PM depth (0x189)
+}
+
+void OPZChip::programLFO(const Patch& p) {
+  // rate 0..99 -> 0..255; depths 0..99 -> 0..127. [verify] curves.
+  writeReg(0x18, static_cast<uint8_t>(std::clamp(p.lfo_speed * 255 / 99, 0, 255)));  // rate
+  writeReg(0x19, static_cast<uint8_t>(std::clamp(p.amd * 127 / 99, 0, 127)));        // AM depth (bit7=0)
+  m_basePmd = std::clamp(p.pmd * 127 / 99, 0, 127);
+  writePmDepth();                                                                    // PM depth (bit7=1)
+  // reg 0x1b: LFO sync (bit4) + waveform (bits 0-1). Upper bits drive only the
+  // external CT pins, not audio, so leaving them 0 is safe.
+  writeReg(0x1b, static_cast<uint8_t>(((p.lfo_sync & 1) << 4) | (p.lfo_wave & 3)));
+}
+
+void OPZChip::setModWheel(float amount01) {
+  m_modWheelPmd = static_cast<int>(std::lround(std::clamp(amount01, 0.0f, 1.0f) * kModWheelDepthPMD));
+  writePmDepth();
 }
 
 void OPZChip::setPitchBendSemitones(float semitones) {
