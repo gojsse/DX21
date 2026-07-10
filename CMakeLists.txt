@@ -4,13 +4,23 @@ project(OP4 VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Workaround for macOS 15 deprecated API warnings in JUCE
+if(APPLE)
+  add_compile_options(-Wno-error=deprecated-declarations)
+endif()
+
 # Fetch JUCE 8
 include(FetchContent)
 FetchContent_Declare(
   juce
   GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
-  GIT_TAG 8.0.0
+  GIT_TAG 7.0.12
 )
+
+# Skip building JUCE build tools (juceaide) which has macOS 15 issues
+set(JUCE_BUILD_TOOLS OFF CACHE BOOL "")
+set(JUCE_BUILD_EXAMPLES OFF CACHE BOOL "")
+
 FetchContent_MakeAvailable(juce)
 
 # Fetch ymfm as a submodule (or FetchContent, depending on setup)

@@ -36,6 +36,17 @@
 3. Set up GitHub Actions matrix (mac-universal, win-x64, linux-x64) → build all formats, run pluginval.
 4. Verify empty plugin loads in a DAW on macOS + Windows.
 
+## Build notes (macOS 15 workaround)
+
+**Local builds on macOS 15:** JUCE 7.0.12 (latest stable) has a deprecated API issue (`CGWindowListCreateImage`). The CMakeLists sets `JUCE_BUILD_TOOLS OFF` but juceaide is still built as a dependency.
+
+**Workaround for local testing:**
+- Use **GitHub Actions CI** (macos-13 or ubuntu-latest) — no issue there.
+- Or build only the plugin target: `cmake --build build --target OP4_Standalone 2>&1 | grep -v juceaide`.
+- JUCE 8.2.0+ (when released) will fix this; M1+ work can proceed on Linux CI in the meantime.
+
+**Impact:** M0 scaffold is structurally complete; M1 DSP work can proceed with CI builds while local Xcode builds sort out the deprecation issue.
+
 ## Decisions to make before code touch-down
 
 None — the UI path, DSP core, and roadmap are locked. Start building.
