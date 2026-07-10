@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FMEngine } from './fmEngine'
 import { useStore } from '../state/store'
+import { isInPlugin } from '../plugin/bridge'
 
 // Lazily-created singleton — one AudioContext for the whole app.
 let engine: FMEngine | null = null
@@ -24,6 +25,9 @@ export function useAudio() {
   const [running, setRunning] = useState(false)
 
   useEffect(() => {
+    // Inside the plugin the host's MIDI drives the real ymfm engine; the web
+    // sketch engine + keyboard play must stay silent so they don't compete.
+    if (isInPlugin()) return
     const eng = getEngine()
     let octave = 0
     const held = new Set<string>()
@@ -75,8 +79,11 @@ export function useAudio() {
   return { running }
 }
 
-/** One-shot audition (e.g. clicking a patch) — plays a short middle-C note. */
+/** One-shot audition (e.g. clicking a patch) — plays a short middle-C note.
+ *  Disabled in the plugin (host MIDI is the sound source; auditioning here would
+ *  play the browser sketch engine, not the plugin's voice). */
 export function auditionNote(note = 60, ms = 700) {
+  if (isInPlugin()) return
   const eng = getEngine()
   const { patch, mode } = useStore.getState()
   void eng.resume()

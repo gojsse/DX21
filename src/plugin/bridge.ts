@@ -26,6 +26,13 @@ declare global {
   interface Window { __JUCE__?: JuceGlobal }
 }
 
+// True when the UI is embedded in the JUCE plugin (vs. a plain browser). Used to
+// disable the web-prototype's own Web Audio "sketch" engine + computer-keyboard
+// play so the plugin's sound comes only from the host's MIDI -> the real engine.
+export function isInPlugin(): boolean {
+  return typeof window !== 'undefined' && !!window.__JUCE__?.backend
+}
+
 let applyingInbound = false
 
 // A partial display patch from native (native-owned fields only).
