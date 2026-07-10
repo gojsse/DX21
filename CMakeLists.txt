@@ -78,10 +78,12 @@ target_sources(OP4 PRIVATE
   src/model/Types.h
 )
 
-# WebView bridge (Patch <-> JSON wire format)
+# WebView bridge (Patch <-> JSON wire format + web display-model mapping)
 target_sources(OP4 PRIVATE
   src/bridge/PatchJson.cpp
   src/bridge/PatchJson.h
+  src/bridge/WebPatch.cpp
+  src/bridge/WebPatch.h
 )
 
 # Sysex codecs
@@ -200,6 +202,17 @@ target_include_directories(op4_patchjson_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_compile_definitions(op4_patchjson_tests PRIVATE JUCE_USE_CURL=0)
 target_link_libraries(op4_patchjson_tests PRIVATE juce::juce_core)
 add_test(NAME op4_patchjson_tests COMMAND op4_patchjson_tests)
+
+# Bridge web-model mapping: web display patch -> native DSP Patch.
+add_executable(op4_webpatch_tests
+  tests/webpatch_tests.cpp
+  src/bridge/WebPatch.cpp
+)
+target_compile_features(op4_webpatch_tests PRIVATE cxx_std_20)
+target_include_directories(op4_webpatch_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_compile_definitions(op4_webpatch_tests PRIVATE JUCE_USE_CURL=0)
+target_link_libraries(op4_webpatch_tests PRIVATE juce::juce_core)
+add_test(NAME op4_webpatch_tests COMMAND op4_webpatch_tests)
 
 message(STATUS "OP4 v${PROJECT_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

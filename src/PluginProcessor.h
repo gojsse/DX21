@@ -30,9 +30,11 @@ public:
   void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
 
-  // WebView bridge (message thread). applyPatchJson merges the incoming keys
-  // onto the current patch (partial messages are safe) and pushes to the engine.
+  // WebView bridge (message thread). applyPatchJson merges canonical patch JSON
+  // (used for state persistence); applyWebPatch maps the UI's display-model
+  // patch var onto the current patch. Both push the result to the engine.
   void applyPatchJson(const juce::String& json);
+  void applyWebPatch(const juce::var& webPatch);
   juce::String getPatchJson() const;
 
 private:

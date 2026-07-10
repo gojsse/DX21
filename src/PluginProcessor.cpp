@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "bridge/PatchJson.h"
+#include "bridge/WebPatch.h"
 
 OP4Processor::OP4Processor() : AudioProcessor(BusesProperties()
     .withOutput("Output", juce::AudioChannelSet::stereo())) {
@@ -48,6 +49,11 @@ void OP4Processor::applyPatchJson(const juce::String& json) {
   // NOTE(M1): engine->setPatch copies the patch; processBlock reads it. A live
   // edit mid-note is a benign torn read for now — replace with a lock-free swap
   // before 1.0.
+  engine->setPatch(currentPatch);
+}
+
+void OP4Processor::applyWebPatch(const juce::var& webPatch) {
+  op4::webpatch::applyWebVar(currentPatch, webPatch);
   engine->setPatch(currentPatch);
 }
 

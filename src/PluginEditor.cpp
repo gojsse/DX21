@@ -49,14 +49,12 @@ juce::WebBrowserComponent::Options OP4Editor::makeOptions() {
   OP4Processor& p = processor_;  // outlives this editor; safe to capture by ref
   auto opts = juce::WebBrowserComponent::Options{}
       .withNativeIntegrationEnabled()
-      // JS -> native: the UI emits canonical patch JSON (whole or partial).
-      .withEventListener("op4_applyPatch",
-          [&p](juce::var payload) {
-            const juce::String json = payload.isString() ? payload.toString()
-                                                         : juce::JSON::toString(payload);
-            p.applyPatchJson(json);
-          })
-      // native -> JS at load: current patch as a JSON string.
+      // JS -> native: the UI emits its display-model patch; native maps it
+      // (bridge/WebPatch) onto the engine's patch.
+      .withEventListener("op4_webPatch",
+          [&p](juce::var payload) { p.applyWebPatch(payload); })
+      // native -> JS at load: current patch as canonical JSON (partial inbound;
+      // full native->display formatting is a follow-up).
       .withInitialisationData("op4_patch", p.getPatchJson());
 #if OP4_EMBEDDED_UI
   opts = opts.withResourceProvider(provideResource);

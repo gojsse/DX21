@@ -74,14 +74,11 @@ export function connectPluginBridge(): void {
   // inbound: runtime pushes (host automation / state recall)
   backend.addEventListener('op4_patch', applyCanonical)
 
-  // outbound: forward store patch changes as a partial canonical patch. The
-  // native side merges, so sending only changed fields is safe.
-  let last = { algorithm: -1, feedback: -1 }
-  useStore.subscribe((s) => {
+  // outbound: forward the whole display patch on any change. The native side
+  // (bridge/WebPatch) maps the display model onto the DSP patch.
+  useStore.subscribe((s, prev) => {
     if (applyingInbound) return
-    const { algorithm, feedback } = s.patch
-    if (algorithm === last.algorithm && feedback === last.feedback) return
-    last = { algorithm, feedback }
-    backend.emitEvent('op4_applyPatch', { algorithm, feedback })
+    if (s.patch === prev.patch) return // Zustand replaces patch by value on edit
+    backend.emitEvent('op4_webPatch', s.patch)
   })
 }
