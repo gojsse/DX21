@@ -40,6 +40,11 @@ public:
   // Advance the chip and sum all 8 channels into stereo host-rate float output.
   void render(float* outL, float* outR, int numSamples);
 
+  // Deterministic native-rate render (no resampling): the chip's integer output
+  // clamped to interleaved stereo int16. Bit-identical across platforms — used
+  // by the null-test / golden-WAV regression harness.
+  void renderNative(int16_t* interleavedLR, int numFrames);
+
   uint32_t chipSampleRate() const { return m_chipRate; }
 
   // --- calibration helpers (see class comment; [verify] against hardware) ---

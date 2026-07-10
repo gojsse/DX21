@@ -175,6 +175,18 @@ target_compile_features(op4_sysex_tests PRIVATE cxx_std_20)
 target_include_directories(op4_sysex_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_test(NAME op4_sysex_tests COMMAND op4_sysex_tests)
 
+# Null-test / golden-WAV regression: render a fixed phrase at native rate and
+# null it against tests/golden/phrase_native.wav. Also drives hardware A/B.
+add_executable(op4_null_test
+  tests/null_test.cpp
+  src/engine/OPZChip.cpp
+  ${YMFM_DIR}/src/ymfm_opz.cpp
+)
+target_compile_features(op4_null_test PRIVATE cxx_std_20)
+target_include_directories(op4_null_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${YMFM_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+add_test(NAME op4_null_test
+         COMMAND op4_null_test golden ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden/phrase_native.wav)
+
 # Bridge wire format: Patch <-> JSON round-trip (links juce_core for var/JSON).
 add_executable(op4_patchjson_tests
   tests/patchjson_tests.cpp

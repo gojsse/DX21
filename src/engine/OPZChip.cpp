@@ -139,6 +139,15 @@ void OPZChip::pullChipSample() {
   m_curR = static_cast<float>(out.data[1]) / 32768.0f;
 }
 
+void OPZChip::renderNative(int16_t* out, int numFrames) {
+  for (int i = 0; i < numFrames; ++i) {
+    ymfm::ym2414::output_data o;
+    m_chip.generate(&o, 1);
+    out[2 * i]     = static_cast<int16_t>(std::clamp<int32_t>(o.data[0], -32768, 32767));
+    out[2 * i + 1] = static_cast<int16_t>(std::clamp<int32_t>(o.data[1], -32768, 32767));
+  }
+}
+
 void OPZChip::render(float* outL, float* outR, int numSamples) {
   const double step = static_cast<double>(m_chipRate) / m_hostRate;  // chip samples / host sample
   for (int i = 0; i < numSamples; ++i) {
