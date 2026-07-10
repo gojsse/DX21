@@ -28,11 +28,11 @@ static Patch flatPatch(int alg) {
   return p;
 }
 
-static float peakOf(int alg) {
+static float peakOfVel(int alg, float velocity) {
   OPZChip c; c.prepare(44100.0);
   Patch p = flatPatch(alg);
   c.programChannel(0, p, /*dx21Mask=*/true);
-  c.noteOn(0, 69, 1.0f);
+  c.noteOn(0, 69, velocity);
   const int N = 44100;
   std::vector<float> L(N), R(N);
   c.render(L.data(), R.data(), N);
@@ -40,6 +40,7 @@ static float peakOf(int alg) {
   for (int i = N / 4; i < N; ++i) peak = std::max(peak, std::fabs(L[i]));
   return peak;
 }
+static float peakOf(int alg) { return peakOfVel(alg, 1.0f); }
 
 int main() {
   std::printf("OP4 Engine Tests (M1)\n");
@@ -54,7 +55,12 @@ int main() {
   CHECK(p5 > p4 * 1.2f, "alg 6 (3 carriers) louder than alg 5 (2 carriers)");
   CHECK(p7 > p5 * 1.1f, "alg 8 (4 carriers) is the loudest");
 
-  // 3. note->keycode invariants
+  // 3. velocity -> carrier TL: harder notes are louder; full velocity is unchanged.
+  const float vFull = peakOfVel(7, 1.0f), vSoft = peakOfVel(7, 0.3f);
+  CHECK(vFull > vSoft * 1.3f, "higher velocity is louder (carrier TL)");
+  CHECK(std::fabs(vFull - peakOf(7)) < 1e-6f, "velocity 1.0 == programmed level (golden stays valid)");
+
+  // 4. note->keycode invariants
   bool validNibbles = true, monotonic = true;
   uint8_t prevKc = 0, kc, kf;
   for (int n = 12; n <= 108; ++n) {
@@ -66,7 +72,7 @@ int main() {
   CHECK(validNibbles, "keycode note nibble is always a valid OPM code");
   CHECK(monotonic, "keycode rises monotonically with MIDI note");
 
-  // 4. TODO(M1): golden-WAV null-test against real-hardware fixtures to lock
+  // 5. TODO(M1): golden-WAV null-test against real-hardware fixtures to lock
   //    absolute tuning, TL curve, and operator/slot ordering ([verify] items).
 
   std::printf(g_failures ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_failures);

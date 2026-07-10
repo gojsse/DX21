@@ -54,9 +54,17 @@ public:
   static uint8_t levelToTL(uint8_t level);
   static void noteToKeyCode(int midiNote, uint8_t& kc, uint8_t& kf);
 
+  // Carrier operators (bitmask over ops 0..3) for algorithm 0..7. Derived from
+  // the verified 4-op chart; matches the measured per-algorithm carrier counts.
+  static uint8_t carrierMask(int algorithm);
+
 private:
   void writeReg(uint8_t addr, uint8_t data);
   void pullChipSample();
+
+  // Velocity -> carrier TL: attenuation in TL steps (~0.75 dB each) at velocity
+  // 0; at velocity 1.0 the carriers play at their programmed level. [verify]
+  static constexpr int kVelocityDepthTL = 48;
 
   ymfm::ym2414 m_chip;
   uint32_t m_chipRate = 0;
@@ -64,6 +72,10 @@ private:
 
   // cached reg 0x20 base per channel (output|feedback|algorithm, key-on bit clear)
   std::array<uint8_t, kChannels> m_ch20base{};
+
+  // programmed TL per channel per op (0..3), so note-on can offset carriers by
+  // velocity without re-deriving from the patch.
+  std::array<std::array<uint8_t, 4>, kChannels> m_baseTL{};
 
   // linear-resampler state (spike-quality; [verify] — replace with polyphase)
   double m_phase = 0.0;

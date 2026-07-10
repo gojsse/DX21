@@ -52,6 +52,19 @@ uint8_t OPZChip::levelToTL(uint8_t level) {
   return static_cast<uint8_t>(std::clamp((99 - l) * 127 / 99, 0, 127));
 }
 
+// Carrier operators (bit i = op i) per algorithm 0..7. From the verified 4-op
+// chart (matches the measured carrier counts: 1,1,1,1,2,3,3,4). [verify] with
+// the op->slot ordering.
+uint8_t OPZChip::carrierMask(int algorithm) {
+  static const uint8_t kCarrier[8] = {
+    0b0001, 0b0001, 0b0001, 0b0001,  // one carrier (OP1)
+    0b0101,                          // OP1, OP3
+    0b0111, 0b0111,                  // OP1, OP2, OP3
+    0b1111,                          // all four
+  };
+  return kCarrier[algorithm & 7];
+}
+
 // MIDI note -> OPM/OPZ key code (reg 0x28) + key fraction (reg 0x30 bits 7-2).
 // KC layout: bits 6-4 octave, bits 3-0 note. Valid note nibbles skip every 4th
 // value: semitone s -> (s/3)*4 + (s%3). [verify] absolute octave reference.
@@ -93,7 +106,9 @@ void OPZChip::programChannel(int ch, const Patch& p, bool dx21Mask) {
     const uint8_t wave = dx21Mask ? 0 : static_cast<uint8_t>(o.wave & 7);
     writeReg(0x40 + base, static_cast<uint8_t>(0x80 | (wave << 4) | (o.fine & 0x0f)));
 
-    writeReg(0x60 + base, levelToTL(o.tl));                        // TL
+    const uint8_t tl = levelToTL(o.tl);
+    m_baseTL[ch][op] = tl;
+    writeReg(0x60 + base, tl);                                     // TL
 
     const uint8_t fix = dx21Mask ? 0 : static_cast<uint8_t>(o.fixed & 1);
     writeReg(0x80 + base,                                          // KRS/FIX/AR
@@ -111,15 +126,27 @@ void OPZChip::programChannel(int ch, const Patch& p, bool dx21Mask) {
   }
 }
 
-void OPZChip::noteOn(int ch, int midiNote, float /*velocity*/) {
+void OPZChip::noteOn(int ch, int midiNote, float velocity) {
   ch &= 7;
   uint8_t kc, kf;
   noteToKeyCode(midiNote, kc, kf);
   writeReg(0x28 + ch, kc);
   writeReg(0x30 + ch, static_cast<uint8_t>((kf << 2) | 0x01));  // KF + output-right on
+
+  // Velocity -> carrier TL: attenuate carriers below their programmed level as
+  // velocity drops (0 dB at velocity 1.0). Modulator level (timbre) is left
+  // alone for now. TODO: weight by per-op KVS.
+  const uint8_t mask = carrierMask(m_ch20base[ch] & 0x07);
+  const int atten = static_cast<int>(std::lround((1.0f - std::clamp(velocity, 0.0f, 1.0f)) * kVelocityDepthTL));
+  for (int op = 0; op < 4; ++op) {
+    if (mask & (1 << op)) {
+      const uint8_t base = static_cast<uint8_t>((slotForOp(op) << 3) | ch);
+      writeReg(0x60 + base, static_cast<uint8_t>(std::clamp(m_baseTL[ch][op] + atten, 0, 127)));
+    }
+  }
+
   writeReg(0x08, static_cast<uint8_t>(ch));                     // select channel for key event
   writeReg(0x20 + ch, static_cast<uint8_t>(m_ch20base[ch] | 0x40));  // key on (bit6)
-  // TODO(M1): velocity -> carrier TL offset once carrier set per algorithm is wired.
 }
 
 void OPZChip::noteOff(int ch) {
