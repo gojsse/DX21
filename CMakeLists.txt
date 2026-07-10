@@ -166,6 +166,10 @@ add_executable(op4_patchjson_tests
 )
 target_compile_features(op4_patchjson_tests PRIVATE cxx_std_20)
 target_include_directories(op4_patchjson_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Headless JSON test: no networking. Disable juce_core's libcurl dependency
+# (Linux defaults JUCE_USE_CURL=1 and would need curl/curl.h). The plugin target
+# is unaffected — juce_add_plugin auto-configures this.
+target_compile_definitions(op4_patchjson_tests PRIVATE JUCE_USE_CURL=0)
 target_link_libraries(op4_patchjson_tests PRIVATE juce::juce_core)
 add_test(NAME op4_patchjson_tests COMMAND op4_patchjson_tests)
 
