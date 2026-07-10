@@ -9,6 +9,7 @@
 // against real-hardware fixtures — that is TODO below.
 
 #include "engine/OPZChip.h"
+#include "engine/Controllers.h"
 #include "model/Patch.h"
 #include <cmath>
 #include <cstdio>
@@ -105,6 +106,21 @@ int main() {
   const auto lfoOff = renderPatch(false, 0.0f);
   CHECK(diffEnergy(renderPatch(true, 0.0f), lfoOff) > 1e-3, "LFO (rate+PMD+PMS) modulates the tone");
   CHECK(diffEnergy(renderPatch(false, 1.0f), lfoOff) > 1e-3, "mod wheel adds vibrato when patch PMD is 0");
+
+  // 3e. breath controller curves (CC2 rests at 0; only active when the patch enables it)
+  using op4::ctl::breathAmpGain;
+  using op4::ctl::breathPitchSemis;
+  CHECK(breathAmpGain(0, 50, 0) == 1.0f && breathAmpGain(0, 50, 127) == 1.0f,
+        "breath_amp 0 -> no amplitude effect (plays normally)");
+  CHECK(breathAmpGain(99, 50, 127) > breathAmpGain(99, 50, 0),
+        "more breath -> louder when breath_amp is set");
+  CHECK(std::fabs(breathAmpGain(99, 0, 0) - 0.0f) < 1e-6f,
+        "full breath sens, no bias, no breath -> silent");
+  CHECK(std::fabs(breathAmpGain(99, 50, 127) - 1.0f) < 1e-6f,
+        "full breath -> full level");
+  CHECK(breathPitchSemis(0, 127) == 0.0f, "breath_pitch 0 -> no pitch effect");
+  CHECK(breathPitchSemis(99, 127) > breathPitchSemis(99, 40),
+        "more breath -> more pitch when breath_pitch is set");
 
   // 4. note->keycode invariants
   bool validNibbles = true, monotonic = true;

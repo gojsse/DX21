@@ -43,7 +43,8 @@ private:
   void handleController(int cc, int value);
   void handlePitchBend(int value14);   // 0..16383, centre 8192
   void releaseSustained();
-  void updateExpression();
+  void updateExpression();             // volume * expression * breath -> carriers
+  void updatePitchBend();              // wheel + breath -> chip
   int  allocateChannel();
 
   double sampleRate_ = 44100.0;
@@ -61,4 +62,6 @@ private:
   bool sustainOn_ = false;
   int  ccVolume_ = 127;      // CC7
   int  ccExpression_ = 127;  // CC11
+  int  ccBreath_ = 0;        // CC2 (rests at 0)
+  float wheelBendSemis_ = 0.0f;
 };

@@ -1,5 +1,6 @@
 #include "FMEngine.h"
 #include "OPZChip.h"
+#include "Controllers.h"
 #include <limits>
 
 FMEngine::FMEngine() : chip_(std::make_unique<OPZChip>()) {
@@ -82,7 +83,14 @@ void FMEngine::releaseSustained() {
 }
 
 void FMEngine::updateExpression() {
-  chip_->setExpression((ccVolume_ / 127.0f) * (ccExpression_ / 127.0f));
+  const float gain = (ccVolume_ / 127.0f) * (ccExpression_ / 127.0f)
+                   * op4::ctl::breathAmpGain(currentPatch_.breath_amp, currentPatch_.breath_bias, ccBreath_);
+  chip_->setExpression(gain);
+}
+
+void FMEngine::updatePitchBend() {
+  chip_->setPitchBendSemitones(
+      wheelBendSemis_ + op4::ctl::breathPitchSemis(currentPatch_.breath_pitch, ccBreath_));
 }
 
 void FMEngine::handleController(int cc, int value) {
@@ -92,22 +100,24 @@ void FMEngine::handleController(int cc, int value) {
       else { sustainOn_ = false; releaseSustained(); }
       break;
     case 1:   chip_->setModWheel(value / 127.0f); break;         // mod wheel -> vibrato
+    case 2:   ccBreath_ = value; updateExpression(); updatePitchBend(); break;  // breath
     case 7:   ccVolume_ = value;     updateExpression(); break;  // channel volume
     case 11:  ccExpression_ = value; updateExpression(); break;  // expression
     case 123: // all notes off
       for (int ch = 0; ch < kPolyphony; ++ch) { chip_->noteOff(ch); voices_[ch].reset(); voices_[ch].channel = ch; }
       break;
-    default: break;  // TODO(M4): breath (amplitude + EG bias), NRPN
+    default: break;  // TODO(M4): breath -> EG bias, NRPN
   }
 }
 
 void FMEngine::handlePitchBend(int value14) {
   const float norm = (value14 - 8192) / 8192.0f;  // -1..~1
-  chip_->setPitchBendSemitones(norm * static_cast<float>(currentPatch_.pb_range));
+  wheelBendSemis_ = norm * static_cast<float>(currentPatch_.pb_range);
+  updatePitchBend();
 }
 
 void FMEngine::processBlock(float* outL, float* outR, int numSamples, const juce::MidiBuffer& midi) {
-  if (patchDirty_) { reprogramAllChannels(); updateExpression(); }
+  if (patchDirty_) { reprogramAllChannels(); updateExpression(); updatePitchBend(); }
 
   int pos = 0;
   for (const auto meta : midi) {
