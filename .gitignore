@@ -4,3 +4,28 @@ dist-ssr
 *.local
 .DS_Store
 .vite
+
+# C++ / CMake
+build/
+cmake-build-*/
+*.o
+*.a
+*.dylib
+*.so
+*.dll
+*.exe
+*.app
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test fixtures (sysex files, not in version control)
+tests/fixtures/
+
+# Build artifacts
+*.tsbuildinfo
+tsconfig*.tsbuildinfo
