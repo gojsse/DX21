@@ -47,6 +47,7 @@ juce_add_plugin(OP4
   FORMATS VST3 AU CLAP Standalone
   IS_SYNTH TRUE
   NEEDS_MIDI_INPUT TRUE
+  NEEDS_WEBVIEW2 TRUE   # Windows: link the Edge/Chromium WebView2 for the editor
   COPY_PLUGIN_AFTER_BUILD TRUE
   PRODUCT_NAME "OP4"
 )
@@ -118,6 +119,14 @@ target_link_libraries(OP4 PRIVATE
 # Platform-specific linking
 if(APPLE)
   target_link_libraries(OP4 PRIVATE "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreMIDI")
+endif()
+
+# Linux: juce_gui_extra's WebBrowserComponent needs GTK + WebKit, which JUCE does
+# NOT auto-provide (no linuxPackages in its module decl). Wire them via pkg-config.
+if(UNIX AND NOT APPLE)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(WEBKIT2GTK REQUIRED IMPORTED_TARGET gtk+-3.0 webkit2gtk-4.1)
+  target_link_libraries(OP4 PRIVATE PkgConfig::WEBKIT2GTK)
 endif()
 
 # ============================================================================
