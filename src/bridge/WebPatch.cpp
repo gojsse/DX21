@@ -73,6 +73,63 @@ static void applyWebOp(Operator& o, const var& wv) {
   }
 }
 
+// --- inverse: native -> web display -------------------------------------
+static String detuneStr(uint8_t detune) {
+  const int v = static_cast<int>(detune) - 3;  // center 3
+  return (v >= 0 ? "+" : "-") + String(std::abs(v));
+}
+static String ratioStr(uint8_t coarse) {
+  return coarse == 0 ? String("0.50") : String(static_cast<int>(coarse)) + ".00";
+}
+static const char* lfoWaveStr(uint8_t w) {
+  switch (w) { case 1: return "SQR"; case 2: return "TRI"; case 3: return "S&H"; default: return "SAW"; }
+}
+static double graph01(uint8_t v, int maxVal) { return 1.0 - static_cast<double>(v) / maxVal; }
+
+var toWebVar(const Patch& p) {
+  auto* d = new juce::DynamicObject();
+  d->setProperty("algorithm", static_cast<int>(p.algorithm));
+  d->setProperty("feedback", static_cast<int>(p.feedback));
+
+  juce::Array<var> ops;
+  for (const auto& o : p.operators) {
+    auto* od = new juce::DynamicObject();
+    od->setProperty("lvl", String(static_cast<int>(o.tl)));
+    od->setProperty("det", detuneStr(o.detune));
+    od->setProperty("wave", "W" + String(static_cast<int>(o.wave) + 1));  // name suffix is UI cosmetic
+    od->setProperty("fix", static_cast<bool>(o.fixed));
+    od->setProperty("ratio", ratioStr(o.coarse));
+    auto* ep = new juce::DynamicObject();
+    ep->setProperty("a",  graph01(o.ar,  31));
+    ep->setProperty("d1", graph01(o.d1r, 31));
+    ep->setProperty("s",  graph01(o.d1l, 15));
+    ep->setProperty("r",  graph01(o.rr,  15));
+    od->setProperty("ep", var(ep));
+    ops.add(var(od));
+  }
+  d->setProperty("ops", ops);
+
+  auto* lfo = new juce::DynamicObject();
+  lfo->setProperty("sync", static_cast<bool>(p.lfo_sync));
+  lfo->setProperty("wave", lfoWaveStr(p.lfo_wave));
+  juce::Array<var> knobs;
+  auto knob = [&](const char* key, int val) {
+    auto* k = new juce::DynamicObject();
+    k->setProperty("key", key); k->setProperty("val", val);
+    knobs.add(var(k));
+  };
+  knob("speed", p.lfo_speed); knob("delay", p.lfo_delay); knob("pmd", p.pmd); knob("amd", p.amd);
+  lfo->setProperty("knobs", knobs);
+  d->setProperty("lfo", var(lfo));
+
+  auto* fn = new juce::DynamicObject();
+  fn->setProperty("voice", p.poly_mono ? "MONO" : "POLY");
+  fn->setProperty("transpose", static_cast<int>(p.transpose) - 24);  // native centers at 24
+  d->setProperty("fn", var(fn));
+
+  return var(d);
+}
+
 void applyWebVar(Patch& p, const var& web) {
   if (!web.isObject()) return;
 

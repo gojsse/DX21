@@ -53,9 +53,9 @@ juce::WebBrowserComponent::Options OP4Editor::makeOptions() {
       // (bridge/WebPatch) onto the engine's patch.
       .withEventListener("op4_webPatch",
           [&p](juce::var payload) { p.applyWebPatch(payload); })
-      // native -> JS at load: current patch as canonical JSON (partial inbound;
-      // full native->display formatting is a follow-up).
-      .withInitialisationData("op4_patch", p.getPatchJson());
+      // native -> JS at load: current patch in the UI's display model, which the
+      // web adapter deep-merges into its store.
+      .withInitialisationData("op4_initPatch", p.getWebPatch());
 #if OP4_EMBEDDED_UI
   opts = opts.withResourceProvider(provideResource);
 #endif
@@ -84,9 +84,10 @@ OP4Editor::OP4Editor(OP4Processor& p)
 OP4Editor::~OP4Editor() = default;
 
 void OP4Editor::pushPatch() {
-  // native -> JS: deliver the current patch as an object the web adapter applies.
-  // TODO(M1): call this when the host changes state/automation so the UI tracks.
-  web_.emitEventIfBrowserIsVisible("op4_patch", juce::JSON::parse(processor_.getPatchJson()));
+  // native -> JS: deliver the current patch in the UI's display model. The web
+  // adapter deep-merges it into its store.
+  // TODO(M2): call this on host state recall / automation so the UI tracks.
+  web_.emitEventIfBrowserIsVisible("op4_setPatch", processor_.getWebPatch());
 }
 
 void OP4Editor::paint(juce::Graphics& g) {

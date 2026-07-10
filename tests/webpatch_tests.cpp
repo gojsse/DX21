@@ -67,6 +67,34 @@ int main() {
   CHECK(p.poly_mono == 1, "fn voice MONO -> poly_mono 1");
   CHECK(p.transpose == 12, "fn transpose -12 -> 12 (center 24)");
 
+  // native -> web -> native round-trip for the reachable fields.
+  Patch n;
+  n.algorithm = 6; n.feedback = 3;
+  for (int i = 0; i < 4; ++i) {
+    Operator& o = n.operators[i];
+    o.tl = 90 - i * 10; o.detune = 3 + (i - 1);  // 2..5 in range
+    o.wave = static_cast<uint8_t>(i); o.fixed = (i == 1) ? 1 : 0;
+    o.coarse = static_cast<uint8_t>(i == 0 ? 0 : i);  // op0 -> 0.5x slot
+    o.ar = 31 - i; o.d1r = 20 + i; o.d1l = i; o.rr = 8 + i;
+  }
+  n.lfo_wave = 2; n.lfo_sync = 1; n.lfo_speed = 42; n.lfo_delay = 5; n.pmd = 10; n.amd = 7;
+  n.poly_mono = 1; n.transpose = 12;
+
+  Patch back;  // start from defaults, overlay the round-tripped web var
+  op4::webpatch::applyWebVar(back, op4::webpatch::toWebVar(n));
+
+  bool ok = back.algorithm == n.algorithm && back.feedback == n.feedback &&
+            back.lfo_wave == n.lfo_wave && back.lfo_sync == n.lfo_sync &&
+            back.lfo_speed == n.lfo_speed && back.pmd == n.pmd &&
+            back.poly_mono == n.poly_mono && back.transpose == n.transpose;
+  for (int i = 0; i < 4; ++i) {
+    const Operator& a = n.operators[i]; const Operator& b = back.operators[i];
+    ok = ok && b.tl == a.tl && b.detune == a.detune && b.wave == a.wave &&
+         b.fixed == a.fixed && b.coarse == a.coarse &&
+         b.ar == a.ar && b.d1r == a.d1r && b.d1l == a.d1l && b.rr == a.rr;
+  }
+  CHECK(ok, "native -> web -> native preserves the reachable fields");
+
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);
   return g_fail ? 1 : 0;
 }

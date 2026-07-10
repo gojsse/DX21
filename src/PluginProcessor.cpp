@@ -61,6 +61,10 @@ juce::String OP4Processor::getPatchJson() const {
   return op4::patchjson::encode(currentPatch);
 }
 
+juce::var OP4Processor::getWebPatch() const {
+  return op4::webpatch::toWebVar(currentPatch);
+}
+
 // Factory
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
   return new OP4Processor();

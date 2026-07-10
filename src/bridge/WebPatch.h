@@ -16,4 +16,10 @@ namespace op4::webpatch {
 // Overlay the fields present in a web-shaped patch var onto a native Patch.
 void applyWebVar(Patch& p, const juce::var& web);
 
+// Inverse: build a (partial) web display patch from a native Patch — the native-
+// owned fields only, so the web adapter can deep-merge it and keep UI-only
+// fields (per-op name, sizzler, ...). Round-trips with applyWebVar for the
+// reachable fields (see tests).
+juce::var toWebVar(const Patch& p);
+
 }  // namespace op4::webpatch

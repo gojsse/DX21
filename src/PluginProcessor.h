@@ -36,6 +36,7 @@ public:
   void applyPatchJson(const juce::String& json);
   void applyWebPatch(const juce::var& webPatch);
   juce::String getPatchJson() const;
+  juce::var getWebPatch() const;  // native patch -> web display var (for the UI)
 
 private:
   std::unique_ptr<FMEngine> engine;

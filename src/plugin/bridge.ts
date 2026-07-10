@@ -1,19 +1,18 @@
 // WebView <-> plugin bridge (additive, no-op in the browser).
 //
 // When the UI runs inside the JUCE plugin, `window.__JUCE__` is injected. This
-// module connects the Zustand store to the native event bus:
-//   - outbound: store patch changes  -> emit "op4_applyPatch" (canonical JSON)
-//   - inbound:  native "op4_patch" / initial data -> apply to the store
-//
-// The wire format is the *canonical native Patch* (see src/bridge/PatchJson.*).
-// This first pass maps the unambiguous numeric fields (algorithm, feedback);
-// the operator / LFO / function fields are display strings in the UI model and
-// their mapping is a follow-up that pairs with the DSP calibration work.
+// module connects the Zustand store to the native event bus, exchanging the
+// UI's *display* patch model (all the mapping to/from the DSP model lives in
+// native C++, src/bridge/WebPatch):
+//   - outbound: store patch changes  -> emit "op4_webPatch"
+//   - inbound:  "op4_initPatch" (initial data) + "op4_setPatch" (runtime push)
+//               -> deep-merge into the store
 //
 // NOTE: the JS<->native round-trip can only be verified in a real host (DAW).
-// The native half is unit-tested (op4_patchjson_tests); this half is not.
+// The native mapping is unit-tested (op4_webpatch_tests); this pipe is not.
 
 import { useStore } from '../state/store'
+import type { Patch } from '../state/types'
 
 interface JuceBackend {
   emitEvent: (eventId: string, object: unknown) => void
@@ -27,25 +26,45 @@ declare global {
   interface Window { __JUCE__?: JuceGlobal }
 }
 
-/** Canonical (native) patch subset we currently bridge. */
-interface CanonicalPatch {
-  algorithm?: number
-  feedback?: number
-  // TODO(M1): operators[], lfo, pitchEg, fn — needs display<->DSP mapping.
-}
-
 let applyingInbound = false
 
-function applyCanonical(raw: unknown): void {
-  const c: CanonicalPatch =
-    typeof raw === 'string' ? safeParse(raw) : (raw as CanonicalPatch) ?? {}
+// A partial display patch from native (native-owned fields only).
+type PartialPatch = Partial<Patch> & { ops?: Partial<Patch['ops'][number]>[] }
 
+function parse(raw: unknown): PartialPatch {
+  if (typeof raw === 'string') { try { return JSON.parse(raw) } catch { return {} } }
+  return (raw as PartialPatch) ?? {}
+}
+
+// Deep-merge a partial display patch into the store, leaving UI-only fields
+// (per-op name/role, sizzler, ...) untouched.
+function applyInbound(raw: unknown): void {
+  const w = parse(raw)
   applyingInbound = true
   try {
     useStore.setState((s) => {
-      const patch = { ...s.patch }
-      if (typeof c.algorithm === 'number') patch.algorithm = c.algorithm
-      if (typeof c.feedback === 'number') patch.feedback = c.feedback
+      const patch: Patch = { ...s.patch }
+      if (typeof w.algorithm === 'number') patch.algorithm = w.algorithm
+      if (typeof w.feedback === 'number') patch.feedback = w.feedback
+      if (Array.isArray(w.ops)) {
+        patch.ops = patch.ops.map((op, i) => {
+          const nw = w.ops![i]
+          if (!nw) return op
+          return { ...op, ...nw, ep: { ...op.ep, ...(nw.ep ?? {}) } }
+        })
+      }
+      if (w.lfo) {
+        patch.lfo = { ...patch.lfo }
+        if (typeof w.lfo.wave === 'string') patch.lfo.wave = w.lfo.wave
+        if (typeof w.lfo.sync === 'boolean') patch.lfo.sync = w.lfo.sync
+        if (Array.isArray(w.lfo.knobs)) {
+          patch.lfo.knobs = patch.lfo.knobs.map((k) => {
+            const nk = w.lfo!.knobs!.find((x) => x.key === k.key)
+            return nk ? { ...k, val: nk.val } : k
+          })
+        }
+      }
+      if (w.fn) patch.fn = { ...patch.fn, ...w.fn }
       return { patch }
     })
   } finally {
@@ -53,29 +72,17 @@ function applyCanonical(raw: unknown): void {
   }
 }
 
-function safeParse(s: string): CanonicalPatch {
-  try {
-    return JSON.parse(s) as CanonicalPatch
-  } catch {
-    return {}
-  }
-}
-
 export function connectPluginBridge(): void {
   const juce = window.__JUCE__
   if (!juce?.backend) return // running in the browser — nothing to do
-
   const backend = juce.backend
 
-  // inbound: initial patch delivered via withInitialisationData("op4_patch", ...)
-  const initial = juce.initialisationData?.op4_patch
-  if (initial !== undefined) applyCanonical(initial)
+  // inbound: initial patch + runtime pushes (host state recall / automation)
+  const initial = juce.initialisationData?.op4_initPatch
+  if (initial !== undefined) applyInbound(initial)
+  backend.addEventListener('op4_setPatch', applyInbound)
 
-  // inbound: runtime pushes (host automation / state recall)
-  backend.addEventListener('op4_patch', applyCanonical)
-
-  // outbound: forward the whole display patch on any change. The native side
-  // (bridge/WebPatch) maps the display model onto the DSP patch.
+  // outbound: forward the whole display patch on any change; native maps it.
   useStore.subscribe((s, prev) => {
     if (applyingInbound) return
     if (s.patch === prev.patch) return // Zustand replaces patch by value on edit
