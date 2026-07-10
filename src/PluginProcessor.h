@@ -30,6 +30,11 @@ public:
   void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
 
+  // WebView bridge (message thread). applyPatchJson merges the incoming keys
+  // onto the current patch (partial messages are safe) and pushes to the engine.
+  void applyPatchJson(const juce::String& json);
+  juce::String getPatchJson() const;
+
 private:
   std::unique_ptr<FMEngine> engine;
   Patch currentPatch;

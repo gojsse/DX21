@@ -78,6 +78,12 @@ target_sources(OP4 PRIVATE
   src/model/Types.h
 )
 
+# WebView bridge (Patch <-> JSON wire format)
+target_sources(OP4 PRIVATE
+  src/bridge/PatchJson.cpp
+  src/bridge/PatchJson.h
+)
+
 # Sysex codecs
 target_sources(OP4 PRIVATE
   src/sysex/VCEDCodec.cpp
@@ -152,6 +158,16 @@ add_executable(op4_sysex_tests
 target_compile_features(op4_sysex_tests PRIVATE cxx_std_20)
 target_include_directories(op4_sysex_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_test(NAME op4_sysex_tests COMMAND op4_sysex_tests)
+
+# Bridge wire format: Patch <-> JSON round-trip (links juce_core for var/JSON).
+add_executable(op4_patchjson_tests
+  tests/patchjson_tests.cpp
+  src/bridge/PatchJson.cpp
+)
+target_compile_features(op4_patchjson_tests PRIVATE cxx_std_20)
+target_include_directories(op4_patchjson_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(op4_patchjson_tests PRIVATE juce::juce_core)
+add_test(NAME op4_patchjson_tests COMMAND op4_patchjson_tests)
 
 message(STATUS "OP4 v${PROJECT_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "bridge/PatchJson.h"
 
 OP4Processor::OP4Processor() : AudioProcessor(BusesProperties()
     .withOutput("Output", juce::AudioChannelSet::stereo())) {
@@ -40,6 +41,18 @@ void OP4Processor::getStateInformation(juce::MemoryBlock& destData) {
 void OP4Processor::setStateInformation(const void* data, int sizeInBytes) {
   // TODO(M2): deserialize currentPatch and engine->setPatch(currentPatch).
   juce::ignoreUnused(data, sizeInBytes);
+}
+
+void OP4Processor::applyPatchJson(const juce::String& json) {
+  op4::patchjson::overlay(currentPatch, juce::JSON::parse(json));
+  // NOTE(M1): engine->setPatch copies the patch; processBlock reads it. A live
+  // edit mid-note is a benign torn read for now — replace with a lock-free swap
+  // before 1.0.
+  engine->setPatch(currentPatch);
+}
+
+juce::String OP4Processor::getPatchJson() const {
+  return op4::patchjson::encode(currentPatch);
 }
 
 // Factory
