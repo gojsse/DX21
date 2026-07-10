@@ -15,6 +15,10 @@ void OPZChip::prepare(double hostSampleRate) {
 void OPZChip::reset() {
   m_chip.reset();
   m_ch20base.fill(0x80);  // output-left enabled, key-on clear
+  m_note.fill(60);
+  m_velAtten.fill(0);
+  m_bendSemitones = 0.0f;
+  m_expression = 1.0f;
   m_phase = 0.0;
   m_prevL = m_prevR = m_curL = m_curR = 0.0f;
   // prime the resampler with two chip samples
@@ -68,16 +72,22 @@ uint8_t OPZChip::carrierMask(int algorithm) {
 // MIDI note -> OPM/OPZ key code (reg 0x28) + key fraction (reg 0x30 bits 7-2).
 // KC layout: bits 6-4 octave, bits 3-0 note. Valid note nibbles skip every 4th
 // value: semitone s -> (s/3)*4 + (s%3). [verify] absolute octave reference.
-void OPZChip::noteToKeyCode(int midiNote, uint8_t& kc, uint8_t& kf) {
+void OPZChip::computeKeyCode(double midiNote, uint8_t& kc, uint8_t& kf) {
   // The chip's key-code octave field is 3 bits (0-7), so it spans 8 octaves.
-  // Clamp the note into that representable window; out-of-range notes saturate
-  // flat rather than wrapping. [verify] absolute octave reference against A440.
-  midiNote = std::clamp(midiNote, 12, 107);
-  int semitone = midiNote % 12;                 // 0 = C
-  int note = (semitone / 3) * 4 + (semitone % 3);
-  int octave = midiNote / 12 - 1;               // 0..7 within [12,107]
+  // Clamp into that window; out-of-range notes saturate flat rather than
+  // wrapping. [verify] absolute octave reference against A440.
+  midiNote = std::clamp(midiNote, 12.0, 107.999);
+  const int base = static_cast<int>(std::floor(midiNote));
+  const double frac = midiNote - base;          // 0..1 within the semitone
+  const int semitone = base % 12;               // 0 = C
+  const int note = (semitone / 3) * 4 + (semitone % 3);
+  const int octave = base / 12 - 1;             // 0..7 within [12,107]
   kc = static_cast<uint8_t>((octave << 4) | note);
-  kf = 0;  // exact equal temperament for now; microtuning/bend feed this later
+  kf = static_cast<uint8_t>(std::clamp(static_cast<int>(std::lround(frac * 64.0)), 0, 63));
+}
+
+void OPZChip::noteToKeyCode(int midiNote, uint8_t& kc, uint8_t& kf) {
+  computeKeyCode(static_cast<double>(midiNote), kc, kf);  // frac 0 -> kf 0
 }
 
 // --- programming ---------------------------------------------------------
@@ -126,27 +136,45 @@ void OPZChip::programChannel(int ch, const Patch& p, bool dx21Mask) {
   }
 }
 
-void OPZChip::noteOn(int ch, int midiNote, float velocity) {
-  ch &= 7;
+void OPZChip::writePitch(int ch) {
   uint8_t kc, kf;
-  noteToKeyCode(midiNote, kc, kf);
+  computeKeyCode(m_note[ch] + m_bendSemitones, kc, kf);
   writeReg(0x28 + ch, kc);
   writeReg(0x30 + ch, static_cast<uint8_t>((kf << 2) | 0x01));  // KF + output-right on
+}
 
-  // Velocity -> carrier TL: attenuate carriers below their programmed level as
-  // velocity drops (0 dB at velocity 1.0). Modulator level (timbre) is left
-  // alone for now. TODO: weight by per-op KVS.
+void OPZChip::writeCarrierTL(int ch) {
+  // carrier TL = programmed base + velocity attenuation + expression attenuation.
+  // Modulators (timbre) are left at their programmed level.
   const uint8_t mask = carrierMask(m_ch20base[ch] & 0x07);
-  const int atten = static_cast<int>(std::lround((1.0f - std::clamp(velocity, 0.0f, 1.0f)) * kVelocityDepthTL));
+  const int expr = static_cast<int>(std::lround((1.0f - m_expression) * kExpressionDepthTL));
   for (int op = 0; op < 4; ++op) {
     if (mask & (1 << op)) {
       const uint8_t base = static_cast<uint8_t>((slotForOp(op) << 3) | ch);
-      writeReg(0x60 + base, static_cast<uint8_t>(std::clamp(m_baseTL[ch][op] + atten, 0, 127)));
+      const int tl = m_baseTL[ch][op] + m_velAtten[ch] + expr;
+      writeReg(0x60 + base, static_cast<uint8_t>(std::clamp(tl, 0, 127)));
     }
   }
+}
 
+void OPZChip::noteOn(int ch, int midiNote, float velocity) {
+  ch &= 7;
+  m_note[ch] = midiNote;
+  m_velAtten[ch] = static_cast<int>(std::lround((1.0f - std::clamp(velocity, 0.0f, 1.0f)) * kVelocityDepthTL));
+  writePitch(ch);
+  writeCarrierTL(ch);
   writeReg(0x08, static_cast<uint8_t>(ch));                     // select channel for key event
   writeReg(0x20 + ch, static_cast<uint8_t>(m_ch20base[ch] | 0x40));  // key on (bit6)
+}
+
+void OPZChip::setPitchBendSemitones(float semitones) {
+  m_bendSemitones = semitones;
+  for (int ch = 0; ch < kChannels; ++ch) writePitch(ch);
+}
+
+void OPZChip::setExpression(float gain01) {
+  m_expression = std::clamp(gain01, 0.0f, 1.0f);
+  for (int ch = 0; ch < kChannels; ++ch) writeCarrierTL(ch);
 }
 
 void OPZChip::noteOff(int ch) {

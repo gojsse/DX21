@@ -56,16 +56,56 @@ void FMEngine::handleNoteOff(int note) {
   for (int ch = 0; ch < kPolyphony; ++ch) {
     Voice& v = voices_[ch];
     if (v.active && v.note == note) {
-      chip_->noteOff(ch);
-      v.active = false;
-      v.releasing = true;   // reclaimable; envelope tail still sounds
+      if (sustainOn_) {
+        v.heldBySustain = true;  // keep sounding until the pedal lifts
+      } else {
+        chip_->noteOff(ch);
+        v.active = false;
+        v.releasing = true;      // reclaimable; envelope tail still sounds
+      }
       return;
     }
   }
 }
 
+void FMEngine::releaseSustained() {
+  for (int ch = 0; ch < kPolyphony; ++ch) {
+    Voice& v = voices_[ch];
+    if (v.heldBySustain) {
+      chip_->noteOff(ch);
+      v.active = false;
+      v.releasing = true;
+      v.heldBySustain = false;
+    }
+  }
+}
+
+void FMEngine::updateExpression() {
+  chip_->setExpression((ccVolume_ / 127.0f) * (ccExpression_ / 127.0f));
+}
+
+void FMEngine::handleController(int cc, int value) {
+  switch (cc) {
+    case 64:  // sustain pedal
+      if (value >= 64) { sustainOn_ = true; }
+      else { sustainOn_ = false; releaseSustained(); }
+      break;
+    case 7:   ccVolume_ = value;     updateExpression(); break;  // channel volume
+    case 11:  ccExpression_ = value; updateExpression(); break;  // expression
+    case 123: // all notes off
+      for (int ch = 0; ch < kPolyphony; ++ch) { chip_->noteOff(ch); voices_[ch].reset(); voices_[ch].channel = ch; }
+      break;
+    default: break;  // TODO: mod wheel / breath (need the LFO wired)
+  }
+}
+
+void FMEngine::handlePitchBend(int value14) {
+  const float norm = (value14 - 8192) / 8192.0f;  // -1..~1
+  chip_->setPitchBendSemitones(norm * static_cast<float>(currentPatch_.pb_range));
+}
+
 void FMEngine::processBlock(float* outL, float* outR, int numSamples, const juce::MidiBuffer& midi) {
-  if (patchDirty_) reprogramAllChannels();
+  if (patchDirty_) { reprogramAllChannels(); updateExpression(); }
 
   int pos = 0;
   for (const auto meta : midi) {
@@ -77,7 +117,11 @@ void FMEngine::processBlock(float* outL, float* outR, int numSamples, const juce
       handleNoteOn(msg.getNoteNumber(), msg.getFloatVelocity());
     else if (msg.isNoteOff())
       handleNoteOff(msg.getNoteNumber());
-    // TODO(M1+): pitch bend, sustain pedal, mod wheel, NRPN (M4).
+    else if (msg.isPitchWheel())
+      handlePitchBend(msg.getPitchWheelValue());
+    else if (msg.isController())
+      handleController(msg.getControllerNumber(), msg.getControllerValue());
+    // TODO(M4): mod wheel/breath (LFO), NRPN.
   }
   if (pos < numSamples) chip_->render(outL + pos, outR + pos, numSamples - pos);
 }

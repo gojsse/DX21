@@ -60,6 +60,29 @@ int main() {
   CHECK(vFull > vSoft * 1.3f, "higher velocity is louder (carrier TL)");
   CHECK(std::fabs(vFull - peakOf(7)) < 1e-6f, "velocity 1.0 == programmed level (golden stays valid)");
 
+  // 3b. pitch bend: key-code math (KC = semitone, KF = intra-semitone fraction)
+  uint8_t kc69, kf69, kcUp, kfUp, kcHalf, kfHalf, kcOct, kfOct;
+  OPZChip::computeKeyCode(69.0, kc69, kf69);
+  OPZChip::computeKeyCode(69.0 + 1.0, kcUp, kfUp);
+  OPZChip::computeKeyCode(69.5, kcHalf, kfHalf);
+  OPZChip::computeKeyCode(69.0 + 12.0, kcOct, kfOct);
+  CHECK(kf69 == 0, "exact note -> key fraction 0");
+  CHECK(kcUp != kc69 && kfUp == 0, "bend +1 semitone -> next key code");
+  CHECK(kcHalf == kc69 && kfHalf == 32, "bend +0.5 semitone -> mid key fraction");
+  CHECK(kcOct == static_cast<uint8_t>(kc69 + 0x10) && kfOct == 0, "bend +12 -> +1 octave in KC");
+
+  // 3c. expression / volume attenuates carriers
+  auto peakExpr = [](float expr) {
+    OPZChip c; c.prepare(44100.0);
+    c.programChannel(0, flatPatch(7), true);
+    c.noteOn(0, 69, 1.0f);
+    c.setExpression(expr);
+    const int N = 44100; std::vector<float> L(N), R(N); c.render(L.data(), R.data(), N);
+    float pk = 0.0f; for (int i = N / 4; i < N; ++i) pk = std::max(pk, std::fabs(L[i]));
+    return pk;
+  };
+  CHECK(peakExpr(1.0f) > peakExpr(0.4f) * 1.3f, "lower expression is quieter (carrier TL)");
+
   // 4. note->keycode invariants
   bool validNibbles = true, monotonic = true;
   uint8_t prevKc = 0, kc, kf;

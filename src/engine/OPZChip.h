@@ -37,6 +37,12 @@ public:
   void noteOn(int ch, int midiNote, float velocity);
   void noteOff(int ch);
 
+  // Global pitch bend in semitones (applied to every channel via KC/KF).
+  void setPitchBendSemitones(float semitones);
+  // Global expression/volume gain 0..1, applied as carrier attenuation
+  // (combines with per-note velocity). 1.0 = programmed level.
+  void setExpression(float gain01);
+
   // Advance the chip and sum all 8 channels into stereo host-rate float output.
   void render(float* outL, float* outR, int numSamples);
 
@@ -53,6 +59,9 @@ public:
   static uint8_t coarseToMul(uint8_t coarse);
   static uint8_t levelToTL(uint8_t level);
   static void noteToKeyCode(int midiNote, uint8_t& kc, uint8_t& kf);
+  // Fractional key code: KC (semitone) + KF (6-bit intra-semitone fraction),
+  // used for pitch bend / microtuning.
+  static void computeKeyCode(double midiNote, uint8_t& kc, uint8_t& kf);
 
   // Carrier operators (bitmask over ops 0..3) for algorithm 0..7. Derived from
   // the verified 4-op chart; matches the measured per-algorithm carrier counts.
@@ -61,10 +70,14 @@ public:
 private:
   void writeReg(uint8_t addr, uint8_t data);
   void pullChipSample();
+  void writePitch(int ch);        // KC/KF from note + bend
+  void writeCarrierTL(int ch);    // base TL + velocity + expression attenuation
 
   // Velocity -> carrier TL: attenuation in TL steps (~0.75 dB each) at velocity
   // 0; at velocity 1.0 the carriers play at their programmed level. [verify]
   static constexpr int kVelocityDepthTL = 48;
+  // Expression/volume 0 -> this much carrier attenuation (TL steps). [verify]
+  static constexpr int kExpressionDepthTL = 64;
 
   ymfm::ym2414 m_chip;
   uint32_t m_chipRate = 0;
@@ -76,6 +89,12 @@ private:
   // programmed TL per channel per op (0..3), so note-on can offset carriers by
   // velocity without re-deriving from the patch.
   std::array<std::array<uint8_t, 4>, kChannels> m_baseTL{};
+
+  // per-channel note + performance controllers (applied via KC/KF and TL).
+  std::array<int, kChannels> m_note{};         // base MIDI note per channel
+  std::array<int, kChannels> m_velAtten{};     // velocity attenuation (TL steps)
+  float m_bendSemitones = 0.0f;
+  float m_expression = 1.0f;                    // CC7*CC11 gain 0..1
 
   // linear-resampler state (spike-quality; [verify] — replace with polyphase)
   double m_phase = 0.0;

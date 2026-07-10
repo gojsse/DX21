@@ -40,6 +40,10 @@ private:
   void reprogramAllChannels();
   void handleNoteOn(int note, float velocity);
   void handleNoteOff(int note);
+  void handleController(int cc, int value);
+  void handlePitchBend(int value14);   // 0..16383, centre 8192
+  void releaseSustained();
+  void updateExpression();
   int  allocateChannel();
 
   double sampleRate_ = 44100.0;
@@ -52,4 +56,9 @@ private:
   std::unique_ptr<OPZChip> chip_;
   std::array<Voice, kPolyphony> voices_;
   uint64_t tick_ = 0;
+
+  // performance controllers
+  bool sustainOn_ = false;
+  int  ccVolume_ = 127;      // CC7
+  int  ccExpression_ = 127;  // CC11
 };
