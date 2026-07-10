@@ -58,7 +58,6 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir build -C Release --output-on-failure
-        continue-on-error: true
 
       - name: Pluginval (macOS)
         if: runner.os == 'macOS'
