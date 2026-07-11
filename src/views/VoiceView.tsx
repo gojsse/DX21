@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useStore } from '../state/store'
 import { auditionNote } from '../audio/useAudio'
+import { requestSelectVoice } from '../plugin/bridge'
 import { ALGACC } from '../theme/themes'
 import { ALGS } from '../state/seed'
 import { AlgorithmGlyph } from '../components/AlgorithmGlyph'
@@ -20,6 +21,7 @@ export function VoiceView() {
   const theme = useStore((s) => s.theme)
   const mode = useStore((s) => s.mode)
   const patch = useStore((s) => s.patch)
+  const bank = useStore((s) => s.bank)
   const setMode = useStore((s) => s.setMode)
   const setAlgorithm = useStore((s) => s.setAlgorithm)
   const setFeedback = useStore((s) => s.setFeedback)
@@ -40,13 +42,13 @@ export function VoiceView() {
         </div>
         <div style={{ flex: 1 }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div onClick={() => { audioStub('prev patch'); auditionNote() }} style={{ ...navBtn, cursor: 'pointer' }}>‹</div>
+          <div onClick={() => { if (bank.loaded) requestSelectVoice(Math.max(0, bank.current - 1)); else { audioStub('prev patch'); auditionNote() } }} style={{ ...navBtn, cursor: 'pointer' }}>‹</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--disp)', border: '1px solid var(--disp-b)', borderRadius: 4, padding: '6px 14px', boxShadow: 'inset 0 1px 5px rgba(0,0,0,.3)' }}>
             <div style={{ font: "500 12px 'IBM Plex Mono'", color: 'var(--disp-dim)' }}>{patch.slot}</div>
             <Editable value={patch.name} style={{ font: "500 14px 'IBM Plex Mono'", color: 'var(--disp-ink)' }} />
             {patch.edited && <div style={{ font: "500 9px 'IBM Plex Mono'", color: 'var(--disp-ink)', border: '1px solid var(--disp-b)', borderRadius: 3, padding: '1px 5px' }}>EDITED</div>}
           </div>
-          <div onClick={() => { audioStub('next patch'); auditionNote() }} style={{ ...navBtn, cursor: 'pointer' }}>›</div>
+          <div onClick={() => { if (bank.loaded) requestSelectVoice(Math.min(bank.names.length - 1, bank.current + 1)); else { audioStub('next patch'); auditionNote() } }} style={{ ...navBtn, cursor: 'pointer' }}>›</div>
           <div onClick={() => audioStub('compare')} style={{ marginLeft: 6, padding: '6px 12px', background: 'var(--key)', border: '1px solid var(--key-b)', borderRadius: 4, font: "600 10.5px 'Barlow Condensed'", letterSpacing: '.12em', color: 'var(--key-ink)', boxShadow: '0 2px 3px rgba(0,0,0,.3)', cursor: 'pointer' }}>COMPARE</div>
         </div>
       </div>

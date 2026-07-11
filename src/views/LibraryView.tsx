@@ -2,15 +2,21 @@ import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useStore } from '../state/store'
 import { auditionNote } from '../audio/useAudio'
-import { requestLoadSyx, requestExportSyx, requestSendVoice } from '../plugin/bridge'
+import { requestLoadSyx, requestExportSyx, requestSendVoice, requestSelectVoice } from '../plugin/bridge'
 import { BANK_NAMES, BANK_CATSEQ, CATS, BANKS, LIB_TAGS } from '../state/seed'
 import { panelCard, sectionLabel, paramLabel, keyBtn, keyABtn, segOnSm, spin } from '../theme/tokens'
 
 export function LibraryView() {
   const audioStub = useStore((s) => s.audioStub)
+  const loadedBank = useStore((s) => s.bank)
   const [tag, setTag] = useState('ALL')
   const [bank, setBank] = useState(0)
   const [slot, setSlot] = useState(6)
+
+  // When a VMEM bank is loaded (in the plugin), the grid shows its real voices
+  // and clicking a cell selects that voice; otherwise the seed mockup is shown.
+  const names = loadedBank.loaded ? loadedBank.names : BANK_NAMES
+  const selected = loadedBank.loaded ? loadedBank.current : slot
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '216px 1fr', gap: 10, padding: '12px 14px' }}>
@@ -62,12 +68,12 @@ export function LibraryView() {
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8,1fr)', gap: 6 }}>
-            {BANK_NAMES.map((nm, i) => {
+            {names.map((nm, i) => {
               const empty = !nm
-              const on = i === slot
+              const on = i === selected
               const cs: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 4, padding: '7px 9px', borderRadius: 4, minWidth: 0, cursor: empty ? 'default' : 'pointer', background: on ? 'var(--disp)' : 'var(--panel)', border: '1px solid ' + (on ? 'var(--disp-b)' : 'var(--panel-b)'), boxShadow: on ? 'var(--disp-inset)' : 'none', opacity: empty ? 0.45 : 1 }
               return (
-                <div key={i} style={cs} onClick={() => { if (!empty) { setSlot(i); auditionNote() } }}>
+                <div key={i} style={cs} onClick={() => { if (loadedBank.loaded) { requestSelectVoice(i) } else if (!empty) { setSlot(i); auditionNote() } }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                     <div style={{ font: "500 9px 'IBM Plex Mono'", color: on ? 'var(--disp-dim)' : 'var(--faint)' }}>{(i + 1 < 10 ? '0' : '') + (i + 1)}</div>
                     <div style={{ font: "600 8px 'Barlow Condensed'", letterSpacing: '.12em', color: on ? 'var(--disp-ink)' : (CATS[BANK_CATSEQ[i]] || 'transparent') }}>{BANK_CATSEQ[i]}</div>

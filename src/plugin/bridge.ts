@@ -35,15 +35,16 @@ export function isInPlugin(): boolean {
 
 // Ask the plugin to perform a native action. Each returns false in the browser
 // so callers can fall back to their web behaviour.
-function emit(event: string): boolean {
+function emit(event: string, obj: unknown = {}): boolean {
   const backend = window.__JUCE__?.backend
   if (!backend) return false
-  backend.emitEvent(event, {})
+  backend.emitEvent(event, obj)
   return true
 }
 export const requestLoadSyx = (): boolean => emit('op4_loadSyx')      // open a .syx file
 export const requestExportSyx = (): boolean => emit('op4_exportSyx')  // save current voice
 export const requestSendVoice = (): boolean => emit('op4_sendVoice')  // transmit over MIDI
+export const requestSelectVoice = (index: number): boolean => emit('op4_selectVoice', { index })
 
 let applyingInbound = false
 
@@ -100,6 +101,15 @@ export function connectPluginBridge(): void {
   const initial = juce.initialisationData?.op4_initPatch
   if (initial !== undefined) applyInbound(initial)
   backend.addEventListener('op4_setPatch', applyInbound)
+
+  // inbound: loaded VMEM bank -> Library grid
+  backend.addEventListener('op4_bank', (info) => {
+    const b = (typeof info === 'string' ? JSON.parse(info) : info) as
+      { loaded?: boolean; current?: number; names?: string[] }
+    useStore.getState().setBank({
+      loaded: !!b?.loaded, current: b?.current ?? 0, names: b?.names ?? [],
+    })
+  })
 
   // outbound: forward the whole display patch on any change; native maps it.
   useStore.subscribe((s, prev) => {

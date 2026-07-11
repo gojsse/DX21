@@ -122,13 +122,37 @@ int OP4Processor::loadSyx(const uint8_t* data, int size) {
   op4::SysexRouter fileRouter;  // isolated from the live-MIDI router state
   int found = 0;
   for (const auto& msg : op4::splitSysex(data, size)) {
-    if (auto patch = fileRouter.feed(msg)) {
-      if (found == 0) setPatch(*patch);  // load the first voice (bank -> library later)
+    if (VMEMCodec::isVMEM(msg)) {
+      bank_ = VMEMCodec::decode(msg);
+      hasBank_ = true;
+      currentVoice_ = 0;
+      if (found == 0) setPatch(bank_[0]);
+      found += VMEMCodec::Voices;
+    } else if (auto patch = fileRouter.feed(msg)) {
+      if (found == 0) setPatch(*patch);  // load the first voice
       ++found;
     }
   }
   if (found > 0 && onPatchLoaded) onPatchLoaded();
   return found;
+}
+
+void OP4Processor::selectBankVoice(int index) {
+  if (!hasBank_ || index < 0 || index >= VMEMCodec::Voices) return;
+  currentVoice_ = index;
+  setPatch(bank_[static_cast<size_t>(index)]);
+  if (onPatchLoaded) onPatchLoaded();
+}
+
+juce::var OP4Processor::getBankInfo() const {
+  auto* d = new juce::DynamicObject();
+  d->setProperty("loaded", hasBank_);
+  d->setProperty("current", currentVoice_);
+  juce::Array<juce::var> names;
+  if (hasBank_)
+    for (const auto& p : bank_) names.add(juce::String(p.name));
+  d->setProperty("names", names);
+  return juce::var(d);
 }
 
 // Factory

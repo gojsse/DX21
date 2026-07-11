@@ -61,6 +61,9 @@ juce::WebBrowserComponent::Options OP4Editor::makeOptions() {
       // UI requests transmitting the current voice out over MIDI.
       .withEventListener("op4_sendVoice",
           [&p](juce::var) { p.sendVoice(); })
+      // UI selects a voice from the loaded VMEM bank.
+      .withEventListener("op4_selectVoice",
+          [&p](juce::var payload) { p.selectBankVoice(static_cast<int>(payload.getProperty("index", 0))); })
       // native -> JS at load: current patch in the UI's display model, which the
       // web adapter deep-merges into its store.
       .withInitialisationData("op4_initPatch", p.getWebPatch());
@@ -88,8 +91,11 @@ OP4Editor::OP4Editor(OP4Processor& p)
     c->setSizeLimits(900, 560, 2400, 1520);
   setSize(1200, 760);  // matches the prototype's 1200px reference scale
 
-  // Refresh the UI when a patch arrives via sysex (message thread).
-  processor_.onPatchLoaded = [this] { pushPatch(); };
+  // Refresh the UI when a patch/bank arrives via sysex (message thread).
+  processor_.onPatchLoaded = [this] {
+    pushPatch();
+    web_.emitEventIfBrowserIsVisible("op4_bank", processor_.getBankInfo());
+  };
 }
 
 OP4Editor::~OP4Editor() {

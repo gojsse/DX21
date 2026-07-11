@@ -35,12 +35,15 @@ interface Store extends Snapshot {
   mode: SynthMode
   theme: ThemeName
   hardwareLink: boolean
+  // loaded VMEM bank (from the plugin); empty in the browser demo
+  bank: { loaded: boolean; current: number; names: string[] }
   // undo
   past: Snapshot[]
   interacting: boolean
   _pending: Snapshot | null
 
   // UI actions (not undoable)
+  setBank: (b: { loaded: boolean; current: number; names: string[] }) => void
   setView: (v: ViewId) => void
   setMode: (m: SynthMode) => void
   setTheme: (t: ThemeName) => void
@@ -123,6 +126,7 @@ export const useStore = create<Store>((set, get) => {
     drums: initialDrums,
     midi: initialMidi,
 
+    bank: { loaded: false, current: 0, names: [] },
     view: 'voice',
     mode: 'DX21',
     theme: 'DX21',
@@ -131,6 +135,7 @@ export const useStore = create<Store>((set, get) => {
     interacting: false,
     _pending: null,
 
+    setBank: (b) => set({ bank: b }),
     setView: (v) => set({ view: v }),
     setMode: (m) => set({ mode: m }),
     setTheme: (t) => set({ theme: t }),

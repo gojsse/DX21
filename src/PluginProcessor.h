@@ -5,6 +5,7 @@
 #include "model/Patch.h"
 #include "sysex/SysexFifo.h"
 #include "sysex/SysexRouter.h"
+#include "sysex/VMEMCodec.h"
 
 class OP4Processor : public juce::AudioProcessor, private juce::Timer {
 public:
@@ -50,6 +51,10 @@ public:
   // Queue the current voice (ACED + VCED) for MIDI transmission (message thread).
   void sendVoice();
 
+  // Loaded VMEM bank -> Library. selectBankVoice loads voice i into the engine.
+  void selectBankVoice(int index);
+  juce::var getBankInfo() const;  // { loaded, current, names[32] } for the UI
+
   // Set by the editor: called on the message thread when a patch arrives via
   // sysex, so the WebView UI can refresh. Cleared when the editor is destroyed.
   std::function<void()> onPatchLoaded;
@@ -66,6 +71,10 @@ private:
   op4::SysexRouter router_;   // message thread only
   std::vector<uint8_t> sysexScratch_;
   std::vector<uint8_t> sysexOutScratch_;
+
+  VMEMCodec::PatchBank bank_{};
+  bool hasBank_ = false;
+  int  currentVoice_ = 0;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OP4Processor)
 };
