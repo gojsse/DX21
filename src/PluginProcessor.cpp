@@ -3,12 +3,15 @@
 #include "bridge/PatchJson.h"
 #include "bridge/WebPatch.h"
 #include "sysex/SyxFile.h"
+#include "sysex/VCEDCodec.h"
+#include "sysex/ACEDCodec.h"
 
 OP4Processor::OP4Processor() : AudioProcessor(BusesProperties()
     .withOutput("Output", juce::AudioChannelSet::stereo())) {
   engine = std::make_unique<FMEngine>();
   engine->setPatch(currentPatch);
   sysexScratch_.reserve(op4::SysexFifo::kSlotBytes);
+  sysexOutScratch_.reserve(op4::SysexFifo::kSlotBytes);
   startTimerHz(30);  // drain incoming sysex on the message thread
 }
 
@@ -59,6 +62,10 @@ void OP4Processor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuff
   float* left = buffer.getWritePointer(0);
   float* right = buffer.getNumChannels() > 1 ? buffer.getWritePointer(1) : left;
   engine->processBlock(left, right, numSamples, midiMessages);
+
+  // Emit any queued outgoing sysex (voice transmit) on the MIDI output.
+  while (sysexOut_.pop(sysexOutScratch_))
+    midiMessages.addEvent(sysexOutScratch_.data(), static_cast<int>(sysexOutScratch_.size()), 0);
 }
 
 juce::AudioProcessorEditor* OP4Processor::createEditor() {
@@ -94,6 +101,21 @@ juce::String OP4Processor::getPatchJson() const {
 
 juce::var OP4Processor::getWebPatch() const {
   return op4::webpatch::toWebVar(currentPatch);
+}
+
+std::vector<uint8_t> OP4Processor::getVoiceSyx() const {
+  // TX81Z voice = ACED immediately followed by VCED.
+  std::vector<uint8_t> out = ACEDCodec::encode(currentPatch, 0);
+  const std::vector<uint8_t> vced = VCEDCodec::encode(currentPatch, 0);
+  out.insert(out.end(), vced.begin(), vced.end());
+  return out;
+}
+
+void OP4Processor::sendVoice() {
+  const std::vector<uint8_t> aced = ACEDCodec::encode(currentPatch, 0);
+  const std::vector<uint8_t> vced = VCEDCodec::encode(currentPatch, 0);
+  sysexOut_.push(aced.data(), static_cast<int>(aced.size()));
+  sysexOut_.push(vced.data(), static_cast<int>(vced.size()));  // drained in processBlock
 }
 
 int OP4Processor::loadSyx(const uint8_t* data, int size) {

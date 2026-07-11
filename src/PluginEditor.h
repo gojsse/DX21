@@ -28,7 +28,8 @@ public:
 
 private:
   juce::WebBrowserComponent::Options makeOptions();
-  void openSyxChooser();  // native .syx file picker -> processor.loadSyx
+  void openSyxChooser();    // native .syx open picker -> processor.loadSyx
+  void exportSyxChooser();  // native .syx save picker <- processor.getVoiceSyx
 
   OP4Processor& processor_;
   juce::WebBrowserComponent web_;

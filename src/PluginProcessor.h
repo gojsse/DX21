@@ -20,7 +20,7 @@ public:
 
   const juce::String getName() const override { return "OP4"; }
   bool acceptsMidi() const override { return true; }
-  bool producesMidi() const override { return false; }
+  bool producesMidi() const override { return true; }  // transmits voice sysex out
   bool isMidiEffect() const override { return false; }
   double getTailLengthSeconds() const override { return 0.0; }
 
@@ -45,6 +45,11 @@ public:
   // first resulting voice. Returns how many voices were found.
   int loadSyx(const uint8_t* data, int size);
 
+  // The current voice as ACED + VCED sysex (for file export).
+  std::vector<uint8_t> getVoiceSyx() const;
+  // Queue the current voice (ACED + VCED) for MIDI transmission (message thread).
+  void sendVoice();
+
   // Set by the editor: called on the message thread when a patch arrives via
   // sysex, so the WebView UI can refresh. Cleared when the editor is destroyed.
   std::function<void()> onPatchLoaded;
@@ -57,8 +62,10 @@ private:
   Patch currentPatch;
 
   op4::SysexFifo sysexIn_;    // audio thread -> message thread
+  op4::SysexFifo sysexOut_;   // message thread -> audio thread
   op4::SysexRouter router_;   // message thread only
   std::vector<uint8_t> sysexScratch_;
+  std::vector<uint8_t> sysexOutScratch_;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OP4Processor)
 };

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useStore } from '../state/store'
 import { auditionNote } from '../audio/useAudio'
-import { requestLoadSyx } from '../plugin/bridge'
+import { requestLoadSyx, requestExportSyx, requestSendVoice } from '../plugin/bridge'
 import { BANK_NAMES, BANK_CATSEQ, CATS, BANKS, LIB_TAGS } from '../state/seed'
 import { panelCard, sectionLabel, paramLabel, keyBtn, keyABtn, segOnSm, spin } from '../theme/tokens'
 
@@ -57,7 +57,7 @@ export function LibraryView() {
               <div style={{ font: "400 9.5px 'IBM Plex Mono'", color: 'var(--faint)' }}>30/32 · CLICK TO AUDITION · DRAG TO REORDER</div>
             </div>
             <div style={{ display: 'flex', gap: 3 }}>
-              <div onClick={() => audioStub('export .syx')} style={{ ...keyBtn, cursor: 'pointer' }}>EXPORT .SYX</div>
+              <div onClick={() => { if (!requestExportSyx()) audioStub('export .syx') }} style={{ ...keyBtn, cursor: 'pointer' }}>EXPORT .SYX</div>
               <div onClick={() => audioStub('new bank')} style={{ ...keyBtn, cursor: 'pointer' }}>NEW BANK</div>
             </div>
           </div>
@@ -88,7 +88,7 @@ export function LibraryView() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4 }}>
-            <div onClick={() => audioStub('send bank')} style={{ ...keyABtn, cursor: 'pointer' }}>SEND BANK TO SYNTH</div>
+            <div onClick={() => { if (!requestSendVoice()) audioStub('send bank') }} style={{ ...keyABtn, cursor: 'pointer' }}>SEND VOICE TO SYNTH</div>
             <div onClick={() => audioStub('receive bank')} style={{ ...keyBtn, cursor: 'pointer' }}>RECEIVE BANK</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5, background: 'var(--disp)', border: '1px solid var(--disp-b)', borderRadius: 4, padding: '7px 12px', boxShadow: 'inset 0 1px 5px rgba(0,0,0,.3)' }}>

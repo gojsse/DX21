@@ -53,9 +53,14 @@ juce::WebBrowserComponent::Options OP4Editor::makeOptions() {
       // (bridge/WebPatch) onto the engine's patch.
       .withEventListener("op4_webPatch",
           [&p](juce::var payload) { p.applyWebPatch(payload); })
-      // UI requests a .syx file load -> open a native file chooser.
+      // UI requests a .syx file load / export -> native file chooser.
       .withEventListener("op4_loadSyx",
           [this](juce::var) { openSyxChooser(); })
+      .withEventListener("op4_exportSyx",
+          [this](juce::var) { exportSyxChooser(); })
+      // UI requests transmitting the current voice out over MIDI.
+      .withEventListener("op4_sendVoice",
+          [&p](juce::var) { p.sendVoice(); })
       // native -> JS at load: current patch in the UI's display model, which the
       // web adapter deep-merges into its store.
       .withInitialisationData("op4_initPatch", p.getWebPatch());
@@ -101,6 +106,21 @@ void OP4Editor::openSyxChooser() {
     juce::MemoryBlock mb;
     if (file.loadFileAsData(mb) && mb.getSize() > 0)
       processor_.loadSyx(static_cast<const uint8_t*>(mb.getData()), static_cast<int>(mb.getSize()));
+  });
+}
+
+void OP4Editor::exportSyxChooser() {
+  chooser_ = std::make_unique<juce::FileChooser>(
+      "Export voice as .syx",
+      juce::File::getSpecialLocation(juce::File::userDocumentsDirectory).getChildFile("OP4 Voice.syx"),
+      "*.syx");
+  const auto flags = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles
+                   | juce::FileBrowserComponent::warnAboutOverwriting;
+  chooser_->launchAsync(flags, [this](const juce::FileChooser& fc) {
+    const juce::File file = fc.getResult();
+    if (file == juce::File{}) return;
+    const auto bytes = processor_.getVoiceSyx();
+    file.replaceWithData(bytes.data(), static_cast<int>(bytes.size()));
   });
 }
 

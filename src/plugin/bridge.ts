@@ -33,14 +33,17 @@ export function isInPlugin(): boolean {
   return typeof window !== 'undefined' && !!window.__JUCE__?.backend
 }
 
-// Ask the plugin to open a native .syx file picker. Returns false in the browser
-// (so callers can fall back to their web behaviour).
-export function requestLoadSyx(): boolean {
+// Ask the plugin to perform a native action. Each returns false in the browser
+// so callers can fall back to their web behaviour.
+function emit(event: string): boolean {
   const backend = window.__JUCE__?.backend
   if (!backend) return false
-  backend.emitEvent('op4_loadSyx', {})
+  backend.emitEvent(event, {})
   return true
 }
+export const requestLoadSyx = (): boolean => emit('op4_loadSyx')      // open a .syx file
+export const requestExportSyx = (): boolean => emit('op4_exportSyx')  // save current voice
+export const requestSendVoice = (): boolean => emit('op4_sendVoice')  // transmit over MIDI
 
 let applyingInbound = false
 
