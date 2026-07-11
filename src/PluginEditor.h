@@ -28,9 +28,11 @@ public:
 
 private:
   juce::WebBrowserComponent::Options makeOptions();
+  void openSyxChooser();  // native .syx file picker -> processor.loadSyx
 
   OP4Processor& processor_;
   juce::WebBrowserComponent web_;
+  std::unique_ptr<juce::FileChooser> chooser_;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OP4Editor)
 };

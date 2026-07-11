@@ -41,6 +41,10 @@ public:
   juce::String getPatchJson() const;
   juce::var getWebPatch() const;  // native patch -> web display var (for the UI)
 
+  // Load a .syx blob (message thread): split into messages, route, and load the
+  // first resulting voice. Returns how many voices were found.
+  int loadSyx(const uint8_t* data, int size);
+
   // Set by the editor: called on the message thread when a patch arrives via
   // sysex, so the WebView UI can refresh. Cleared when the editor is destroyed.
   std::function<void()> onPatchLoaded;

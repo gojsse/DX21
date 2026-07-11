@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useStore } from '../state/store'
 import { auditionNote } from '../audio/useAudio'
+import { requestLoadSyx } from '../plugin/bridge'
 import { BANK_NAMES, BANK_CATSEQ, CATS, BANKS, LIB_TAGS } from '../state/seed'
 import { panelCard, sectionLabel, paramLabel, keyBtn, keyABtn, segOnSm, spin } from '../theme/tokens'
 
@@ -41,7 +42,7 @@ export function LibraryView() {
             })}
           </div>
         </div>
-        <div onClick={() => audioStub('receive .syx')} style={{ ...panelCard, border: '1px dashed var(--dash)', padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', textAlign: 'center', cursor: 'pointer' }}>
+        <div onClick={() => { if (!requestLoadSyx()) audioStub('receive .syx') }} style={{ ...panelCard, border: '1px dashed var(--dash)', padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', textAlign: 'center', cursor: 'pointer' }}>
           <div style={{ font: "600 11px 'Barlow Condensed'", letterSpacing: '.1em', color: 'var(--silk)' }}>DROP A .SYX FILE</div>
           <div style={{ font: "400 9.5px 'IBM Plex Mono'", color: 'var(--faint)', lineHeight: 1.5 }}>or receive from<br />your synth</div>
         </div>

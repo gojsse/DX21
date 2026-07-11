@@ -7,6 +7,7 @@
 #include "sysex/ACEDCodec.h"
 #include "sysex/SysexRouter.h"
 #include "sysex/SysexFifo.h"
+#include "sysex/SyxFile.h"
 #include "model/Patch.h"
 #include <cstdio>
 #include <vector>
@@ -122,6 +123,23 @@ int main() {
     CHECK(!fifo.pop(m3), "fifo: empty after draining");
     std::vector<uint8_t> tooBig(op4::SysexFifo::kSlotBytes + 1, 0);
     CHECK(!fifo.push(tooBig.data(), (int)tooBig.size()), "fifo: oversized message rejected");
+  }
+
+  // --- .syx file splitting (ACED + VCED concatenated, with junk padding) ---
+  {
+    std::vector<uint8_t> file;
+    file.push_back(0x00);  // leading junk
+    file.insert(file.end(), aced.begin(), aced.end());
+    file.insert(file.end(), bytes.begin(), bytes.end());
+    file.push_back(0xF0);  // unterminated trailing F0 (ignored)
+    auto msgs = op4::splitSysex(file.data(), (int)file.size());
+    CHECK(msgs.size() == 2 && msgs[0] == aced && msgs[1] == bytes,
+          "splitSysex extracts the two messages, ignoring junk");
+
+    op4::SysexRouter r;
+    std::optional<Patch> got;
+    for (auto& m : msgs) if (auto p = r.feed(m)) got = p;
+    CHECK(got && got->reverb == tx.reverb, "loaded voice from the split file is the full TX81Z voice");
   }
 
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);

@@ -2,6 +2,7 @@
 #include "PluginEditor.h"
 #include "bridge/PatchJson.h"
 #include "bridge/WebPatch.h"
+#include "sysex/SyxFile.h"
 
 OP4Processor::OP4Processor() : AudioProcessor(BusesProperties()
     .withOutput("Output", juce::AudioChannelSet::stereo())) {
@@ -93,6 +94,19 @@ juce::String OP4Processor::getPatchJson() const {
 
 juce::var OP4Processor::getWebPatch() const {
   return op4::webpatch::toWebVar(currentPatch);
+}
+
+int OP4Processor::loadSyx(const uint8_t* data, int size) {
+  op4::SysexRouter fileRouter;  // isolated from the live-MIDI router state
+  int found = 0;
+  for (const auto& msg : op4::splitSysex(data, size)) {
+    if (auto patch = fileRouter.feed(msg)) {
+      if (found == 0) setPatch(*patch);  // load the first voice (bank -> library later)
+      ++found;
+    }
+  }
+  if (found > 0 && onPatchLoaded) onPatchLoaded();
+  return found;
 }
 
 // Factory

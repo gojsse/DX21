@@ -33,6 +33,15 @@ export function isInPlugin(): boolean {
   return typeof window !== 'undefined' && !!window.__JUCE__?.backend
 }
 
+// Ask the plugin to open a native .syx file picker. Returns false in the browser
+// (so callers can fall back to their web behaviour).
+export function requestLoadSyx(): boolean {
+  const backend = window.__JUCE__?.backend
+  if (!backend) return false
+  backend.emitEvent('op4_loadSyx', {})
+  return true
+}
+
 let applyingInbound = false
 
 // A partial display patch from native (native-owned fields only).
