@@ -79,9 +79,14 @@ OP4Editor::OP4Editor(OP4Processor& p)
   if (auto* c = getConstrainer())
     c->setSizeLimits(900, 560, 2400, 1520);
   setSize(1200, 760);  // matches the prototype's 1200px reference scale
+
+  // Refresh the UI when a patch arrives via sysex (message thread).
+  processor_.onPatchLoaded = [this] { pushPatch(); };
 }
 
-OP4Editor::~OP4Editor() = default;
+OP4Editor::~OP4Editor() {
+  processor_.onPatchLoaded = nullptr;
+}
 
 void OP4Editor::pushPatch() {
   // native -> JS: deliver the current patch in the UI's display model. The web

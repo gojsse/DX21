@@ -7,6 +7,28 @@ OP4Processor::OP4Processor() : AudioProcessor(BusesProperties()
     .withOutput("Output", juce::AudioChannelSet::stereo())) {
   engine = std::make_unique<FMEngine>();
   engine->setPatch(currentPatch);
+  sysexScratch_.reserve(op4::SysexFifo::kSlotBytes);
+  startTimerHz(30);  // drain incoming sysex on the message thread
+}
+
+OP4Processor::~OP4Processor() {
+  stopTimer();
+}
+
+void OP4Processor::setPatch(const Patch& p) {
+  currentPatch = p;
+  engine->setPatch(currentPatch);
+}
+
+void OP4Processor::timerCallback() {
+  bool loaded = false;
+  while (sysexIn_.pop(sysexScratch_)) {
+    if (auto patch = router_.feed(sysexScratch_)) {
+      setPatch(*patch);
+      loaded = true;
+    }
+  }
+  if (loaded && onPatchLoaded) onPatchLoaded();  // refresh the WebView UI
 }
 
 void OP4Processor::prepareToPlay(double sampleRate, int samplesPerBlock) {
@@ -24,6 +46,14 @@ void OP4Processor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuff
   // Clear any output channels beyond what we render to.
   for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     buffer.clear(i, 0, numSamples);
+
+  // Hand any incoming sysex to the message thread (copy only — no decoding
+  // here). Note/CC/pitch-bend are consumed by the engine below.
+  for (const auto meta : midiMessages) {
+    const auto msg = meta.getMessage();
+    if (msg.isSysEx())
+      sysexIn_.push(msg.getRawData(), msg.getRawDataSize());  // full F0..F7
+  }
 
   float* left = buffer.getWritePointer(0);
   float* right = buffer.getNumChannels() > 1 ? buffer.getWritePointer(1) : left;

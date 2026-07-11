@@ -6,6 +6,7 @@
 #include "sysex/VCEDCodec.h"
 #include "sysex/ACEDCodec.h"
 #include "sysex/SysexRouter.h"
+#include "sysex/SysexFifo.h"
 #include "model/Patch.h"
 #include <cstdio>
 #include <vector>
@@ -108,6 +109,19 @@ int main() {
     CHECK(out.has_value() && out->name == src.name, "router: standalone VCED yields a patch");
     CHECK(op4::classifySysex(aced) == op4::SysexKind::ACED &&
           op4::classifySysex(bytes) == op4::SysexKind::VCED, "classifySysex tags VCED/ACED");
+  }
+
+  // --- SysexFifo: lock-free hand-off (audio -> message thread) ---
+  {
+    op4::SysexFifo fifo;
+    CHECK(fifo.push(aced.data(), (int)aced.size()) && fifo.push(bytes.data(), (int)bytes.size()),
+          "fifo: push ACED then VCED");
+    std::vector<uint8_t> m1, m2, m3;
+    CHECK(fifo.pop(m1) && m1 == aced, "fifo: FIFO order preserved (ACED first)");
+    CHECK(fifo.pop(m2) && m2 == bytes, "fifo: second message is the VCED");
+    CHECK(!fifo.pop(m3), "fifo: empty after draining");
+    std::vector<uint8_t> tooBig(op4::SysexFifo::kSlotBytes + 1, 0);
+    CHECK(!fifo.push(tooBig.data(), (int)tooBig.size()), "fifo: oversized message rejected");
   }
 
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);
