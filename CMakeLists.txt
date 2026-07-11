@@ -92,6 +92,7 @@ target_sources(OP4 PRIVATE
   src/sysex/VCEDCodec.h
   src/sysex/ACEDCodec.cpp
   src/sysex/ACEDCodec.h
+  src/sysex/VMEMCodec.cpp
   src/sysex/VMEMCodec.h
   src/sysex/SysexRouter.h
 )
@@ -174,6 +175,7 @@ add_executable(op4_sysex_tests
   tests/sysex_tests.cpp
   src/sysex/VCEDCodec.cpp
   src/sysex/ACEDCodec.cpp
+  src/sysex/VMEMCodec.cpp
 )
 target_compile_features(op4_sysex_tests PRIVATE cxx_std_20)
 target_include_directories(op4_sysex_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)

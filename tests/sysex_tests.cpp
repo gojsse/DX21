@@ -8,6 +8,7 @@
 #include "sysex/SysexRouter.h"
 #include "sysex/SysexFifo.h"
 #include "sysex/SyxFile.h"
+#include "sysex/VMEMCodec.h"
 #include "model/Patch.h"
 #include <cstdio>
 #include <vector>
@@ -140,6 +141,34 @@ int main() {
     std::optional<Patch> got;
     for (auto& m : msgs) if (auto p = r.feed(m)) got = p;
     CHECK(got && got->reverb == tx.reverb, "loaded voice from the split file is the full TX81Z voice");
+  }
+
+  // --- VMEM (32-voice bank) — structural round-trip ([verify] byte layout) ---
+  {
+    VMEMCodec::PatchBank bank;
+    for (int vi = 0; vi < VMEMCodec::Voices; ++vi) {
+      Patch& b = bank[vi];
+      b = vcedPatch();  // VCED-representable fields
+      b.name = "VOICE" + std::to_string(vi);
+      b.algorithm = vi % 8; b.feedback = vi % 8;
+      for (int i = 0; i < 4; ++i) {  // add the TX81Z/ACED fields VMEM also stores
+        Operator& o = b.operators[i];
+        o.fixed = (vi + i) & 1; o.fixed_freq_range = (vi + i) % 8;
+        o.fine = (vi * 2 + i) % 16; o.wave = (vi + i) % 8; o.eg_shift = (vi + i) % 4;
+      }
+      b.reverb = vi % 8; b.foot_ctrl_pitch = vi % 100; b.foot_ctrl_amp = (vi * 3) % 100;
+    }
+
+    const std::vector<uint8_t> vmem = VMEMCodec::encode(bank, 0);
+    CHECK(static_cast<int>(vmem.size()) == VMEMCodec::TotalLength, "VMEM length is 4104");
+    CHECK(vmem[3] == 0x04 && vmem[4] == 0x20 && vmem[5] == 0x00, "VMEM header (04 20 00 = 4096)");
+    CHECK(VMEMCodec::isVMEM(vmem) && VMEMCodec::validateChecksum(vmem), "VMEM header + checksum");
+
+    const VMEMCodec::PatchBank back = VMEMCodec::decode(vmem);
+    bool bankOk = true;
+    for (int vi = 0; vi < VMEMCodec::Voices; ++vi) bankOk = bankOk && (back[vi] == bank[vi]);
+    CHECK(bankOk, "PatchBank[32] -> VMEM -> PatchBank[32] is identity");
+    CHECK(VMEMCodec::encode(back, 0) == vmem, "VMEM -> bank -> VMEM is byte-identical");
   }
 
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);

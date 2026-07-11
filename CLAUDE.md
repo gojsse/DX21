@@ -5,7 +5,10 @@
 ## M2 progress (in flight)
 
 - **VCED codec done** (`src/sysex/VCEDCodec.{h,cpp}`): single-voice sysex `F0 43 0n 03 00 5D <93> <cksum> F7` ↔ native `Patch` (operators in OP4/OP2/OP3/OP1 order per handoff §2.1). Fixed the M0 stub's 6-byte header (was 7). Added per-op `ebs` (EG bias sensitivity) to the model to complete the mapping. **Round-trip unit-tested** (`op4_sysex_tests`): Patch→bytes→Patch identity, byte-exact re-encode, checksum validate + corruption detection. Byte order/details are `[verify]` against a real `.syx` fixture (private, `tests/fixtures/`).
-- **Next M2:** ACED (TX81Z extra voice data) + VMEM (32-voice bank, bit-packed), SysexRouter wiring, `.syx` file load + MIDI send/receive, and the Library UI → real patch switching.
+- **ACED codec done** (`ACEDCodec`): TX81Z extras (fixed-freq, per-op waveform, EG shift, reverb, foot ctrl); `apply()` overlays onto a VCED voice. Round-trip tested.
+- **SysexRouter + transfer wired:** `SysexRouter` combines ACED→VCED; `SysexFifo` (lock-free) carries sysex both ways. **Live receive** (MIDI sysex → load voice → UI refresh), **`.syx` file load** (Library drop-zone → native picker), **send** (`producesMidi`; SEND VOICE → MIDI out), **export** (EXPORT .SYX → file). RT-safe (processBlock only copies; decode/encode on the message thread).
+- **VMEM codec — structural pass** (`VMEMCodec`): `F0 43 0n 04 20 00 <4096> <cksum> F7`, 32×128 packed. `PatchBank[32] ↔ VMEM` **internally lossless + byte-identical** (round-trip tested). ⚠️ **Bit layout is `[verify]`** — a documented, centralized placeholder; correct the `packVoice`/`unpackVoice` map against a factory bank dump before real-hardware bank interchange (handoff §2.3).
+- **Next M2:** load a VMEM bank → populate the Library grid (real patches, ‹/› stepping), bank send/receive, library DB. Then M2 ships as Alpha.
 
 ## M1 progress (in flight)
 
