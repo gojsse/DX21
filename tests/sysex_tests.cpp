@@ -4,6 +4,7 @@
 // private fixtures (tests/fixtures/*.syx) — [verify].
 
 #include "sysex/VCEDCodec.h"
+#include "sysex/ACEDCodec.h"
 #include "model/Patch.h"
 #include <cstdio>
 #include <vector>
@@ -59,6 +60,36 @@ int main() {
   std::vector<uint8_t> bad = bytes;
   bad[10] ^= 0x01;
   CHECK(!VCEDCodec::validateChecksum(bad), "checksum catches a flipped bit");
+
+  // --- ACED (TX81Z extensions) ---
+  Patch tx = vcedPatch();
+  for (int i = 0; i < 4; ++i) {
+    Operator& o = tx.operators[i];
+    o.fixed = i & 1; o.fixed_freq_range = i % 8; o.fine = (i * 3) % 16;
+    o.wave = (i + 2) % 8; o.eg_shift = i % 4;
+  }
+  tx.reverb = 5; tx.foot_ctrl_pitch = 33; tx.foot_ctrl_amp = 77;
+
+  const std::vector<uint8_t> aced = ACEDCodec::encode(tx, 0);
+  CHECK(static_cast<int>(aced.size()) == ACEDCodec::TotalLength, "ACED length is 41");
+  CHECK(ACEDCodec::isACED(aced) && ACEDCodec::validateChecksum(aced), "ACED header/class + checksum");
+
+  // apply ACED onto a VCED-decoded patch and confirm the TX81Z fields land
+  Patch merged = VCEDCodec::decode(VCEDCodec::encode(tx, 0));  // VCED half (no TX fields)
+  CHECK(merged.reverb == 0 && merged.operators[0].wave == 0, "VCED alone omits TX81Z fields");
+  CHECK(ACEDCodec::apply(aced, merged), "ACED applies");
+  bool txOk = merged.reverb == tx.reverb && merged.foot_ctrl_pitch == tx.foot_ctrl_pitch &&
+              merged.foot_ctrl_amp == tx.foot_ctrl_amp;
+  for (int i = 0; i < 4; ++i) {
+    const Operator& a = tx.operators[i]; const Operator& b = merged.operators[i];
+    txOk = txOk && b.fixed == a.fixed && b.fixed_freq_range == a.fixed_freq_range &&
+           b.fine == a.fine && b.wave == a.wave && b.eg_shift == a.eg_shift;
+  }
+  CHECK(txOk, "VCED + ACED reconstructs the full TX81Z voice");
+
+  // ACED byte round-trip
+  Patch fresh; ACEDCodec::apply(aced, fresh);
+  CHECK(ACEDCodec::encode(fresh, 0) == aced, "ACED -> Patch -> ACED is byte-identical");
 
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);
   return g_fail ? 1 : 0;
