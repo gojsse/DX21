@@ -5,6 +5,7 @@
 
 #include "sysex/VCEDCodec.h"
 #include "sysex/ACEDCodec.h"
+#include "sysex/SysexRouter.h"
 #include "model/Patch.h"
 #include <cstdio>
 #include <vector>
@@ -90,6 +91,24 @@ int main() {
   // ACED byte round-trip
   Patch fresh; ACEDCodec::apply(aced, fresh);
   CHECK(ACEDCodec::encode(fresh, 0) == aced, "ACED -> Patch -> ACED is byte-identical");
+
+  // --- SysexRouter: combines ACED + VCED into one voice ---
+  {
+    op4::SysexRouter router;
+    CHECK(!router.feed(aced).has_value(), "router: ACED alone yields no patch (stashed)");
+    auto out = router.feed(bytes);  // VCED for `src` (no TX fields)
+    CHECK(out.has_value(), "router: VCED after ACED yields a patch");
+    // the stashed ACED (from `tx`) should be overlaid onto the VCED voice
+    CHECK(out && out->reverb == tx.reverb && out->operators[0].wave == tx.operators[0].wave,
+          "router: ACED fields merged into the following VCED");
+  }
+  {
+    op4::SysexRouter router;
+    auto out = router.feed(bytes);  // standalone VCED
+    CHECK(out.has_value() && out->name == src.name, "router: standalone VCED yields a patch");
+    CHECK(op4::classifySysex(aced) == op4::SysexKind::ACED &&
+          op4::classifySysex(bytes) == op4::SysexKind::VCED, "classifySysex tags VCED/ACED");
+  }
 
   std::printf(g_fail ? "\n%d CHECK(s) FAILED\n" : "\nALL CHECKS PASSED\n", g_fail);
   return g_fail ? 1 : 0;
