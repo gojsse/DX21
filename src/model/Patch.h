@@ -12,6 +12,7 @@ struct Operator {
   uint8_t eg_shift = 0;                        // TX81Z only
   uint8_t am = 0;                              // amplitude mod enable
   uint8_t kvs = 0;                             // key velocity sensitivity
+  uint8_t ebs = 0;                             // EG bias sensitivity (0-7)
   uint8_t coarse = 0, fine = 0;                // frequency ratio / fine
   uint8_t detune = 3;                          // detune (-63 to +63, center=3)
   uint8_t fixed = 0;                           // TX81Z: fixed frequency flag

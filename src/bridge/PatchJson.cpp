@@ -18,7 +18,7 @@ static var opToVar(const Operator& o) {
   auto* d = new DynamicObject();
   put(d, "ar", o.ar);   put(d, "d1r", o.d1r); put(d, "d2r", o.d2r); put(d, "rr", o.rr);
   put(d, "d1l", o.d1l); put(d, "tl", o.tl);   put(d, "rs", o.rs);   put(d, "ks", o.ks);
-  put(d, "eg_shift", o.eg_shift); put(d, "am", o.am); put(d, "kvs", o.kvs);
+  put(d, "eg_shift", o.eg_shift); put(d, "am", o.am); put(d, "kvs", o.kvs); put(d, "ebs", o.ebs);
   put(d, "coarse", o.coarse); put(d, "fine", o.fine); put(d, "detune", o.detune);
   put(d, "fixed", o.fixed); put(d, "fixed_freq_range", o.fixed_freq_range); put(d, "wave", o.wave);
   put(d, "egl", o.egl); put(d, "eg2", o.eg2); put(d, "eg3", o.eg3);
@@ -29,6 +29,7 @@ static void opOverlay(Operator& o, const var& v) {
   o.ar = u8(v, "ar", o.ar);   o.d1r = u8(v, "d1r", o.d1r); o.d2r = u8(v, "d2r", o.d2r); o.rr = u8(v, "rr", o.rr);
   o.d1l = u8(v, "d1l", o.d1l); o.tl = u8(v, "tl", o.tl);   o.rs = u8(v, "rs", o.rs);   o.ks = u8(v, "ks", o.ks);
   o.eg_shift = u8(v, "eg_shift", o.eg_shift); o.am = u8(v, "am", o.am); o.kvs = u8(v, "kvs", o.kvs);
+  o.ebs = u8(v, "ebs", o.ebs);
   o.coarse = u8(v, "coarse", o.coarse); o.fine = u8(v, "fine", o.fine); o.detune = u8(v, "detune", o.detune);
   o.fixed = u8(v, "fixed", o.fixed); o.fixed_freq_range = u8(v, "fixed_freq_range", o.fixed_freq_range);
   o.wave = u8(v, "wave", o.wave);

@@ -1,6 +1,11 @@
 # OP4 Development Notes
 
-**Current phase:** M1 (Voice engine + Voice UI) · started 2026-07-10
+**Current phase:** M1 (Voice engine + Voice UI) ~done · **M2 (Sysex I/O + Librarian) started** 2026-07-10
+
+## M2 progress (in flight)
+
+- **VCED codec done** (`src/sysex/VCEDCodec.{h,cpp}`): single-voice sysex `F0 43 0n 03 00 5D <93> <cksum> F7` ↔ native `Patch` (operators in OP4/OP2/OP3/OP1 order per handoff §2.1). Fixed the M0 stub's 6-byte header (was 7). Added per-op `ebs` (EG bias sensitivity) to the model to complete the mapping. **Round-trip unit-tested** (`op4_sysex_tests`): Patch→bytes→Patch identity, byte-exact re-encode, checksum validate + corruption detection. Byte order/details are `[verify]` against a real `.syx` fixture (private, `tests/fixtures/`).
+- **Next M2:** ACED (TX81Z extra voice data) + VMEM (32-voice bank, bit-packed), SysexRouter wiring, `.syx` file load + MIDI send/receive, and the Library UI → real patch switching.
 
 ## M1 progress (in flight)
 
